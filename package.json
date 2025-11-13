@@ -2,9 +2,6 @@
   "name": "dino-validation",
   "version": "1.0.0",
   "description": "Lightweight clientside form validation in vanilla JS",
-  "keywords": [
-    "typescript"
-  ],
   "homepage": "https://github.com/cadamsmith/dino-validation",
   "bugs": {
     "url": "https://github.com/cadamsmith/dino-validation/issues"
@@ -18,15 +15,19 @@
     "dist"
   ],
   "type": "module",
-  "main": "dist/index.js",
+  "main": "dist/dino-validation.js",
   "license": "MIT",
   "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^24.10.0",
+    "http-server": "^14.1.1",
     "prettier": "^3.6.2",
-    "typescript": "^5.9.3"
+    "rollup": "^4.53.2"
   },
   "scripts": {
     "ci": "npm run build && npm run check-format",
-    "build": "tsc",
+    "build": "rollup -c",
+    "test": "npx playwright test",
     "format": "prettier --write .",
     "check-format": "prettier --check ."
   }
