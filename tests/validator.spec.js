@@ -97,4 +97,40 @@ test.describe('validator', () => {
       true
     ]);
   });
+
+  test('valid() ???', async ({ page }) => {
+    await page.goto('');
+
+    const tests = await page.evaluate(() => {
+      const errorList = [
+        {
+          name: "meal",
+          message: "foo",
+          element: document.querySelector("#meal")
+        }
+      ];
+      let v = dv.validate("#testForm3");
+
+      const tests = [v.valid()];
+
+      v.errorList = errorList;
+      tests.push(v.valid());
+
+      v.destroy();
+      v = dv.validate("#testForm3");
+      tests.push(v.valid());
+
+      v.errorList = errorList;
+      tests.push(v.valid());
+
+      return tests;
+    });
+
+    expect(tests).toEqual([
+      true,
+      false,
+      true,
+      false
+    ]);
+  });
 });

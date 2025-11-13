@@ -11,6 +11,8 @@ import { getRules } from './rules.js';
 import { getMessage } from './messages.js';
 import methods from './methods.js';
 
+export const validatorMap = new Map();
+
 export class Validator {
   currentForm = undefined;
   submitted = {};
@@ -144,7 +146,7 @@ export class Validator {
     }
 
     for (const element of this.validElements()) {
-      this.unhighlight(element);
+      this.unhighlight(element, "error", "valid");
     }
 
     this.toHide = this.toHide.filter(el => !this.toShow.includes(el));
@@ -181,17 +183,20 @@ export class Validator {
     }
   }
 
-  unhighlight(element) {
+  unhighlight(element, errorClass, validClass) {
+    let targets = [element];
     if (element.type === "radio") {
-      findByName(element.form, element.name).forEach(el => {
-        el.classList.remove("error");
-        el.classList.add("valid");
-      });
+      targets = findByName(element.form, element.name);
     }
-    else {
-      element.classList.remove("error");
-      element.classList.add("valid");
-    }
+
+    targets.forEach(el => {
+      if (errorClass) {
+        el.classList.remove(errorClass);
+      }
+      if (validClass) {
+        el.classList.add(validClass);
+      }
+    });
   }
 
   hideErrors() {
@@ -238,5 +243,26 @@ export class Validator {
 
   numberOfInvalids() {
     return objectLength(this.invalid);
+  }
+
+  destroy() {
+    this.resetForm();
+    validatorMap.delete(this.currentForm);
+  }
+
+  resetForm() {
+    this.invalid = {};
+    this.submitted = {};
+    this.prepareForm();
+    this.hideErrors();
+
+    this.resetElements();
+  }
+
+  resetElements() {
+    for (const element of this.elements()) {
+      this.unhighlight(element, "error", "");
+      findByName(element.form, element.name).forEach(el => el.classList.remove("valid"));
+    }
   }
 }

@@ -1,7 +1,5 @@
-import { Validator } from './validator.js';
+import { Validator, validatorMap } from './validator.js';
 import { getRules } from './rules.js';
-
-const validatorMap = new Map();
 
 export function validate(selector) {
   const element = selector instanceof HTMLElement
