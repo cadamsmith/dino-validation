@@ -1,3 +1,27 @@
+export function deepMerge(target, source) {
+  if (!source) return target;
+  
+  const result = { ...target };
+  
+  for (const key in source) {
+    if (source[key] === undefined) {
+      continue; // Skip undefined values at all levels
+    }
+    
+    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      // If target[key] exists and is an object, merge with it; otherwise use empty object
+      const targetValue = (result[key] && typeof result[key] === 'object' && !Array.isArray(result[key])) 
+        ? result[key] 
+        : {};
+      result[key] = deepMerge(targetValue, source[key]);
+    } else {
+      result[key] = source[key];
+    }
+  }
+  
+  return result;
+}
+
 export function isVisible(el) {
   return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
 }
@@ -98,4 +122,19 @@ export function getLength(value, element) {
   }
 
   return value.length;
+}
+
+export function isBlankElement(element) {
+  const value = elementValue(element);
+
+  if (element.nodeName.toLowerCase() === "select") {
+    const selected = [...element.selectedOptions].map(o => o.value);
+    return !selected || selected.length === 0;
+  }
+
+  if (isCheckableElement(element)) {
+    return getLength(value, element) === 0;
+  }
+
+  return value === undefined || value === null || value.length === 0;
 }

@@ -1,8 +1,12 @@
 import { Validator } from './validator.js';
 import { validatorStore } from './validatorStore.js';
-import { getRules } from './rules.js';
+import {
+  getRules,
+  staticRules,
+} from './rules.js';
+import { getMethods } from './methods.js';
 
-export function validate(selector) {
+export function validate(selector, options) {
   const element = selector instanceof HTMLElement
     ? selector
     : document.querySelector(selector);
@@ -16,7 +20,7 @@ export function validate(selector) {
     return validatorStore.get(element);
   }
 
-  const validator = new Validator(element);
+  const validator = new Validator(element, options);
   validatorStore.set(element, validator);
   return validator;
 }
@@ -52,10 +56,14 @@ export function valid(selector) {
   return valid;
 }
 
-export function rules(selectorOrElement) {
-  const element = selectorOrElement instanceof HTMLElement
-    ? selectorOrElement
-    : document.querySelector(selectorOrElement);
+export function rules(selector) {
+  const element = selector instanceof HTMLElement
+    ? selector
+    : document.querySelector(selector);
 
   return getRules(element);
 }
+
+export { messages } from "./messages.js";
+
+export { getMethods as methods, addMethod } from "./methods.js";

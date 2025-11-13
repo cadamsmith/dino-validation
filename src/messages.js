@@ -1,6 +1,6 @@
 import { findDefined, format } from './helpers.js';
 
-const messages = {
+export const messages = {
   required: 'This field is required.',
   remote: 'Please fix this field.',
   email: 'Please enter a valid email address.',
@@ -20,6 +20,14 @@ const messages = {
   min: format('Please enter a value greater than or equal to {0}.'),
   step: format('Please enter a multiple of {0}.'),
 };
+
+export function addMessage(name, value) {
+  if (value === undefined) {
+    return;
+  }
+
+  messages[name] = value;
+}
 
 export function getMessage(element, rule) {
   if (typeof rule === "string") {

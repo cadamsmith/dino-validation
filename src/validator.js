@@ -1,14 +1,17 @@
 import {
+  deepMerge,
   elementValue,
   escapeCssMeta,
   findByName,
-  idOrName, isCheckableElement,
+  idOrName,
+  isBlankElement,
+  isCheckableElement,
   isVisible,
   objectLength,
 } from './helpers.js';
 import { getRules } from './rules.js';
 import { getMessage } from './messages.js';
-import methods from './methods.js';
+import { getMethods } from './methods.js';
 import { validatorStore } from './validatorStore.js';
 
 export class Validator {
@@ -29,7 +32,8 @@ export class Validator {
 
   constructor(form, options) {
     this.currentForm = form;
-    this.settings = { ...this.settings, ...options };
+    this.settings.ignore = options?.ignore || this.settings.ignore;
+    this.settings.rules = options?.rules || this.settings.rules;
   }
 
   reset() {
@@ -77,7 +81,11 @@ export class Validator {
   }
 
   valid() {
-    return this.errorList.length === 0;
+    return this.size() === 0;
+  }
+
+  size() {
+    return this.errorList.length;
   }
 
   elements() {
@@ -117,11 +125,12 @@ export class Validator {
 
     const rules = getRules(element);
     const value = elementValue(element);
+    const isBlank = isBlankElement(element);
 
     for (const method in rules) {
       const rule = { method, parameters: rules[method] };
       try {
-        const result = methods[method](value, element, rule.parameters);
+        const result = getMethods()[method](isBlank, value, element, rule.parameters);
 
         if (!result) {
           this.formatAndAdd(element, rule);

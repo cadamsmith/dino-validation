@@ -1,4 +1,4 @@
-import methods from './methods.js';
+import { getMethods } from './methods.js';
 import { validatorStore } from './validatorStore.js';
 
 export function getRules(element) {
@@ -22,6 +22,26 @@ export function getRules(element) {
   }
 
   return data;
+}
+
+let classRuleSettings = {
+  required: { required: true },
+  email: { email: true },
+  url: { url: true },
+  date: { date: true },
+  dateISO: { dateISO: true },
+  number: { number: true },
+  digits: { digits: true },
+  creditcard: { creditcard: true }
+};
+
+export function addClassRules(className, rules) {
+  if (className.constructor === String) {
+    classRuleSettings[className] = rules;
+  }
+  else {
+    classRuleSettings = { ...classRuleSettings, ...className };
+  }
 }
 
 function normalizeRules(rules, element) {
@@ -67,17 +87,6 @@ function classRules(element) {
   let rules = {};
   const classes = element.getAttribute("class");
 
-  const classRuleSettings = {
-    required: { required: true },
-    email: { email: true },
-    url: { url: true },
-    date: { date: true },
-    dateISO: { dateISO: true },
-    number: { number: true },
-    digits: { digits: true },
-    creditcard: { creditcard: true }
-  };
-
   if (classes) {
     classes.split(" ").forEach(className => {
       if (className in classRuleSettings) {
@@ -90,14 +99,40 @@ function classRules(element) {
 }
 
 function attributeRules(element) {
-  return {};
+  const rules = {};
+  const type = element.getAttribute("type");
+
+  for (const method in getMethods()) {
+    let value = element.getAttribute(method);
+
+    // Support for <input required> in both html5 and older browsers
+    if (method === "required") {
+      // Some browsers return an empty string for the required attribute
+      // and non-HTML5 browsers might have required="" markup
+      if (value === "") {
+        value = true;
+      }
+
+      // Force non-HTML5 browsers to return bool
+      value = !!value;
+    }
+
+    normalizeAttributeRule(rules, type, method, value);
+  }
+
+  // 'maxlength' may be returned as -1, 2147483647 ( IE ) and 524288 ( safari ) for text inputs
+  if (rules.maxlength && /-1|2147483647|524288/.test(rules.maxlength)) {
+    delete rules.maxlength;
+  }
+
+  return rules;
 }
 
 function dataRules(element) {
   const rules = {};
   const type = element.getAttribute("type");
 
-  for (const method in methods) {
+  for (const method in getMethods()) {
     const datasetKey = "rule" + method.charAt(0).toUpperCase() + method.substring(1).toLowerCase()
     let value = element.dataset[datasetKey];
 
@@ -112,7 +147,7 @@ function dataRules(element) {
   return rules;
 }
 
-function staticRules(element) {
+export function staticRules(element) {
   let rules = {};
   const validator = validatorStore.get(element.form);
 
@@ -139,7 +174,7 @@ function normalizeAttributeRule(rules, type, method, value) {
   }
 }
 
-function normalizeRule(data) {
+export function normalizeRule(data) {
   if (typeof data !== "string") {
     return data;
   }

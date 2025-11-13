@@ -248,4 +248,122 @@ test.describe('validator', () => {
 
     expect(result2).toBe(true);
   });
+
+  test("elements() should ignore elements that belong to other/nested forms", async ({ page }) => {
+    await page.goto('');
+
+    const result1 = await page.evaluate(() => {
+      const form = document.querySelector("#testForm28");
+      const v = dv.validate(form);
+
+      // 1. Test with nested form
+      form.insertAdjacentHTML('afterend', "<form id='testForm28-nested'>" +
+        "    <input type='text' name='f28nestedinput' required>" +
+        "</form>");
+
+      return v.elements().length;
+    });
+
+    expect(result1).toBe(1);
+
+    await page.goto('');
+
+    const result2 = await page.evaluate(() => {
+      const form = document.querySelector("#testForm28");
+
+      // 2. Test using another form outside of validated one
+      form.parentElement.insertAdjacentHTML('afterend', "<form id='testForm28-other'>" +
+        "   <input type='text' name='f28otherinput' required>" +
+        "   <input type='text' name='f28input' form='testForm28' required>" +
+        "</form>");
+
+      const v = dv.validate("#testForm28-other");
+
+      return v.elements().length;
+    });
+
+    expect(result2).toBe(1);
+  });
+
+  test("Ignore elements that have form attribute set to other forms", async ({ page }) => {
+    await page.goto('');
+
+    const result = await page.evaluate(() => {
+      const form = document.querySelector("#testForm28");
+
+      // Append a form that contains an input with form attribute set to "testForm28"
+      form.parentElement.insertAdjacentHTML('afterend', "<form id='testForm28-other'>" +
+        "   <input type='text' name='f28otherinput' required>" +
+        "   <input type='text' name='f28input' form='testForm28' required>" +
+        "</form>");
+
+      // Attach the plugin to the appended form
+      const appendedForm = document.querySelector('#testForm28-other');
+      dv.validate(appendedForm);
+
+      // 1. simulate typing
+      appendedForm.querySelector("[name='f28input']").dispatchEvent(new Event('keyup'));
+      // 2. simulate focussing in the input
+      appendedForm.querySelector("[name='f28input']").dispatchEvent(new Event('focusin'));
+      // 3. simulate focussing out of the input
+      appendedForm.querySelector("[name='f28input']").dispatchEvent(new Event('focusout'));
+
+      return true;
+    });
+
+    expect(result).toBe(true);
+  });
+
+  test("addMethod", async ({ page }) => {
+    await page.goto('');
+
+    const result = await page.evaluate(() => {
+      dv.addMethod("hi", function (blank, value) {
+        return value === "hi";
+      }, "hi me too");
+
+      const method = dv.methods().hi;
+      const e = document.querySelector("#text1");
+
+      const ret = [method(!!e.value, e.value)];
+
+      e.value = "hi";
+      ret.push(method(!!e.value, e.value), dv.messages.hi);
+
+      return ret;
+    });
+
+    expect(result).toEqual([false, true, "hi me too"]);
+  });
+
+  test("addMethod2", async ({ page }) => {
+    await page.goto('');
+
+    const result = await page.evaluate(() => {
+      const ret = [];
+
+      dv.addMethod("complicatedPassword", function (blank, value) {
+        return blank || /\D/.test(value) && /\d/.test(value);
+      }, "Your password must contain at least one number and one letter");
+
+      const v = dv.validate("#form", {
+        rules: {
+          action: { complicatedPassword: true }
+        }
+      });
+
+      const e = document.querySelector("#text1");
+      e.value = "";
+
+      ret.push(v.element(e), v.size());
+      e.value = "ko";
+      ret.push(v.element(e));
+      e.value = "ko1";
+      ret.push(v.element(e));
+
+      return ret;
+    });
+
+    expect(result).toEqual([true, 0, false, true]);
+  });
 });
