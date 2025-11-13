@@ -133,4 +133,119 @@ test.describe('validator', () => {
       false
     ]);
   });
+
+  test("valid(), ignores ignored elements", async ({ page }) => {
+    await page.goto("");
+
+    const result = await page.evaluate(() => {
+      dv.validate("#testForm1clean", {
+        ignore: "#firstnamec",
+        rules: {
+          firstnamec: "required"
+        }
+      });
+
+      return dv.valid("#firstnamec");
+    });
+
+    expect(result).toBe(true);
+  });
+
+  test("valid() should ignore elements that belong to other/nested forms", async ({ page }) => {
+    await page.goto("");
+
+    const result1 = await page.evaluate(() => {
+      const form = document.querySelector('#testForm28');
+      dv.validate(form);
+
+      // 1. Test with nested form
+      form.insertAdjacentHTML('afterend', "<form id='testForm28-nested'>" +
+        "    <input type='text' name='f28nestedinput' required>" +
+        "</form>");
+
+      try {
+        dv.valid(form);
+        return true;
+      }
+      catch (err) {
+        return false;
+      }
+    });
+
+    expect(result1).toBe(true);
+
+    // reset test page
+    await page.goto("");
+
+    const result2 = await page.evaluate(() => {
+      const form = document.querySelector('#testForm28');
+
+      // 2. Test using another form outside of validated one
+      form.parentElement.insertAdjacentHTML('afterend', "<form id='testForm28-other'>" +
+        "   <input type='text' name='f28otherinput' required>" +
+        "   <input type='text' name='f28input' form='testForm28' required>" +
+        "</form>");
+
+      dv.validate('#testForm28-other');
+
+      try {
+        dv.valid('#testForm28-other');
+        return true;
+      }
+      catch (err) {
+        return false;
+      }
+    });
+
+    expect(result2).toBe(true);
+  });
+
+  test("form() should ignore elements that belong to other/nested forms", async ({ page }) => {
+    await page.goto("");
+
+    const result1 = await page.evaluate(() => {
+      const form = document.querySelector('#testForm28');
+      const v = dv.validate(form);
+
+      // 1. Test with nested form
+      form.insertAdjacentHTML('afterend', "<form id='testForm28-nested'>" +
+        "    <input type='text' name='f28nestedinput' required>" +
+        "</form>");
+
+      try {
+        v.form();
+        return true;
+      }
+      catch (err) {
+        return false;
+      }
+    });
+
+    expect(result1).toBe(true);
+
+    // reset test page
+    await page.goto("");
+
+    const result2 = await page.evaluate(() => {
+      const form = document.querySelector('#testForm28');
+
+      // 2. Test using another form outside of validated one
+      form.parentElement.insertAdjacentHTML('afterend', "<form id='testForm28-other'>" +
+        "   <input type='text' name='f28otherinput' required>" +
+        "   <input type='text' name='f28input' form='testForm28' required>" +
+        "</form>");
+
+      const v = dv.validate(form);
+
+      try {
+        v.form();
+        return true;
+      }
+      catch (err) {
+        return false;
+      }
+    });
+
+    expect(result2).toBe(true);
+  });
 });

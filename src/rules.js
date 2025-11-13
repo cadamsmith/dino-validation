@@ -1,4 +1,5 @@
 import methods from './methods.js';
+import { validatorStore } from './validatorStore.js';
 
 export function getRules(element) {
   // If nothing is selected, return empty object; can't chain anyway
@@ -9,7 +10,8 @@ export function getRules(element) {
   let data = normalizeRules({
     ...classRules(element),
     ...attributeRules(element),
-    ...dataRules(element)
+    ...dataRules(element),
+    ...staticRules(element)
   }, element);
 
   // Make sure required is at front
@@ -110,6 +112,17 @@ function dataRules(element) {
   return rules;
 }
 
+function staticRules(element) {
+  let rules = {};
+  const validator = validatorStore.get(element.form);
+
+  if (validator.settings.rules) {
+    rules = normalizeRule(validator.settings.rules[element.name]) || {};
+  }
+
+  return rules;
+}
+
 function normalizeAttributeRule(rules, type, method, value) {
   // Convert the value to a number for number inputs, and for text for backwards compability
   // allows type="date" and others to be compared as strings
@@ -124,4 +137,17 @@ function normalizeAttributeRule(rules, type, method, value) {
     // does not test for the html5 'range' type
     rules[type === "date" ? "dateISO" : method] = true;
   }
+}
+
+function normalizeRule(data) {
+  if (typeof data !== "string") {
+    return data;
+  }
+
+  const transformed = {};
+  data.split(/\s/).forEach(token => {
+    transformed[token] = true;
+  });
+
+  return transformed;
 }

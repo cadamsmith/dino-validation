@@ -13,15 +13,6 @@ export function objectLength(obj) {
   return count;
 }
 
-export function validationTargetFor(element) {
-  let targets = [element];
-  if (isCheckableElement(element)) {
-    targets = findByName(element.form, element.name);
-  }
-
-  return targets.filter(t => isVisible(t))[0];
-}
-
 export function findByName(form, name) {
   return [...form.querySelectorAll(`[name='${escapeCssMeta(name)}']`)];
 }

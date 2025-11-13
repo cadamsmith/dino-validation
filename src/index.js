@@ -1,4 +1,5 @@
-import { Validator, validatorMap } from './validator.js';
+import { Validator } from './validator.js';
+import { validatorStore } from './validatorStore.js';
 import { getRules } from './rules.js';
 
 export function validate(selector) {
@@ -11,12 +12,12 @@ export function validate(selector) {
     return;
   }
 
-  if (validatorMap.has(element)) {
-    return validatorMap.get(element);
+  if (validatorStore.has(element)) {
+    return validatorStore.get(element);
   }
 
   const validator = new Validator(element);
-  validatorMap.set(element, validator);
+  validatorStore.set(element, validator);
   return validator;
 }
 

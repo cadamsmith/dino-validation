@@ -1,17 +1,15 @@
 import {
   elementValue,
   escapeCssMeta,
-  findByName, getLength,
-  idOrName,
+  findByName,
+  idOrName, isCheckableElement,
   isVisible,
   objectLength,
-  validationTargetFor,
 } from './helpers.js';
 import { getRules } from './rules.js';
 import { getMessage } from './messages.js';
 import methods from './methods.js';
-
-export const validatorMap = new Map();
+import { validatorStore } from './validatorStore.js';
 
 export class Validator {
   currentForm = undefined;
@@ -24,8 +22,14 @@ export class Validator {
   toHide = [];
   currentElements = [];
 
-  constructor(form) {
+  settings = {
+    ignore: ":hidden",
+    rules: {}
+  };
+
+  constructor(form, options) {
     this.currentForm = form;
+    this.settings = { ...this.settings, ...options };
   }
 
   reset() {
@@ -51,7 +55,7 @@ export class Validator {
   }
 
   element(element) {
-    const target = validationTargetFor(element);
+    const target = this.validationTargetFor(element);
     if (target === undefined) {
       delete this.invalid[element.name];
       return true;
@@ -83,7 +87,7 @@ export class Validator {
     const notSelector = 'input[type="submit"], [type="reset"], [type="image"], [disabled]';
 
     return [...this.currentForm.querySelectorAll(selector)]
-      .filter(el => !el.matches(notSelector) && isVisible(el))
+      .filter(el => !el.matches(notSelector) && !this.shouldIgnore(el))
       .filter(el => {
         if (el.form !== this.currentForm) {
           return false;
@@ -109,7 +113,7 @@ export class Validator {
   }
 
   check(element) {
-    element = validationTargetFor(element);
+    element = this.validationTargetFor(element);
 
     const rules = getRules(element);
     const value = elementValue(element);
@@ -247,7 +251,7 @@ export class Validator {
 
   destroy() {
     this.resetForm();
-    validatorMap.delete(this.currentForm);
+    validatorStore.delete(this.currentForm);
   }
 
   resetForm() {
@@ -264,5 +268,22 @@ export class Validator {
       this.unhighlight(element, "error", "");
       findByName(element.form, element.name).forEach(el => el.classList.remove("valid"));
     }
+  }
+
+  validationTargetFor(element) {
+    let targets = [element];
+    if (isCheckableElement(element)) {
+      targets = findByName(element.form, element.name);
+    }
+
+    return targets.filter(t => !this.shouldIgnore(t))[0];
+  }
+
+  shouldIgnore(element) {
+    if (this.settings.ignore === ":hidden") {
+      return !isVisible(element);
+    }
+
+    return element.matches(this.settings.ignore);
   }
 }
