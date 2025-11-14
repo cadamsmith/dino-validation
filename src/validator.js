@@ -1,8 +1,8 @@
 import {
-  deepMerge,
   elementValue,
   escapeCssMeta,
   findByName,
+  getLength,
   idOrName,
   isBlankElement,
   isCheckableElement,
@@ -32,8 +32,7 @@ export class Validator {
 
   constructor(form, options) {
     this.currentForm = form;
-    this.settings.ignore = options?.ignore || this.settings.ignore;
-    this.settings.rules = options?.rules || this.settings.rules;
+    this.settings = { ...this.settings, ...options};
   }
 
   reset() {

@@ -1,27 +1,3 @@
-export function deepMerge(target, source) {
-  if (!source) return target;
-  
-  const result = { ...target };
-  
-  for (const key in source) {
-    if (source[key] === undefined) {
-      continue; // Skip undefined values at all levels
-    }
-    
-    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-      // If target[key] exists and is an object, merge with it; otherwise use empty object
-      const targetValue = (result[key] && typeof result[key] === 'object' && !Array.isArray(result[key])) 
-        ? result[key] 
-        : {};
-      result[key] = deepMerge(targetValue, source[key]);
-    } else {
-      result[key] = source[key];
-    }
-  }
-  
-  return result;
-}
-
 export function isVisible(el) {
   return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
 }
@@ -58,8 +34,8 @@ export function escapeCssMeta(text) {
 
 export function elementValue(element) {
   if (element.type === "radio" || element.type === "checkbox") {
-    const first = findByName(element.form, element.name).filter(el => el.matches(":checked"));
-    return first?.value;
+    const checked = findByName(element.form, element.name).filter(el => el.matches(":checked"));
+    return checked.map(el => el.value);
   }
   else if (element.type === "number" && typeof element.validity !== "undefined") {
     return element.validity.badInput ? "NaN" : element.value;

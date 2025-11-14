@@ -366,4 +366,68 @@ test.describe('validator', () => {
 
     expect(result).toEqual([true, 0, false, true]);
   });
+
+  test("form(): simple", async ({ page }) => {
+    await page.goto('');
+
+    const result = await page.evaluate(() => {
+      const v = dv.validate("#testForm1");
+      const fnInput = document.querySelector("#firstname");
+      const lnInput = document.querySelector("#lastname");
+
+      const ret = [v.form()];
+
+      fnInput.value = "hi";
+      lnInput.value = "hi";
+      ret.push(v.form());
+
+      return ret;
+    });
+
+    expect(result).toEqual([false, true]);
+  });
+
+  test("form(): checkboxes: min/required", async ({ page }) => {
+    await page.goto('');
+
+    const result = await page.evaluate(() => {
+      const v = dv.validate("#testForm6");
+
+      const ret = [v.form()];
+
+      document.querySelector('#form6check1').checked = true;
+      ret.push(v.form());
+      document.querySelector("#form6check2").checked = true;
+      ret.push(v.form());
+
+      return ret;
+    });
+
+    expect(result).toEqual([false, false, true]);
+  });
+
+  test("form(): radio buttons: required", async ({ page }) => {
+    await page.goto("");
+
+    const result = await page.evaluate(() => {
+      const v = dv.validate("#testForm10", {
+        rules: {
+          testForm10Radio: "required"
+        }
+      });
+
+      const radio1 = document.querySelector('#testForm10Radio1');
+      const radio2 = document.querySelector('#testForm10Radio2');
+
+      const ret = [v.form(), radio1.className, radio2.className];
+
+      radio2.checked = true;
+
+      ret.push(v.form(), radio1.className, radio2.className);
+
+      return ret;
+    });
+
+    expect(result).toEqual([false, "error", "error", true, "valid", "valid"]);
+  });
 });

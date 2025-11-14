@@ -1,8 +1,7 @@
 import { Validator } from './validator.js';
 import { validatorStore } from './validatorStore.js';
 import {
-  getRules,
-  staticRules,
+  getRules
 } from './rules.js';
 import { getMethods } from './methods.js';
 

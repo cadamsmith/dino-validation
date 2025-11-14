@@ -161,7 +161,7 @@ export function staticRules(element) {
 function normalizeAttributeRule(rules, type, method, value) {
   // Convert the value to a number for number inputs, and for text for backwards compability
   // allows type="date" and others to be compared as strings
-  if (/min|max|step/.test(method) && (type === null || /number|range|text/.test(type))) {
+  if (/min|max|step/.test(method) && (type === null || /number|range|text/.test(type)) && value !== null) {
     value = Number(value);
   }
 
