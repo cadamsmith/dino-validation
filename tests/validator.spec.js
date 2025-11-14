@@ -586,4 +586,36 @@ test.describe('validator', () => {
 
     expect(result).toEqual(["block", "none"]);
   });
+
+  test("hide(): container", async ({ page }) => {
+    await page.goto("");
+
+    const result = await page.evaluate(() => {
+      const errorLabel = document.querySelector("#errorContainer");
+      const mealSelect = document.querySelector("#meal");
+      const v = dv.validate("#testForm3", {
+        wrapper: "li",
+        errorContainer: "#errorContainer"
+      });
+
+      v.form();
+      const ret = [errorLabel.style.display];
+
+      mealSelect.selectedIndex = 1;
+      v.form();
+      ret.push(errorLabel.style.display);
+
+      mealSelect.selectedIndex = -1;
+      v.element(mealSelect);
+      ret.push(errorLabel.style.display);
+
+      mealSelect.selectedIndex = 1;
+      v.element(mealSelect);
+      ret.push(errorLabel.style.display);
+
+      return ret;
+    });
+
+    expect(result).toEqual(["block", "none", "block", "none"]);
+  });
 });

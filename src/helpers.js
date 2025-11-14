@@ -105,7 +105,8 @@ export function isBlankElement(element) {
 
   if (element.nodeName.toLowerCase() === "select") {
     const selected = [...element.selectedOptions].map(o => o.value);
-    return !selected || selected.length === 0;
+
+    return selected.length === 0 || !selected[0];
   }
 
   if (isCheckableElement(element)) {

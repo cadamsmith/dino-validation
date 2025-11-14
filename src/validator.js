@@ -25,6 +25,7 @@ export class Validator {
   currentElements = [];
   labelContainer = null;
   errorContext = null;
+  containers = [];
 
   settings = {
     ignore: ":hidden",
@@ -32,6 +33,7 @@ export class Validator {
     validClass: "valid",
     wrapper: null,
     errorLabelContainer: null,
+    errorContainer: null,
     rules: {}
   };
 
@@ -44,6 +46,8 @@ export class Validator {
   init() {
     this.labelContainer = document.querySelector(this.settings.errorLabelContainer);
     this.errorContext = this.labelContainer || this.currentForm;
+    this.containers = [document.querySelector(this.settings.errorContainer), this.labelContainer]
+      .filter(el => el !== null);
   }
 
   reset() {
@@ -81,8 +85,8 @@ export class Validator {
     const result = this.check(target) !== false;
     this.invalid[target.name] = !result;
 
-    if (!this.numberOfInvalids() && this.labelContainer) {
-      this.toHide.push(this.labelContainer);
+    if (!this.numberOfInvalids()) {
+      this.toHide.push(...this.containers);
     }
     this.showErrors();
 
@@ -173,6 +177,10 @@ export class Validator {
       this.showLabel(error.element, error.message);
     }
 
+    if (this.errorList.length) {
+      this.toShow = this.toShow.concat(this.containers);
+    }
+
     for (const element of this.validElements()) {
       this.unhighlight(element, this.settings.errorClass, this.settings.validClass);
     }
@@ -195,7 +203,7 @@ export class Validator {
 
   prepareForm() {
     this.reset();
-    this.toHide = this.errors();
+    this.toHide = this.errors().concat(this.containers);
   }
 
   highlight(element) {
@@ -231,7 +239,7 @@ export class Validator {
     for (const element of this.toHide) {
       element.innerText = "";
 
-      if (this.labelContainer !== element) {
+      if (!this.containers.includes(element)) {
         element.innerText = "";
       }
 
