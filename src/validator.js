@@ -34,6 +34,9 @@ export class Validator {
     wrapper: null,
     errorLabelContainer: null,
     errorContainer: null,
+    onfocusin: this.onFocusIn,
+    onfocusout: this.onFocusOut,
+    onkeyup: this.onKeyUp,
     rules: {}
   };
 
@@ -48,6 +51,45 @@ export class Validator {
     this.errorContext = this.labelContainer || this.currentForm;
     this.containers = [document.querySelector(this.settings.errorContainer), this.labelContainer]
       .filter(el => el !== null);
+
+    this.attachEventHandlers();
+  }
+
+  attachEventHandlers() {
+    const targets = [
+      "[type='text']", "[type='password']", "[type='file']", "select", "textarea", "[type='number']",
+      "[type='search']", "[type='tel']", "[type='url']", "[type='email']", "[type='datetime']",
+      "[type='date']", "[type='month']", "[type='week']", "[type='time']", "[type='datetime-local']",
+      "[type='range']", "[type='color']", "[type='radio']", "[type='checkbox']", "[type='button']"
+    ];
+
+    this.eventCount = 0;
+
+    const delegate = (event, handler) => {
+      this.eventCount++;
+      const element = event.target;
+
+      // Ignore the element if it doesn't match one of the targets
+      if (!element.matches(targets.join(", "))) {
+        return;
+      }
+
+      // Ignore the element if it belongs to another form. This will happen mainly
+      // when setting the `form` attribute of an input to the id of another form
+      if (this.currentForm !== element.form) {
+        return;
+      }
+
+      if (this.shouldIgnore(element)) {
+        return;
+      }
+
+      return handler(element, event);
+    };
+
+    this.currentForm.addEventListener("focusin", (e) => delegate(e, this.settings.onfocusin));
+    this.currentForm.addEventListener("focusout", (e) => delegate(e, this.settings.onfocusout));
+    this.currentForm.addEventListener("keyup", (e) => delegate(e, this.settings.onkeyup));
   }
 
   reset() {
@@ -235,6 +277,18 @@ export class Validator {
     });
   }
 
+  onFocusIn(element) {
+
+  }
+
+  onFocusOut(element) {
+
+  }
+
+  onKeyUp(element, event) {
+
+  }
+
   hideErrors() {
     for (const element of this.toHide) {
       element.innerText = "";
@@ -317,6 +371,8 @@ export class Validator {
   destroy() {
     this.resetForm();
     validatorStore.delete(this.currentForm);
+
+    // TODO: cleanup event listeners
   }
 
   resetForm() {

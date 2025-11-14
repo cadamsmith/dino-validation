@@ -618,4 +618,48 @@ test.describe('validator', () => {
 
     expect(result).toEqual(["block", "none", "block", "none"]);
   });
+
+  test("validation triggered on radio.checkbox when using keyboard", async ({ page }) => {
+    await page.goto("");
+
+    const result = await page.evaluate(() => {
+      let triggeredEvents = 0;
+
+      dv.validate("#form", {
+        onfocusin: function() {
+          triggeredEvents++;
+        },
+        onfocusout: function() {
+          triggeredEvents++;
+        },
+        onkeyup: function() {
+          triggeredEvents++;
+        }
+      });
+
+      const events = [
+        new Event("focusin", { bubbles: true }),
+        new Event("focusout", { bubbles: true }),
+        new Event("keyup", { bubbles: true })
+      ];
+
+      let input = document.querySelector('#form [type="radio"]');
+      for (const event of events) {
+        input.dispatchEvent(event);
+      }
+
+      input = document.querySelector("#form [type='checkbox']");
+      for (const event of events) {
+        input.dispatchEvent(event);
+      }
+
+      return new Promise((resolve) => {
+        setTimeout(function() {
+          resolve(triggeredEvents);
+        });
+      });
+    });
+
+    expect(result).toBe(6);
+  });
 });
