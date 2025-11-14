@@ -430,4 +430,27 @@ test.describe('validator', () => {
 
     expect(result).toEqual([false, "error", "error", true, "valid", "valid"]);
   });
+
+  test("form(): selects: min/required", async ({ page }) => {
+    await page.goto("");
+
+    const result = await page.evaluate(() => {
+      const v = dv.validate("#testForm7");
+
+      const optionXA = document.querySelector('#optionxa');
+      const optionXB = document.querySelector('#optionxb');
+
+      const ret = [v.form()];
+
+      optionXA.selected = true;
+      ret.push(v.form());
+
+      optionXB.selected = true;
+      ret.push(v.form());
+
+      return ret;
+    });
+
+    expect(result).toEqual([false, false, true]);
+  });
 });
