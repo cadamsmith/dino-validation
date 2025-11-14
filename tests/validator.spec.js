@@ -322,7 +322,7 @@ test.describe('validator', () => {
         return value === "hi";
       }, "hi me too");
 
-      const method = dv.methods().hi;
+      const method = dv.methods.get("hi");
       const e = document.querySelector("#text1");
 
       const ret = [method(!!e.value, e.value)];

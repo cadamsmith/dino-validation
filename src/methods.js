@@ -1,5 +1,3 @@
-import { setMessage } from './messages.js';
-import { addClassRules, normalizeRule } from './rules.js';
 import { getLength } from './helpers.js';
 
 const methods = {
@@ -18,18 +16,17 @@ const methods = {
   "equalTo": (blank, value, element, param) => equalTo(blank, value, element, param)
 };
 
-export function getMethods() {
-  return methods;
-}
-
-export function addMethod(name, method, message) {
-  methods[name] = method;
-  setMessage(name, message);
-  if (method.length < 3) {
-    const rules = normalizeRule(name);
-    addClassRules(name, rules);
+export const store = {
+  keys: function() {
+    return Object.keys(methods);
+  },
+  get: function(key) {
+    return methods[key];
+  },
+  set: function(key, value) {
+    methods[key] = value;
   }
-}
+};
 
 function required(blank) {
   return !blank;

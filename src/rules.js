@@ -1,5 +1,5 @@
-import { getMethods } from './methods.js';
 import { validatorStore } from './validatorStore.js';
+import { store as methodStore } from './methods.js';
 
 export function getRules(element) {
   // If nothing is selected, return empty object; can't chain anyway
@@ -102,7 +102,7 @@ function attributeRules(element) {
   const rules = {};
   const type = element.getAttribute("type");
 
-  for (const method in getMethods()) {
+  for (const method of methodStore.keys()) {
     let value = element.getAttribute(method);
 
     // Support for <input required> in both html5 and older browsers
@@ -132,7 +132,7 @@ function dataRules(element) {
   const rules = {};
   const type = element.getAttribute("type");
 
-  for (const method in getMethods()) {
+  for (const method of methodStore.keys()) {
     const datasetKey = "rule" + method.charAt(0).toUpperCase() + method.substring(1).toLowerCase()
     let value = element.dataset[datasetKey];
 

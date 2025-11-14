@@ -10,8 +10,8 @@ import {
 } from './helpers.js';
 import { getRules } from './rules.js';
 import { getMessage } from './messages.js';
-import { getMethods } from './methods.js';
 import { validatorStore } from './validatorStore.js';
+import { store as methodStore } from './methods.js';
 
 export class Validator {
   currentForm = null;
@@ -190,7 +190,7 @@ export class Validator {
     for (const method in rules) {
       const rule = { method, parameters: rules[method] };
       try {
-        const result = getMethods()[method](isBlank, value, element, rule.parameters);
+        const result = methodStore.get(method)(isBlank, value, element, rule.parameters);
 
         if (!result) {
           this.formatAndAdd(element, rule);
