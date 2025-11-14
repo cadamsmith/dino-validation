@@ -60,13 +60,10 @@ export class Validator {
       "[type='text']", "[type='password']", "[type='file']", "select", "textarea", "[type='number']",
       "[type='search']", "[type='tel']", "[type='url']", "[type='email']", "[type='datetime']",
       "[type='date']", "[type='month']", "[type='week']", "[type='time']", "[type='datetime-local']",
-      "[type='range']", "[type='color']", "[type='radio']", "[type='checkbox']", "[type='button']"
+      "[type='range']", "[type='color']", "[type='radio']", "[type='checkbox']", "button", "input[type='button']"
     ];
 
-    this.eventCount = 0;
-
     const delegate = (event, handler) => {
-      this.eventCount++;
       const element = event.target;
 
       // Ignore the element if it doesn't match one of the targets
