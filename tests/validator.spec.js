@@ -453,4 +453,23 @@ test.describe('validator', () => {
 
     expect(result).toEqual([false, false, true]);
   });
+
+  test("form(): with equalTo", async ({ page }) => {
+    await page.goto("");
+
+    const result = await page.evaluate(() => {
+      const v = dv.validate("#testForm5");
+
+      const ret = [v.form()];
+
+      [...document.querySelectorAll('#x1, #x2')].forEach((e) => {
+        e.value = "hi";
+      });
+      ret.push(v.form());
+
+      return ret;
+    });
+
+    expect(result).toEqual([false, true]);
+  });
 });

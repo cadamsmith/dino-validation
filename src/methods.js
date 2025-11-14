@@ -14,7 +14,8 @@ const methods = {
   "url": (blank, value, element, param) => url(blank, value),
   "dateISO": (blank, value, element, param) => dateISO(blank, value),
   "number": (blank, value, element, param) => number(blank, value),
-  "digits": (blank, value, element, param) => digits(blank, value)
+  "digits": (blank, value, element, param) => digits(blank, value),
+  "equalTo": (blank, value, element, param) => equalTo(blank, value, element, param)
 };
 
 export function getMethods() {
@@ -84,4 +85,9 @@ function number(blank, value) {
 function digits(blank, value) {
   const re = /^\d+$/;
   return blank || re.test(value);
+}
+
+function equalTo(blank, value, element, param) {
+  const target = document.querySelector(param);
+  return value === target.value;
 }
