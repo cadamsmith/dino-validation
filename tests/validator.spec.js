@@ -472,4 +472,118 @@ test.describe('validator', () => {
 
     expect(result).toEqual([false, true]);
   });
+
+  test("check(): simple", async ({ page }) => {
+    await page.goto('');
+
+    const result = await page.evaluate(() => {
+      const v = dv.validate("#testForm1");
+      const firstName = document.querySelector("#firstname");
+
+      const ret = [v.size()];
+
+      v.check(firstName);
+      ret.push(v.size());
+
+      v.errorList = [];
+      firstName.value = "hi";
+      v.check(firstName);
+      ret.push(v.size());
+
+      return ret;
+    });
+
+    expect(result).toEqual([0, 1, 0]);
+  });
+
+  test("numberOfInvalids(): count invalid fields with empty message", async ({ page }) => {
+    await page.goto('');
+
+    const result = await page.evaluate(() => {
+      const v = dv.validate("#testForm23", {
+        rules: {
+          box1: {
+            required: true
+          },
+          box2: {
+            required: true
+          }
+        }
+      });
+
+      const requiredMessage = dv.messages.required;
+      dv.setMessage("required", "");
+      v.form();
+
+      return [v.errorList.length, v.numberOfInvalids()];
+    });
+
+    expect(result).toEqual([2, 2]);
+  });
+
+  test("hide(): input", async ({ page }) => {
+    await page.goto('');
+
+    const result = await page.evaluate(() => {
+      const errorLabel = document.querySelector("#errorFirstname");
+      const element = document.querySelector("#firstname");
+
+      // TODO: needs to adjust with how the validator shows/hides error labels
+      element.value = "bla";
+      const v = dv.validate("#testForm1");
+      errorLabel.style.display = "block";
+
+      return [errorLabel.style.display, v.element(element), errorLabel.style.display];
+    });
+
+    expect(result).toEqual(["block", true, "none"]);
+  });
+
+  test("hide(): radio", async ({ page }) => {
+    await page.goto("");
+
+    const result = await page.evaluate(() => {
+      const errorLabel = document.querySelector("#agreeLabel");
+      const element = document.querySelector("#agb");
+
+      element.checked = true;
+      const v = dv.validate("#testForm2", { errorClass: "xerror" });
+      errorLabel.style.display = "block";
+
+      const ret = [errorLabel.style.display];
+
+      v.element(element);
+      ret.push(errorLabel.style.display);
+
+      return ret;
+    });
+
+    expect(result).toEqual(["block", "none"]);
+  });
+
+  test("hide(): errorWrapper", async ({ page }) => {
+    await page.goto("");
+
+    const result = await page.evaluate(() => {
+      const errorLabel = document.querySelector("#errorWrapper");
+      const element = document.querySelector("#meal");
+
+      element.selectedIndex = 1;
+      errorLabel.style.display = "block";
+
+      const ret = [errorLabel.style.display];
+
+      const v = dv.validate("#testForm3", {
+        wrapper: "li",
+        errorLabelContainer: "#errorContainer"
+      });
+      v.element(element);
+
+      ret.push(errorLabel.style.display);
+
+      return ret;
+    });
+
+    expect(result).toEqual(["block", "none"]);
+  });
 });

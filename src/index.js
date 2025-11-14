@@ -63,6 +63,6 @@ export function rules(selector) {
   return getRules(element);
 }
 
-export { messages } from "./messages.js";
+export { messages, setMessage } from "./messages.js";
 
 export { getMethods as methods, addMethod } from "./methods.js";

@@ -21,7 +21,7 @@ export const messages = {
   step: format('Please enter a multiple of {0}.'),
 };
 
-export function addMessage(name, value) {
+export function setMessage(name, value) {
   if (value === undefined) {
     return;
   }

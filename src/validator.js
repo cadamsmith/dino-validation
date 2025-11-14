@@ -2,7 +2,6 @@ import {
   elementValue,
   escapeCssMeta,
   findByName,
-  getLength,
   idOrName,
   isBlankElement,
   isCheckableElement,
@@ -15,7 +14,7 @@ import { getMethods } from './methods.js';
 import { validatorStore } from './validatorStore.js';
 
 export class Validator {
-  currentForm = undefined;
+  currentForm = null;
   submitted = {};
   invalid = {};
   successList = [];
@@ -24,15 +23,27 @@ export class Validator {
   toShow = [];
   toHide = [];
   currentElements = [];
+  labelContainer = null;
+  errorContext = null;
 
   settings = {
     ignore: ":hidden",
+    errorClass: "error",
+    validClass: "valid",
+    wrapper: null,
+    errorLabelContainer: null,
     rules: {}
   };
 
   constructor(form, options) {
     this.currentForm = form;
     this.settings = { ...this.settings, ...options};
+    this.init();
+  }
+
+  init() {
+    this.labelContainer = document.querySelector(this.settings.errorLabelContainer);
+    this.errorContext = this.labelContainer || this.currentForm;
   }
 
   reset() {
@@ -69,6 +80,10 @@ export class Validator {
 
     const result = this.check(target) !== false;
     this.invalid[target.name] = !result;
+
+    if (!this.numberOfInvalids() && this.labelContainer) {
+      this.toHide.push(this.labelContainer);
+    }
     this.showErrors();
 
     return result;
@@ -148,7 +163,8 @@ export class Validator {
   }
 
   errors() {
-    return [...this.currentForm.querySelectorAll("label.error")];
+    const errorClass = this.settings.errorClass.split(" ").join(".");
+    return [...this.errorContext.querySelectorAll(`label.${errorClass}`)];
   }
 
   showErrors() {
@@ -158,12 +174,12 @@ export class Validator {
     }
 
     for (const element of this.validElements()) {
-      this.unhighlight(element, "error", "valid");
+      this.unhighlight(element, this.settings.errorClass, this.settings.validClass);
     }
 
     this.toHide = this.toHide.filter(el => !this.toShow.includes(el));
     this.hideErrors();
-    this.toShow.forEach(el => {
+    this.addWrapper(this.toShow).forEach(el => {
       // TODO: this should restore to previous state instead of always using display:block
       el.style.display = "block";
     });
@@ -185,13 +201,13 @@ export class Validator {
   highlight(element) {
     if (element.type === "radio") {
       findByName(element.form, element.name).forEach(el => {
-        el.classList.add("error");
-        el.classList.remove("valid");
+        el.classList.add(this.settings.errorClass);
+        el.classList.remove(this.settings.validClass);
       });
     }
     else {
-      element.classList.add("error");
-      element.classList.remove("valid");
+      element.classList.add(this.settings.errorClass);
+      element.classList.remove(this.settings.validClass);
     }
   }
 
@@ -214,9 +230,27 @@ export class Validator {
   hideErrors() {
     for (const element of this.toHide) {
       element.innerText = "";
+
+      if (this.labelContainer !== element) {
+        element.innerText = "";
+      }
+
       // TODO: match jquery and remember old display state
-      element.style.display = "none";
+      this.addWrapper(element).forEach(el => el.style.display = "none");
     }
+  }
+
+  addWrapper(elements) {
+    const result = Array.isArray(elements) ? elements : [elements];
+
+    if (this.settings.wrapper) {
+      const wrappers = result.map(el => el.parentElement)
+        .filter(el => el.matches(this.settings.wrapper));
+
+      result.push(...wrappers);
+    }
+
+    return result;
   }
 
   showLabel(element, message) {
@@ -225,8 +259,8 @@ export class Validator {
     if (errors.length) {
       // Refresh error/success class
       errors.forEach(el => {
-        el.classList.remove("valid");
-        el.classList.add("error");
+        el.classList.remove(this.settings.validClass);
+        el.classList.add(this.settings.errorClass);
         el.innerHTML = message || "";
       });
     }
@@ -235,9 +269,24 @@ export class Validator {
 
       const newError = document.createElement("label");
       newError.setAttribute("id", `${elementID}-error`);
-      newError.classList.add("error");
+      newError.classList.add(this.settings.errorClass);
       newError.innerHTML = message || "";
-      element.after(newError);
+
+      // Maintain reference to the element(s) to be placed into the DOM
+      let insert = newError;
+      if (this.settings.wrapper) {
+        const wrapper = document.createElement(this.settings.wrapper);
+        wrapper.appendChild(newError);
+        insert = wrapper;
+      }
+
+      if (this.labelContainer) {
+        this.labelContainer.appendChild(insert);
+      }
+      else {
+        element.after(insert);
+      }
+
       newError.setAttribute("for", elementID);
 
       errors = [newError];
@@ -273,8 +322,8 @@ export class Validator {
 
   resetElements() {
     for (const element of this.elements()) {
-      this.unhighlight(element, "error", "");
-      findByName(element.form, element.name).forEach(el => el.classList.remove("valid"));
+      this.unhighlight(element, this.settings.errorClass, "");
+      findByName(element.form, element.name).forEach(el => el.classList.remove(this.settings.validClass));
     }
   }
 

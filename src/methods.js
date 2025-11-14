@@ -1,4 +1,4 @@
-import { addMessage } from './messages.js';
+import { setMessage } from './messages.js';
 import { addClassRules, normalizeRule } from './rules.js';
 import { getLength } from './helpers.js';
 
@@ -24,7 +24,7 @@ export function getMethods() {
 
 export function addMethod(name, method, message) {
   methods[name] = method;
-  addMessage(name, message);
+  setMessage(name, message);
   if (method.length < 3) {
     const rules = normalizeRule(name);
     addClassRules(name, rules);
