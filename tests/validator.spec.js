@@ -353,7 +353,7 @@ test('addMethod', async ({ page }) => {
     const ret = [method(!!e.value, e.value)];
 
     e.value = 'hi';
-    ret.push(method(!!e.value, e.value), dv.messages.hi);
+    ret.push(method(!!e.value, e.value), dv.messages.get("hi"));
 
     return ret;
   });
@@ -542,8 +542,7 @@ test('numberOfInvalids(): count invalid fields with empty message', async ({
       },
     });
 
-    const requiredMessage = dv.messages.required;
-    dv.setMessage('required', '');
+    dv.messages.set('required', '');
     v.form();
 
     return [v.errorList.length, v.numberOfInvalids()];

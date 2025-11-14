@@ -1,6 +1,6 @@
 import { findDefined, format } from './helpers.js';
 
-export const messages = {
+const messages = {
   required: 'This field is required.',
   remote: 'Please fix this field.',
   email: 'Please enter a valid email address.',
@@ -21,13 +21,17 @@ export const messages = {
   step: format('Please enter a multiple of {0}.'),
 };
 
-export function setMessage(name, value) {
-  if (value === undefined) {
-    return;
+export const store = {
+  keys: function() {
+    return Object.keys(messages);
+  },
+  get: function(key) {
+    return messages[key];
+  },
+  set: function(key, value) {
+    messages[key] = value;
   }
-
-  messages[name] = value;
-}
+};
 
 export function getMessage(element, rule) {
   if (typeof rule === "string") {
@@ -37,7 +41,7 @@ export function getMessage(element, rule) {
   let message = findDefined(
     customDataMessage(element, rule.method),
     element.title || undefined,
-    messages[rule.method],
+    store.get(rule.method),
     `<strong>Warning: No message defined for ${element.name}</strong>`
   );
 
