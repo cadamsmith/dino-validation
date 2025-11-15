@@ -995,3 +995,44 @@ test("option: errorPlacement", async ({ page }) => {
 
   expect(result).toBe(true);
 });
+
+test("option: focusCleanup default false", async ({ page }) => {
+  await page.goto("");
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector("#userForm");
+    dv.validate(form);
+    dv.valid(form);
+
+    const usernameError = form.querySelector("#username").nextElementSibling;
+    const ret = [usernameError.style.display];
+
+    usernameError.focus();
+    ret.push(usernameError.style.display);
+
+    return ret;
+  });
+
+  expect(result).toEqual(["block", "block"]);
+});
+
+test("option: focusCleanup true", async ({ page }) => {
+  await page.goto("");
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector("#userForm");
+    dv.validate(form, { focusCleanup: true });
+    dv.valid(form);
+
+    const usernameError = form.querySelector("#username").nextElementSibling;
+    const ret = [usernameError.style.display];
+
+    usernameError.focus();
+    usernameError.dispatchEvent(new Event("focusin"));
+    ret.push(usernameError.style.display);
+
+    return ret;
+  });
+
+  expect(result).toEqual(["block", "none"]);
+});

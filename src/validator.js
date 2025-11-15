@@ -41,6 +41,7 @@ export class Validator {
     highlight: this.highlight,
     unhighlight: this.unhighlight,
     errorPlacement: null,
+    focusCleanup: false,
     rules: {},
     messages: {}
   };
@@ -318,7 +319,12 @@ export class Validator {
   }
 
   onFocusIn(element) {
-
+    if (this.settings.focusCleanup) {
+      if (this.settings.unhighlight) {
+        this.settings.unhighlight(element, this.settings.errorClass, this.settings.validClass);
+      }
+      this.hideErrors(element);
+    }
   }
 
   onFocusOut(element) {
@@ -333,16 +339,22 @@ export class Validator {
 
   }
 
-  hideErrors() {
-    for (const element of this.toHide) {
-      element.innerText = "";
+  hideErrors(element) {
+    // we're either hiding all errors, or just the errors for a specific element
+    let targets = this.toHide;
+    if (element) {
+      targets = this.errorsFor(element);
+    }
 
-      if (!this.containers.includes(element)) {
-        element.innerText = "";
+    for (const el of targets) {
+      el.innerText = "";
+
+      if (!this.containers.includes(el)) {
+        el.innerText = "";
       }
 
       // TODO: match jquery and remember old display state
-      this.addWrapper(element).forEach(el => el.style.display = "none");
+      this.addWrapper(el).forEach(e => e.style.display = "none");
     }
   }
 
