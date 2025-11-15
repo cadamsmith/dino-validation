@@ -1091,7 +1091,7 @@ test("option: errorClass with multiple classes", async ({ page }) => {
       return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
     }
 
-    function containsError(name) {
+    function containsErrorClass(name) {
       const matches = [...form.querySelectorAll("span")]
         .filter(el => isVisible(el))
         .map(el => el.querySelectorAll(`.${name}#username-error`))
@@ -1101,18 +1101,18 @@ test("option: errorClass with multiple classes", async ({ page }) => {
     }
 
     const ret = [
-      containsError("error"),
-      containsError("error1"),
-      containsError("error2")
+      containsErrorClass("error"),
+      containsErrorClass("error1"),
+      containsErrorClass("error2")
     ];
 
     const username = document.querySelector("#username");
     username.focus();
     username.dispatchEvent(new Event("focusin"));
     ret.push(
-      containsError("error"),
-      containsError("error1"),
-      containsError("error2")
+      containsErrorClass("error"),
+      containsErrorClass("error1"),
+      containsErrorClass("error2")
     );
 
     return ret;
