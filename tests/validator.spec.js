@@ -739,3 +739,32 @@ test('validation triggered on button', async ({ page }) => {
 
   expect(result).toBe(6);
 });
+
+test("validation triggered on radio/checkbox when using mouseclick", async ({ page }) => {
+  await page.goto("");
+
+  const result = await page.evaluate(() => {
+    let triggeredEvents = 0;
+    dv.validate("#form", {
+      onclick: function() {
+        triggeredEvents++;
+      }
+    });
+
+    const event = new Event("click", { bubbles: true });
+
+    let input = document.querySelector("#form [type='radio']");
+    input.dispatchEvent(event);
+
+    input = document.querySelector("#form [type='checkbox']");
+    input.dispatchEvent(event);
+
+    return new Promise((resolve) => {
+      setTimeout(function () {
+        resolve(triggeredEvents);
+      });
+    });
+  });
+
+  expect(result).toBe(2);
+});

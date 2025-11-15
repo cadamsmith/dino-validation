@@ -37,6 +37,7 @@ export class Validator {
     onfocusin: this.onFocusIn,
     onfocusout: this.onFocusOut,
     onkeyup: this.onKeyUp,
+    onclick: this.onClick,
     rules: {}
   };
 
@@ -56,14 +57,16 @@ export class Validator {
   }
 
   attachEventHandlers() {
-    const targets = [
+    const focusTargets = [
       "[type='text']", "[type='password']", "[type='file']", "select", "textarea", "[type='number']",
       "[type='search']", "[type='tel']", "[type='url']", "[type='email']", "[type='datetime']",
       "[type='date']", "[type='month']", "[type='week']", "[type='time']", "[type='datetime-local']",
       "[type='range']", "[type='color']", "[type='radio']", "[type='checkbox']", "button", "input[type='button']"
     ];
 
-    const delegate = (event, handler) => {
+    const clickTargets = ["select", "option", "[type='radio']", "[type='checkbox']"];
+
+    const delegate = (event, targets, handler) => {
       const element = event.target;
 
       // Ignore the element if it doesn't match one of the targets
@@ -84,9 +87,10 @@ export class Validator {
       return handler(element, event);
     };
 
-    this.currentForm.addEventListener("focusin", (e) => delegate(e, this.settings.onfocusin));
-    this.currentForm.addEventListener("focusout", (e) => delegate(e, this.settings.onfocusout));
-    this.currentForm.addEventListener("keyup", (e) => delegate(e, this.settings.onkeyup));
+    this.currentForm.addEventListener("focusin", (e) => delegate(e, focusTargets, this.settings.onfocusin));
+    this.currentForm.addEventListener("focusout", (e) => delegate(e, focusTargets, this.settings.onfocusout));
+    this.currentForm.addEventListener("keyup", (e) => delegate(e, focusTargets, this.settings.onkeyup));
+    this.currentForm.addEventListener("click", (e) => delegate(e, clickTargets, this.settings.onclick));
   }
 
   reset() {
@@ -283,6 +287,10 @@ export class Validator {
   }
 
   onKeyUp(element, event) {
+
+  }
+
+  onClick(element) {
 
   }
 
