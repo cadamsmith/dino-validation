@@ -34,10 +34,12 @@ export class Validator {
     wrapper: null,
     errorLabelContainer: null,
     errorContainer: null,
-    onfocusin: this.onFocusIn,
-    onfocusout: this.onFocusOut,
-    onkeyup: this.onKeyUp,
-    onclick: this.onClick,
+    onfocusin: this.onFocusIn.bind(this),
+    onfocusout: this.onFocusOut.bind(this),
+    onkeyup: this.onKeyUp.bind(this),
+    onclick: this.onClick.bind(this),
+    highlight: this.highlight.bind(this),
+    unhighlight: this.unhighlight.bind(this),
     rules: {},
     messages: {}
   };
@@ -217,7 +219,9 @@ export class Validator {
 
   showErrors() {
     for (const error of this.errorList) {
-      this.highlight(error.element);
+      if (this.settings.highlight) {
+        this.settings.highlight(error.element, this.settings.errorClass, this.settings.validClass);
+      }
       this.showLabel(error.element, error.message);
     }
 
@@ -225,8 +229,10 @@ export class Validator {
       this.toShow = this.toShow.concat(this.containers);
     }
 
-    for (const element of this.validElements()) {
-      this.unhighlight(element, this.settings.errorClass, this.settings.validClass);
+    if (this.settings.unhighlight) {
+      for (const element of this.validElements()) {
+        this.settings.unhighlight(element, this.settings.errorClass, this.settings.validClass);
+      }
     }
 
     this.toHide = this.toHide.filter(el => !this.toShow.includes(el));
@@ -250,17 +256,20 @@ export class Validator {
     this.toHide = this.errors().concat(this.containers);
   }
 
-  highlight(element) {
+  highlight(element, errorClass, validClass) {
+    let targets = [element];
     if (element.type === "radio") {
-      findByName(element.form, element.name).forEach(el => {
-        el.classList.add(this.settings.errorClass);
-        el.classList.remove(this.settings.validClass);
-      });
+      targets = findByName(element.form, element.name);
     }
-    else {
-      element.classList.add(this.settings.errorClass);
-      element.classList.remove(this.settings.validClass);
-    }
+
+    targets.forEach(el => {
+      if (errorClass) {
+        el.classList.add(errorClass);
+      }
+      if (validClass) {
+        el.classList.remove(validClass);
+      }
+    });
   }
 
   unhighlight(element, errorClass, validClass) {
@@ -391,9 +400,17 @@ export class Validator {
   }
 
   resetElements() {
-    for (const element of this.elements()) {
-      this.unhighlight(element, this.settings.errorClass, "");
-      findByName(element.form, element.name).forEach(el => el.classList.remove(this.settings.validClass));
+    if (this.settings.unhighlight) {
+      for (const element of this.elements()) {
+        this.unhighlight(element, this.settings.errorClass, "");
+        findByName(element.form, element.name).forEach(el => el.classList.remove(this.settings.validClass));
+      }
+    }
+    else {
+      this.elements().forEach(el => {
+        el.classList.remove(this.settings.errorClass);
+        el.classList.remove(this.settings.validClass);
+      });
     }
   }
 
@@ -407,6 +424,9 @@ export class Validator {
   }
 
   shouldIgnore(element) {
+    if (!this.settings.ignore) {
+      return false;
+    }
     if (this.settings.ignore === ":hidden") {
       return !isVisible(element);
     }

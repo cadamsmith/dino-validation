@@ -844,3 +844,136 @@ test("showErrors() - external messages", async ({ page }) => {
 
   expect(result).toEqual([false, null, true, "Please!", true, "Wohoo!"]);
 });
+
+test("option: (un)highlight, default", async ({ page }) => {
+  await page.goto("");
+
+  const result = await page.evaluate(() => {
+    dv.validate("#testForm1");
+    const e = document.querySelector("#firstname");
+
+    const ret = [
+      e.classList.contains("error"),
+      e.classList.contains("valid")
+    ];
+
+    dv.valid(e);
+
+    ret.push(
+      e.classList.contains("error"),
+      e.classList.contains("valid")
+    );
+
+    e.value = "hithere";
+    dv.valid(e);
+
+    ret.push(
+      e.classList.contains("error"),
+      e.classList.contains("valid")
+    );
+
+    return ret;
+  });
+
+  expect(result).toEqual([false, false, true, false, false, true]);
+});
+
+test("option: (un)highlight, nothing", async ({ page }) => {
+  await page.goto("");
+
+  const result = await page.evaluate(() => {
+    dv.validate("#testForm1", {
+      highlight: false,
+      unhighlight: false
+    });
+    const e = document.querySelector("#firstname");
+
+    const ret = [e.classList.contains("error")];
+
+    dv.valid(e);
+    ret.push(e.classList.contains("error"));
+
+    dv.valid(e);
+    ret.push(e.classList.contains("error"));
+
+    return ret;
+  });
+
+  expect(result).toEqual([false, false, false]);
+});
+
+test("option: (un)highlight, custom", async ({ page }) => {
+  await page.goto("");
+
+  const result = await page.evaluate(() => {
+    const ret = [];
+
+    dv.validate("#testForm1clean", {
+      highlight: function(element, errorClass) {
+        ret.unshift(errorClass);
+        element.style.display = "none";
+      },
+      unhighlight: function(element, errorClass) {
+        ret.unshift(errorClass);
+        element.style.display = "block";
+      },
+      ignore: "",
+      errorClass: "invalid",
+      rules: {
+        firstnamec: "required"
+      }
+    });
+
+    const e = document.querySelector("#firstnamec");
+    ret.push(e.style.display !== "none");
+
+    dv.valid(e);
+    ret.push(e.style.display);
+
+    e.value = "hithere";
+    dv.valid(e);
+    ret.push(e.style.display);
+
+    return ret;
+  });
+
+  expect(result).toEqual(["invalid", "invalid", true, "none", "block"]);
+});
+
+test("option: (un)highlight, custom2", async ({ page }) => {
+  await page.goto("");
+
+  const result = await page.evaluate(() => {
+    dv.validate("#testForm1", {
+      highlight: function(element, errorClass) {
+        element.classList.add(errorClass);
+        if (element.nextElementSibling.matches(".error:not(input)")) {
+          element.nextElementSibling.classList.add(errorClass);
+        }
+      },
+      unhighlight: function(element, errorClass) {
+        element.classList.remove(errorClass);
+        if (element.nextElementSibling.matches(".error:not(input)")) {
+          element.nextElementSibling.classList.remove(errorClass);
+        }
+      },
+      errorClass: "invalid"
+    });
+
+    const e = document.querySelector("#firstname");
+    const l = document.querySelector("#errorFirstname");
+
+    const ret = [e.matches(".invalid"), l.matches(".invalid")];
+
+    dv.valid(e);
+    ret.push(e.matches(".invalid"), l.matches(".invalid"));
+
+    e.value = "hithere";
+    dv.valid(e);
+    ret.push(e.matches(".invalid"), l.matches(".invalid"));
+
+    return ret;
+  });
+
+  expect(result).toEqual([false, false, true, true, false, false]);
+});
