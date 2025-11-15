@@ -34,12 +34,13 @@ export class Validator {
     wrapper: null,
     errorLabelContainer: null,
     errorContainer: null,
-    onfocusin: this.onFocusIn.bind(this),
-    onfocusout: this.onFocusOut.bind(this),
-    onkeyup: this.onKeyUp.bind(this),
-    onclick: this.onClick.bind(this),
-    highlight: this.highlight.bind(this),
-    unhighlight: this.unhighlight.bind(this),
+    onfocusin: this.onFocusIn,
+    onfocusout: this.onFocusOut,
+    onkeyup: this.onKeyUp,
+    onclick: this.onClick,
+    highlight: this.highlight,
+    unhighlight: this.unhighlight,
+    errorPlacement: null,
     rules: {},
     messages: {}
   };
@@ -47,7 +48,35 @@ export class Validator {
   constructor(form, options) {
     this.currentForm = form;
     this.settings = { ...this.settings, ...options};
+
+    this.normalizeSettings();
+    
     this.init();
+  }
+
+  normalizeSettings() {
+    // bind function settings to this validator instance
+    if (this.settings.onfocusin) {
+      this.settings.onfocusin = this.settings.onfocusin.bind(this);
+    }
+    if (this.settings.onfocusout) {
+      this.settings.onfocusout = this.settings.onfocusout.bind(this);
+    }
+    if (this.settings.onkeyup) {
+      this.settings.onkeyup = this.settings.onkeyup.bind(this);
+    }
+    if (this.settings.onclick) {
+      this.settings.onclick = this.settings.onclick.bind(this);
+    }
+    if (this.settings.highlight) {
+      this.settings.highlight = this.settings.highlight.bind(this);
+    }
+    if (this.settings.unhighlight) {
+      this.settings.unhighlight = this.settings.unhighlight.bind(this);
+    }
+    if (this.settings.errorPlacement) {
+      this.settings.errorPlacement = this.settings.errorPlacement.bind(this);
+    }
   }
 
   init() {
@@ -359,6 +388,9 @@ export class Validator {
 
       if (this.labelContainer) {
         this.labelContainer.appendChild(insert);
+      }
+      else if (this.settings.errorPlacement) {
+        this.settings.errorPlacement(insert, element);
       }
       else {
         element.after(insert);

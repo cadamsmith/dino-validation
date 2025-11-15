@@ -977,3 +977,21 @@ test("option: (un)highlight, custom2", async ({ page }) => {
 
   expect(result).toEqual([false, false, true, true, false, false]);
 });
+
+test("option: errorPlacement", async ({ page }) => {
+  await page.goto("");
+
+  const result = await page.evaluate(() => {
+    return new Promise((resolve) => {
+      const v = dv.validate("#testForm1", {
+        errorPlacement: function() {
+          resolve(this === v);
+        }
+      });
+
+      v.form();
+    });
+  });
+
+  expect(result).toBe(true);
+});
