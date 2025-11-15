@@ -33,12 +33,13 @@ export const store = {
   }
 };
 
-export function getMessage(element, rule) {
+export function getMessage(element, rule, settings) {
   if (typeof rule === "string") {
     rule = { method: rule };
   }
 
   let message = findDefined(
+    customMessage(element.name, rule.method, settings),
     customDataMessage(element, rule.method),
     element.title || undefined,
     store.get(rule.method),
@@ -55,6 +56,11 @@ export function getMessage(element, rule) {
   }
 
   return message;
+}
+
+function customMessage(name, method, settings) {
+  const m = settings[name];
+  return m && (m.constructor === String ? m : m[method]);
 }
 
 // Return the custom message for the given element and validation method

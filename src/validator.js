@@ -38,7 +38,8 @@ export class Validator {
     onfocusout: this.onFocusOut,
     onkeyup: this.onKeyUp,
     onclick: this.onClick,
-    rules: {}
+    rules: {},
+    messages: {}
   };
 
   constructor(form, options) {
@@ -237,7 +238,7 @@ export class Validator {
   }
 
   formatAndAdd(element, rule) {
-    const message = getMessage(element, rule);
+    const message = getMessage(element, rule, this.settings.messages);
 
     this.errorList.push({ message, element, method: rule.method });
     this.errorMap[element.name] = message;

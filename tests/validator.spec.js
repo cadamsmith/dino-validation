@@ -768,3 +768,79 @@ test("validation triggered on radio/checkbox when using mouseclick", async ({ pa
 
   expect(result).toBe(2);
 });
+
+test("showErrors(), allow empty string and null as default message", async ({ page }) => {
+  await page.goto("");
+
+  const result = await page.evaluate(() => {
+    dv.validate("#userForm", {
+      rules: {
+        username: {
+          required: true,
+          minlength: 3
+        }
+      },
+      messages: {
+        username: {
+          required: "",
+          minlength: "too short"
+        }
+      }
+    });
+
+    const ret = [dv.valid("#username")];
+
+    const usernameError = document.querySelector("#username").nextElementSibling;
+    ret.push(usernameError.matches(".error:not(input)"), usernameError.innerText);
+
+    document.querySelector("#username").value = "ab";
+    ret.push(dv.valid("#username"), usernameError.matches(".error:not(input)"), usernameError.innerText);
+
+    document.querySelector("#username").value = "abc";
+    ret.push(dv.valid("#username"), usernameError.matches(".error:not(input)"), usernameError.style.display);
+
+    return ret;
+  });
+
+  expect(result).toEqual([false, true, "", false, true, "too short", true, true, "none"]);
+});
+
+test("showErrors() - external messages", async ({ page }) => {
+  await page.goto("");
+
+  const result = await page.evaluate(() => {
+    dv.addMethod("foo", function() { return false; });
+    dv.addMethod("bar", function() { return false; });
+
+    let f1Next = document.querySelector("#testForm4 #f1").nextElementSibling;
+    let f2Next = document.querySelector("#testForm4 #f2").nextElementSibling;
+
+    const ret = [
+      f1Next.matches(".error:not(input)"),
+      f2Next,
+    ];
+
+    const form = document.querySelector("#testForm4");
+    const v = dv.validate(form, {
+      messages: {
+        f1: "Please!",
+        f2: "Wohoo!"
+      }
+    });
+    v.form();
+
+    f1Next = document.querySelector("#testForm4 #f1").nextElementSibling;
+    f2Next = document.querySelector("#testForm4 #f2").nextElementSibling;
+
+    ret.push(
+      f1Next.matches(".error:not(input)"),
+      f1Next.innerText,
+      f2Next.matches(".error:not(input)"),
+      f2Next.innerText
+    );
+
+    return ret;
+  });
+
+  expect(result).toEqual([false, null, true, "Please!", true, "Wohoo!"]);
+});
