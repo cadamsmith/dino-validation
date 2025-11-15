@@ -909,12 +909,12 @@ test("option: (un)highlight, custom", async ({ page }) => {
     const ret = [];
 
     dv.validate("#testForm1clean", {
-      highlight: function(element, errorClass) {
-        ret.unshift(errorClass);
+      highlight: function(element, errorClasses) {
+        ret.unshift(...errorClasses);
         element.style.display = "none";
       },
-      unhighlight: function(element, errorClass) {
-        ret.unshift(errorClass);
+      unhighlight: function(element, errorClasses) {
+        ret.unshift(...errorClasses);
         element.style.display = "block";
       },
       ignore: "",
@@ -1035,4 +1035,88 @@ test("option: focusCleanup true", async ({ page }) => {
   });
 
   expect(result).toEqual(["block", "none"]);
+});
+
+test("option: focusCleanup with wrapper", async ({ page }) => {
+  await page.goto("");
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector("#userForm");
+    dv.validate(form, {
+      focusCleanup: true,
+      wrapper: "span"
+    });
+    dv.valid(form);
+
+    const username = document.querySelector("#username");
+
+    function isVisible(el) {
+      return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
+    }
+
+    function hasVisibleErrors () {
+      const wrappers = [...form.querySelectorAll("span")]
+        .filter(el => isVisible(el))
+        .map(el => el.querySelectorAll(".error#username-error"))
+        .flat();
+
+      return wrappers.length > 0;
+    }
+
+    const ret = [hasVisibleErrors()];
+
+    username.focus();
+    username.dispatchEvent(new Event("focusin"));
+    ret.push(hasVisibleErrors());
+
+    return ret;
+  });
+
+  expect(result).toEqual([true, false]);
+});
+
+test("option: errorClass with multiple classes", async ({ page }) => {
+  await page.goto("");
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector("#userForm");
+    dv.validate(form, {
+      focusCleanup: true,
+      wrapper: "span",
+      errorClass: "error error1 error2"
+    });
+    dv.valid(form);
+
+    function isVisible(el) {
+      return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
+    }
+
+    function containsError(name) {
+      const matches = [...form.querySelectorAll("span")]
+        .filter(el => isVisible(el))
+        .map(el => el.querySelectorAll(`.${name}#username-error`))
+        .flat();
+
+      return matches.length > 0;
+    }
+
+    const ret = [
+      containsError("error"),
+      containsError("error1"),
+      containsError("error2")
+    ];
+
+    const username = document.querySelector("#username");
+    username.focus();
+    username.dispatchEvent(new Event("focusin"));
+    ret.push(
+      containsError("error"),
+      containsError("error1"),
+      containsError("error2")
+    );
+
+    return ret;
+  });
+
+  expect(result).toEqual([true, true, true, false, false, false]);
 });

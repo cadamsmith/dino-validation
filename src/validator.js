@@ -243,14 +243,14 @@ export class Validator {
   }
 
   errors() {
-    const errorClass = this.settings.errorClass.split(" ").join(".");
+    const errorClass = this.errorClasses.join(".");
     return [...this.errorContext.querySelectorAll(`label.${errorClass}`)];
   }
 
   showErrors() {
     for (const error of this.errorList) {
       if (this.settings.highlight) {
-        this.settings.highlight(error.element, this.settings.errorClass, this.settings.validClass);
+        this.settings.highlight(error.element, this.errorClasses, this.validClasses);
       }
       this.showLabel(error.element, error.message);
     }
@@ -261,7 +261,7 @@ export class Validator {
 
     if (this.settings.unhighlight) {
       for (const element of this.validElements()) {
-        this.settings.unhighlight(element, this.settings.errorClass, this.settings.validClass);
+        this.settings.unhighlight(element, this.errorClasses, this.validClasses);
       }
     }
 
@@ -286,42 +286,34 @@ export class Validator {
     this.toHide = this.errors().concat(this.containers);
   }
 
-  highlight(element, errorClass, validClass) {
+  highlight(element, errorClasses, validClasses) {
     let targets = [element];
     if (element.type === "radio") {
       targets = findByName(element.form, element.name);
     }
 
     targets.forEach(el => {
-      if (errorClass) {
-        el.classList.add(errorClass);
-      }
-      if (validClass) {
-        el.classList.remove(validClass);
-      }
+      el.classList.add(...errorClasses);
+      el.classList.remove(...validClasses);
     });
   }
 
-  unhighlight(element, errorClass, validClass) {
+  unhighlight(element, errorClasses, validClasses) {
     let targets = [element];
     if (element.type === "radio") {
       targets = findByName(element.form, element.name);
     }
 
     targets.forEach(el => {
-      if (errorClass) {
-        el.classList.remove(errorClass);
-      }
-      if (validClass) {
-        el.classList.add(validClass);
-      }
+      el.classList.remove(...errorClasses);
+      el.classList.add(...validClasses);
     });
   }
 
   onFocusIn(element) {
     if (this.settings.focusCleanup) {
       if (this.settings.unhighlight) {
-        this.settings.unhighlight(element, this.settings.errorClass, this.settings.validClass);
+        this.settings.unhighlight(element, this.errorClasses, this.validClasses);
       }
       this.hideErrors(element);
     }
@@ -378,7 +370,7 @@ export class Validator {
       // Refresh error/success class
       errors.forEach(el => {
         el.classList.remove(this.settings.validClass);
-        el.classList.add(this.settings.errorClass);
+        el.classList.add(...this.errorClasses);
         el.innerHTML = message || "";
       });
     }
@@ -387,7 +379,7 @@ export class Validator {
 
       const newError = document.createElement("label");
       newError.setAttribute("id", `${elementID}-error`);
-      newError.classList.add(this.settings.errorClass);
+      newError.classList.add(...this.errorClasses);
       newError.innerHTML = message || "";
 
       // Maintain reference to the element(s) to be placed into the DOM
@@ -446,14 +438,14 @@ export class Validator {
   resetElements() {
     if (this.settings.unhighlight) {
       for (const element of this.elements()) {
-        this.unhighlight(element, this.settings.errorClass, "");
-        findByName(element.form, element.name).forEach(el => el.classList.remove(this.settings.validClass));
+        this.unhighlight(element, ...this.errorClasses, []);
+        findByName(element.form, element.name).forEach(el => el.classList.remove(...this.validClasses));
       }
     }
     else {
       this.elements().forEach(el => {
-        el.classList.remove(this.settings.errorClass);
-        el.classList.remove(this.settings.validClass);
+        el.classList.remove(...this.errorClasses);
+        el.classList.remove(...this.validClasses);
       });
     }
   }
@@ -476,5 +468,15 @@ export class Validator {
     }
 
     return element.matches(this.settings.ignore);
+  }
+
+  get errorClasses() {
+    return this.settings.errorClass.split(" ")
+      .filter(Boolean);
+  }
+
+  get validClasses() {
+    return this.settings.validClass.split(" ")
+      .filter(Boolean);
   }
 }
