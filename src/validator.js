@@ -320,15 +320,59 @@ export class Validator {
   }
 
   onFocusOut(element) {
+    if (isCheckableElement(element)) {
+      return;
+    }
+    if (!(element.name in this.submitted) && isBlankElement(element)) {
+      return;
+    }
 
+    this.element(element);
   }
 
   onKeyUp(element, event) {
+    if (event.which === 9 && elementValue(element) === "") {
+      return;
+    }
 
+    // Avoid revalidate the field when pressing one of the following keys
+    // Shift       => 16
+    // Ctrl        => 17
+    // Alt         => 18
+    // Caps lock   => 20
+    // End         => 35
+    // Home        => 36
+    // Left arrow  => 37
+    // Up arrow    => 38
+    // Right arrow => 39
+    // Down arrow  => 40
+    // Insert      => 45
+    // Num lock    => 144
+    // AltGr key   => 225
+    const excludedKeys = [
+      16, 17, 18, 20, 35, 36, 37,
+      38, 39, 40, 45, 144, 225
+    ];
+    if (excludedKeys.includes(event.keyCode)) {
+      return;
+    }
+
+    if (!(element.name in this.submitted) && !(element.name in this.invalid)) {
+      return;
+    }
+
+    this.element(element);
   }
 
   onClick(element) {
-
+    // Click on selects, radiobuttons and checkboxes
+    if (element.name in this.submitted) {
+      this.element(element);
+    }
+    // Or option elements, check parent select in that case
+    else if ( element.parentNode.name in this.submitted ) {
+      this.element(element.parentNode);
+    }
   }
 
   hideErrors(element) {
