@@ -46,6 +46,11 @@ export class Validator {
     messages: {}
   };
 
+  /**
+   * Initializes a new validator instance for the given form with optional configuration settings.
+   * @param form - form element to validate
+   * @param options - optional user configuration settings
+   */
   constructor(form, options) {
     this.currentForm = form;
     this.settings = { ...this.settings, ...options};
@@ -55,31 +60,23 @@ export class Validator {
     this.init();
   }
 
+  /**
+   * Normalizes Validator settings.
+   * Currently, this only binds function settings to validator instance.
+   */
   normalizeSettings() {
-    // bind function settings to this validator instance
-    if (this.settings.onfocusin) {
-      this.settings.onfocusin = this.settings.onfocusin.bind(this);
-    }
-    if (this.settings.onfocusout) {
-      this.settings.onfocusout = this.settings.onfocusout.bind(this);
-    }
-    if (this.settings.onkeyup) {
-      this.settings.onkeyup = this.settings.onkeyup.bind(this);
-    }
-    if (this.settings.onclick) {
-      this.settings.onclick = this.settings.onclick.bind(this);
-    }
-    if (this.settings.highlight) {
-      this.settings.highlight = this.settings.highlight.bind(this);
-    }
-    if (this.settings.unhighlight) {
-      this.settings.unhighlight = this.settings.unhighlight.bind(this);
-    }
-    if (this.settings.errorPlacement) {
-      this.settings.errorPlacement = this.settings.errorPlacement.bind(this);
-    }
+    // bind function settings to this validator instance\
+    ["onfocusin", "onfocusout", "onkeyup", "onclick", "highlight", "unhighlight", "errorPlacement"]
+      .forEach(key => {
+        if (this.settings[key]) {
+          this.settings[key] = this.settings[key].bind(this);
+        }
+      });
   }
 
+  /**
+   * Sets up DOM references and attaches event handlers to the form.
+   */
   init() {
     this.labelContainer = document.querySelector(this.settings.errorLabelContainer);
     this.errorContext = this.labelContainer || this.currentForm;
@@ -89,6 +86,10 @@ export class Validator {
     this.attachEventHandlers();
   }
 
+  /**
+   * Registers delegated event listeners for focus, blur, keyup, and click events on form elements.
+   * TODO: need to be able to deregister these handlers in destroy() function - refactor later
+   */
   attachEventHandlers() {
     const focusTargets = [
       "[type='text']", "[type='password']", "[type='file']", "select", "textarea", "[type='number']",
@@ -126,6 +127,9 @@ export class Validator {
     this.currentForm.addEventListener("click", (e) => delegate(e, clickTargets, this.settings.onclick));
   }
 
+  /**
+   * Resets the validator state.
+   */
   reset() {
     this.successList = [];
     this.errorList = [];
@@ -135,6 +139,10 @@ export class Validator {
     this.currentElements = [];
   }
 
+  /**
+   * Validates all form elements.
+   * @return {boolean} - true if the form is valid, false otherwise
+   */
   form() {
     this.prepareForm();
     this.currentElements = this.elements();
@@ -148,6 +156,11 @@ export class Validator {
     return this.valid();
   }
 
+  /**
+   * Validates a single element within the form.
+   * @param element - element to validate
+   * @return {boolean} - true if the element is valid, false otherwise
+   */
   element(element) {
     const target = this.validationTargetFor(element);
     if (target === undefined) {
@@ -174,14 +187,26 @@ export class Validator {
     this.toHide = this.errorsFor(element);
   }
 
+  /**
+   * Returns true if there are currently no validation errors.
+   * @return {boolean} - true if there are no validation errors, false otherwise
+   */
   valid() {
     return this.size() === 0;
   }
 
+  /**
+   * Returns the number of validation errors.
+   * @return {number} - number of validation errors
+   */
   size() {
     return this.errorList.length;
   }
 
+  /**
+   * Returns a list of all form elements that need to be validated.
+   * @return {NodeList} - list of form elements
+   */
   elements() {
     const rulesCache = {};
 
@@ -205,15 +230,28 @@ export class Validator {
       });
   }
 
+  /**
+   * Returns an array of currently valid elements from the last validation.
+   * @return {NodeList} - list of valid form elements
+   */
   validElements() {
     const invalid = this.invalidElements();
     return this.currentElements.filter(el => !invalid.includes(el));
   }
 
+  /**
+   * Returns an array of currently invalid elements from the last validation.
+   * @return {NodeList} - list of invalid form elements
+   */
   invalidElements() {
     return this.errorList.map(e => e.element);
   }
 
+  /**
+   * Runs all validation rules against an element and returns true if valid.
+   * @param element - element to validate
+   * @return {boolean} - true if the element is valid, false otherwise
+   */
   check(element) {
     element = this.validationTargetFor(element);
 
@@ -242,6 +280,10 @@ export class Validator {
     return true;
   }
 
+  /**
+   * Returns all error label elements currently in the DOM.
+   * @return {NodeList} - list of error labels
+   */
   errors() {
     const errorClass = this.errorClasses.join(".");
     return [...this.errorContext.querySelectorAll(`label.${errorClass}`)];
@@ -503,6 +545,11 @@ export class Validator {
     return targets.filter(t => !this.shouldIgnore(t))[0];
   }
 
+  /**
+   * Returns true if the element should be skipped from receiving validation.
+   * @param element - element to check
+   * @return {boolean} - true if the element should be skipped, false otherwise
+   */
   shouldIgnore(element) {
     if (!this.settings.ignore) {
       return false;
