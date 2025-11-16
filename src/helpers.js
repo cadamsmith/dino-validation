@@ -1,7 +1,17 @@
+/**
+ * Returns true if the element is visible in the DOM.
+ * @param {HTMLElement} el - element to check visibility
+ * @return {boolean} - true if element is visible, false otherwise
+ */
 export function isVisible(el) {
   return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
 }
 
+/**
+ * Returns the number of truthy properties in an object.
+ * @param {Object} obj - object to count properties
+ * @return {number} - count of truthy properties
+ */
 export function objectLength(obj) {
   let count = 0;
   for (const key in obj) {
@@ -13,17 +23,31 @@ export function objectLength(obj) {
   return count;
 }
 
+/**
+ * Finds all form elements with the specified name attribute.
+ * @param {HTMLFormElement} form - form element to search within
+ * @param {string} name - name attribute to search for
+ * @return {HTMLElement[]} - array of matching elements
+ */
 export function findByName(form, name) {
   return [...form.querySelectorAll(`[name='${escapeCssMeta(name)}']`)];
 }
 
+/**
+ * Returns true if the element is a radio button or checkbox.
+ * @param {HTMLElement} element - element to check
+ * @return {boolean} - true if element is radio or checkbox, false otherwise
+ */
 export function isCheckableElement(element) {
   return (/radio|checkbox/i).test(element.type);
 }
 
-// See https://api.jquery.com/category/selectors/, for CSS
-// meta-characters that should be escaped in order to be used with JQuery
-// as a literal part of a name/id or any selector.
+/**
+ * Escapes CSS meta-characters in a string for use in CSS selectors.
+ * See https://api.jquery.com/category/selectors/ for CSS meta-characters that should be escaped.
+ * @param {string} text - text to escape
+ * @return {string} - escaped text safe for CSS selectors
+ */
 export function escapeCssMeta(text) {
   if (text === undefined) {
     return "";
@@ -32,6 +56,11 @@ export function escapeCssMeta(text) {
   return text.replace(/([\\!"#$%&'()*+,./:;<=>?@\[\]^`{|}~])/g, "\\$1");
 }
 
+/**
+ * Gets the value of a form element, handling special cases for different input types.
+ * @param {HTMLElement} element - form element to get value from
+ * @return {string|string[]} - element value or array of values for checkboxes/radios
+ */
 export function elementValue(element) {
   if (element.type === "radio" || element.type === "checkbox") {
     const checked = findByName(element.form, element.name).filter(el => el.matches(":checked"));
@@ -48,6 +77,11 @@ export function elementValue(element) {
   return element.value;
 }
 
+/**
+ * Returns the first defined (non-undefined) argument from the provided arguments.
+ * @param {...*} args - arguments to check
+ * @return {*} - first defined argument or undefined if none found
+ */
 export function findDefined(...args) {
   for (const arg of args) {
     if (arg !== undefined) {
@@ -57,6 +91,12 @@ export function findDefined(...args) {
   return undefined;
 }
 
+/**
+ * Formats a string by replacing {0}, {1}, etc. placeholders with provided parameters.
+ * @param {string} source - template string with placeholders
+ * @param {...*} params - parameters to substitute into placeholders
+ * @return {string|function} - formatted string or curried function if only source provided
+ */
 export function format(source, params) {
   if (arguments.length === 1) {
     return function() {
@@ -83,10 +123,21 @@ export function format(source, params) {
   return source;
 }
 
+/**
+ * Returns the id or name attribute of an element, preferring name for checkable elements.
+ * @param {HTMLElement} element - element to get identifier from
+ * @return {string} - element id or name
+ */
 export function idOrName(element) {
   return (isCheckableElement(element) ? element.name : element.id) || element.name;
 }
 
+/**
+ * Gets the length of a form element's value, handling special cases for selects and checkables.
+ * @param {*} value - element value
+ * @param {HTMLElement} element - form element
+ * @return {number} - length of the element's value
+ */
 export function getLength(value, element) {
   const nodeName = element.nodeName.toLowerCase();
 
@@ -100,6 +151,11 @@ export function getLength(value, element) {
   return value.length;
 }
 
+/**
+ * Returns true if the element has no value or is considered blank.
+ * @param {HTMLElement} element - form element to check
+ * @return {boolean} - true if element is blank, false otherwise
+ */
 export function isBlankElement(element) {
   const value = elementValue(element);
 
