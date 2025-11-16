@@ -275,8 +275,15 @@ export class Validator {
 
     for (const method in rules) {
       const rule = { method, parameters: rules[method] };
+
+      const methodFunc = methodStore.get(method);
+      if (!methodFunc) {
+        console.warn(`Validation method "${method}" not found. Skipping.`);
+        continue;
+      }
+
       try {
-        const result = methodStore.get(method)(isBlank, value, element, rule.parameters);
+        const result = methodFunc(isBlank, value, element, rule.parameters);
 
         if (!result) {
           this.formatAndAdd(element, rule);
