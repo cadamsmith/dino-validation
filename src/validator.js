@@ -47,6 +47,16 @@ export class Validator {
   };
 
   /**
+   * stored event handlers for easy cleanup
+   */
+  boundEventHandlers = {
+    onFocusIn: null,
+    onFocusOut: null,
+    onKeyUp: null,
+    onClick: null
+  };
+
+  /**
    * Initializes a new validator instance for the given form with optional configuration settings.
    * @param form - form element to validate
    * @param options - optional user configuration settings
@@ -88,7 +98,6 @@ export class Validator {
 
   /**
    * Registers delegated event listeners for focus, blur, keyup, and click events on form elements.
-   * TODO: need to be able to deregister these handlers in destroy() function - refactor later
    */
   attachEventHandlers() {
     const focusTargets = [
@@ -121,10 +130,15 @@ export class Validator {
       return handler(element, event);
     };
 
-    this.currentForm.addEventListener("focusin", (e) => delegate(e, focusTargets, this.settings.onfocusin));
-    this.currentForm.addEventListener("focusout", (e) => delegate(e, focusTargets, this.settings.onfocusout));
-    this.currentForm.addEventListener("keyup", (e) => delegate(e, focusTargets, this.settings.onkeyup));
-    this.currentForm.addEventListener("click", (e) => delegate(e, clickTargets, this.settings.onclick));
+    this.boundEventHandlers.onFocusIn = (e) => delegate(e, focusTargets, this.settings.onfocusin);
+    this.boundEventHandlers.onFocusOut = (e) => delegate(e, focusTargets, this.settings.onfocusout);
+    this.boundEventHandlers.onKeyUp = (e) => delegate(e, focusTargets, this.settings.onkeyup);
+    this.boundEventHandlers.onClick = (e) => delegate(e, clickTargets, this.settings.onclick);
+
+    this.currentForm.addEventListener("focusin", this.boundEventHandlers.onFocusIn);
+    this.currentForm.addEventListener("focusout", this.boundEventHandlers.onFocusOut);
+    this.currentForm.addEventListener("keyup", this.boundEventHandlers.onKeyUp);
+    this.currentForm.addEventListener("click", this.boundEventHandlers.onClick);
   }
 
   /**
@@ -509,7 +523,10 @@ export class Validator {
     this.resetForm();
     validatorStore.delete(this.currentForm);
 
-    // TODO: cleanup event listeners
+    this.currentForm.removeEventListener("focusin", this.boundEventHandlers.onFocusIn);
+    this.currentForm.removeEventListener("focusout", this.boundEventHandlers.onFocusOut);
+    this.currentForm.removeEventListener("keyup", this.boundEventHandlers.onKeyUp);
+    this.currentForm.removeEventListener("click", this.boundEventHandlers.onClick);
   }
 
   resetForm() {
