@@ -296,7 +296,7 @@ export class Validator {
 
   /**
    * Returns all error label elements currently in the DOM.
-   * @return {NodeList} - list of error labels
+   * @return {HTMLElement[]} - array of error label elements
    */
   errors() {
     const errorClass = this.errorClasses.join(".");

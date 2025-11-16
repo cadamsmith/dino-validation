@@ -1,5 +1,9 @@
 import { findDefined, format } from './helpers.js';
 
+/**
+ * Default error messages for all validation methods.
+ * Messages can be strings or functions that return formatted strings with parameters.
+ */
 const messages = {
   required: 'This field is required.',
   remote: 'Please fix this field.',
@@ -21,18 +25,43 @@ const messages = {
   step: format('Please enter a multiple of {0}.'),
 };
 
+/**
+ * Public API for accessing and managing error messages.
+ */
 export const store = {
+  /**
+   * Returns all registered message keys.
+   * @return {string[]} - array of message keys
+   */
   keys: function() {
     return Object.keys(messages);
   },
+  /**
+   * Gets an error message by validation method name.
+   * @param {string} key - validation method name
+   * @return {string|Function} - error message string or function
+   */
   get: function(key) {
     return messages[key];
   },
+  /**
+   * Adds or replaces an error message for a validation method.
+   * @param {string} key - validation method name
+   * @param {string|Function} value - error message string or function
+   */
   set: function(key, value) {
     messages[key] = value;
   }
 };
 
+/**
+ * Gets the appropriate error message for a validation rule failure.
+ * Checks custom messages, data attributes, element title, and default messages in order.
+ * @param {HTMLElement} element - form element that failed validation
+ * @param {string|Object} rule - validation rule (string method name or object with method and parameters)
+ * @param {Object} settings - validator settings that may contain custom messages
+ * @return {string} - formatted error message
+ */
 export function getMessage(element, rule, settings) {
   if (typeof rule === "string") {
     rule = { method: rule };
@@ -58,14 +87,25 @@ export function getMessage(element, rule, settings) {
   return message;
 }
 
+/**
+ * Gets a custom error message from validator settings.
+ * @param {string} name - element name
+ * @param {string} method - validation method name
+ * @param {Object} settings - validator settings that may contain custom messages
+ * @return {string|undefined} - custom message if defined
+ */
 function customMessage(name, method, settings) {
   const m = settings[name];
   return m && (m.constructor === String ? m : m[method]);
 }
 
-// Return the custom message for the given element and validation method
-// specified in the element's HTML5 data attribute
-// return the generic message if present and no method specific message is present
+/**
+ * Gets a custom error message from element's data attributes.
+ * Checks data-msg-{method} first, then falls back to data-msg.
+ * @param {HTMLElement} element - form element
+ * @param {string} method - validation method name
+ * @return {string|undefined} - custom message from data attribute if present
+ */
 function customDataMessage(element, method) {
   const dataSetKey = "msg" + method.charAt(0).toUpperCase() + method.substring(1).toLowerCase();
 

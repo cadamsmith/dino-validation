@@ -1,6 +1,12 @@
 import { validatorStore } from './validatorStore.js';
 import { store as methodStore } from './methods.js';
 
+/**
+ * Gets all validation rules for an element from multiple sources.
+ * Merges rules from CSS classes, HTML attributes, data attributes, and programmatic settings.
+ * @param {HTMLElement} element - form element to get rules for
+ * @return {Object} - object containing all validation rules with the required rule first
+ */
 export function getRules(element) {
   // If nothing is selected, return empty object; can't chain anyway
   if (element == null || element.form == null) {
@@ -24,6 +30,10 @@ export function getRules(element) {
   return data;
 }
 
+/**
+ * Default mapping of CSS class names to validation rules.
+ * Allows class-based rule declaration like class="required email".
+ */
 let classRuleSettings = {
   required: { required: true },
   email: { email: true },
@@ -35,6 +45,11 @@ let classRuleSettings = {
   creditcard: { creditcard: true }
 };
 
+/**
+ * Adds or updates validation rules for a CSS class name.
+ * @param {string|Object} className - class name to associate with rules, or object of className: rules pairs
+ * @param {Object} [rules] - validation rules object (only used if className is a string)
+ */
 export function addClassRules(className, rules) {
   if (className.constructor === String) {
     classRuleSettings[className] = rules;
@@ -44,6 +59,13 @@ export function addClassRules(className, rules) {
   }
 }
 
+/**
+ * Normalizes and processes validation rules for an element.
+ * Removes false rules, evaluates function parameters, and converts string/number values.
+ * @param {Object} rules - raw validation rules object
+ * @param {HTMLElement} element - element the rules apply to
+ * @return {Object} - normalized rules object
+ */
 function normalizeRules(rules, element) {
   Object.entries(rules).forEach(([key, value]) => {
     // Ignore rule when param is explicitly false, eg. required:false
@@ -83,6 +105,11 @@ function normalizeRules(rules, element) {
   return rules;
 }
 
+/**
+ * Extracts validation rules from an element's CSS classes.
+ * @param {HTMLElement} element - element to extract rules from
+ * @return {Object} - validation rules derived from CSS classes
+ */
 function classRules(element) {
   let rules = {};
   const classes = element.getAttribute("class");
@@ -98,6 +125,11 @@ function classRules(element) {
   return rules;
 }
 
+/**
+ * Extracts validation rules from HTML attributes (required, minlength, etc.).
+ * @param {HTMLElement} element - element to extract rules from
+ * @return {Object} - validation rules derived from HTML attributes
+ */
 function attributeRules(element) {
   const rules = {};
   const type = element.getAttribute("type");
@@ -128,6 +160,11 @@ function attributeRules(element) {
   return rules;
 }
 
+/**
+ * Extracts validation rules from data attributes (data-rule-required, etc.).
+ * @param {HTMLElement} element - element to extract rules from
+ * @return {Object} - validation rules derived from data attributes
+ */
 function dataRules(element) {
   const rules = {};
   const type = element.getAttribute("type");
@@ -147,6 +184,11 @@ function dataRules(element) {
   return rules;
 }
 
+/**
+ * Gets validation rules defined programmatically in validator settings.
+ * @param {HTMLElement} element - element to get rules for
+ * @return {Object} - validation rules from validator settings
+ */
 export function staticRules(element) {
   let rules = {};
   const validator = validatorStore.get(element.form);
@@ -158,6 +200,14 @@ export function staticRules(element) {
   return rules;
 }
 
+/**
+ * Normalizes a single attribute rule and adds it to the rules object.
+ * Handles type coercion and special cases for different input types.
+ * @param {Object} rules - rules object to add the rule to
+ * @param {string} type - input type attribute value
+ * @param {string} method - validation method name
+ * @param {*} value - attribute value
+ */
 function normalizeAttributeRule(rules, type, method, value) {
   // Convert the value to a number for number inputs, and for text for backwards compability
   // allows type="date" and others to be compared as strings
@@ -174,6 +224,12 @@ function normalizeAttributeRule(rules, type, method, value) {
   }
 }
 
+/**
+ * Converts string-based rule declarations to rule objects.
+ * Transforms "required email" to {required: true, email: true}.
+ * @param {string|Object} data - rule string or object
+ * @return {Object} - normalized rule object
+ */
 export function normalizeRule(data) {
   if (typeof data !== "string") {
     return data;
