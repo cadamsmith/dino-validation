@@ -43,6 +43,7 @@ export class Validator {
     unhighlight: this.unhighlight,
     errorPlacement: null,
     invalidHandler: null,
+    success: null,
     focusCleanup: false,
     rules: {},
     messages: {}
@@ -336,6 +337,12 @@ export class Validator {
       this.toShow = this.toShow.concat(this.containers);
     }
 
+    if (this.settings.success) {
+      for (const el of this.successList) {
+        this.showLabel(el);
+      }
+    }
+
     if (this.settings.unhighlight) {
       for (const element of this.validElements()) {
         this.settings.unhighlight(element, this.errorClasses, this.validClasses);
@@ -524,6 +531,16 @@ export class Validator {
       newError.setAttribute("for", elementID);
 
       errors = [newError];
+    }
+
+    if (!message && this.settings.success) {
+      errors.forEach(e => e.innerText = "");
+      if (typeof this.settings.success === "string") {
+        errors.forEach(e => e.classList.add(this.settings.success));
+      }
+      else {
+        this.settings.success(errors, element);
+      }
     }
 
     this.toShow.push(...errors);
