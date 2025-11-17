@@ -41,6 +41,7 @@ export class Validator {
     highlight: this.highlight,
     unhighlight: this.unhighlight,
     errorPlacement: null,
+    invalidHandler: null,
     focusCleanup: false,
     rules: {},
     messages: {}
@@ -53,7 +54,8 @@ export class Validator {
     onFocusIn: null,
     onFocusOut: null,
     onKeyUp: null,
-    onClick: null
+    onClick: null,
+    onInvalidForm: null
   };
 
   /**
@@ -76,7 +78,7 @@ export class Validator {
    */
   normalizeSettings() {
     // bind function settings to this validator instance\
-    ["onfocusin", "onfocusout", "onkeyup", "onclick", "highlight", "unhighlight", "errorPlacement"]
+    ["onfocusin", "onfocusout", "onkeyup", "onclick", "highlight", "unhighlight", "errorPlacement", "invalidHandler"]
       .forEach(key => {
         if (this.settings[key]) {
           this.settings[key] = this.settings[key].bind(this);
@@ -134,11 +136,16 @@ export class Validator {
     this.boundEventHandlers.onFocusOut = (e) => delegate(e, focusTargets, this.settings.onfocusout);
     this.boundEventHandlers.onKeyUp = (e) => delegate(e, focusTargets, this.settings.onkeyup);
     this.boundEventHandlers.onClick = (e) => delegate(e, clickTargets, this.settings.onclick);
+    this.boundEventHandlers.onInvalidForm = this.settings.invalidHandler;
 
     this.currentForm.addEventListener("focusin", this.boundEventHandlers.onFocusIn);
     this.currentForm.addEventListener("focusout", this.boundEventHandlers.onFocusOut);
     this.currentForm.addEventListener("keyup", this.boundEventHandlers.onKeyUp);
     this.currentForm.addEventListener("click", this.boundEventHandlers.onClick);
+
+    if (this.settings.invalidHandler) {
+      this.currentForm.addEventListener("invalid-form", this.boundEventHandlers.onInvalidForm);
+    }
   }
 
   /**
@@ -166,6 +173,12 @@ export class Validator {
 
     this.submitted = { ...this.submitted, ...this.errorMap };
     this.invalid = { ...this.errorMap };
+    if (!this.valid() && this.settings.invalidHandler) {
+      this.currentForm.dispatchEvent(new CustomEvent("invalid-form", {
+        detail: this,
+        bubbles: false
+      }));
+    }
     this.showErrors();
     return this.valid();
   }
@@ -534,6 +547,7 @@ export class Validator {
     this.currentForm.removeEventListener("focusout", this.boundEventHandlers.onFocusOut);
     this.currentForm.removeEventListener("keyup", this.boundEventHandlers.onKeyUp);
     this.currentForm.removeEventListener("click", this.boundEventHandlers.onClick);
+    this.currentForm.removeEventListener("invalid-form", this.boundEventHandlers.onInvalidForm);
   }
 
   resetForm() {
