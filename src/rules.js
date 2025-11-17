@@ -174,8 +174,11 @@ function dataRules(element) {
     let value = element.dataset[datasetKey];
 
     // Cast empty attributes like `data-rule-required` to `true`
-    if (value === "") {
+    if (value === "" || value === "true") {
       value = true;
+    }
+    else if (value === "false") {
+      value = false;
     }
 
     normalizeAttributeRule(rules, type, method, value);

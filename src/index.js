@@ -3,6 +3,7 @@ import { validatorStore } from './validatorStore.js';
 import { addClassRules, getRules, normalizeRule } from './rules.js';
 import { store as methodStore } from './methods.js';
 import { store as messageStore } from './messages.js';
+import { elementValue, isBlankElement } from './helpers.js';
 
 export function validate(selector, options) {
   const element = selector instanceof HTMLElement
@@ -65,12 +66,19 @@ export function rules(selector) {
 
 export function addMethod(name, method, message) {
   methodStore.set(name, method);
-  messageStore.set(name, message);
+  if (message) {
+    messageStore.set(name, message);
+  }
   if (method.length < 3) {
     const rules = normalizeRule(name);
     addClassRules(name, rules);
   }
 }
+
+export const helpers = {
+  isBlankElement,
+  elementValue
+};
 
 export { store as messages } from "./messages.js";
 export { store as methods } from "./methods.js";

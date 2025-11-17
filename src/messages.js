@@ -23,6 +23,8 @@ const messages = {
   max: format('Please enter a value less than or equal to {0}.'),
   min: format('Please enter a value greater than or equal to {0}.'),
   step: format('Please enter a multiple of {0}.'),
+  regex: format('Please enter a value that matches the pattern {0}.'),
+  nonalphamin: format('Please enter at least {0} non-alphabetic characters.'),
 };
 
 /**
