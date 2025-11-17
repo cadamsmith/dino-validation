@@ -210,6 +210,9 @@ export class Validator {
     }
     this.showErrors();
 
+    // add aria-invalid status for screen readers
+    element.setAttribute("aria-invalid", !result);
+
     return result;
   }
 
@@ -572,6 +575,7 @@ export class Validator {
     this.prepareForm();
     this.hideErrors();
 
+    this.elements().forEach(el => el.removeAttribute("aria-invalid"));
     this.resetElements();
   }
 
