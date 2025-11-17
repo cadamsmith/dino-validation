@@ -632,25 +632,27 @@ test('hide(): container', async ({ page }) => {
       errorContainer: '#errorContainer',
     });
 
+    const isVisible = (el) => el.style.display !== "none";
+
     v.form();
-    const ret = [errorLabel.style.display];
+    const ret = [isVisible(errorLabel)];
 
     mealSelect.selectedIndex = 1;
     v.form();
-    ret.push(errorLabel.style.display);
+    ret.push(isVisible(errorLabel));
 
     mealSelect.selectedIndex = -1;
     v.element(mealSelect);
-    ret.push(errorLabel.style.display);
+    ret.push(isVisible(errorLabel));
 
     mealSelect.selectedIndex = 1;
     v.element(mealSelect);
-    ret.push(errorLabel.style.display);
+    ret.push(isVisible(errorLabel));
 
     return ret;
   });
 
-  expect(result).toEqual(['block', 'none', 'block', 'none']);
+  expect(result).toEqual([true, false, true, false]);
 });
 
 test('validation triggered on radio.checkbox when using keyboard', async ({
@@ -1004,16 +1006,18 @@ test("option: focusCleanup default false", async ({ page }) => {
     dv.validate(form);
     dv.valid(form);
 
+    const isVisible = el => el.style.display !== "none";
+
     const usernameError = form.querySelector("#username").nextElementSibling;
-    const ret = [usernameError.style.display];
+    const ret = [isVisible(usernameError)];
 
     usernameError.focus();
-    ret.push(usernameError.style.display);
+    ret.push(isVisible(usernameError));
 
     return ret;
   });
 
-  expect(result).toEqual(["block", "block"]);
+  expect(result).toEqual([true, true]);
 });
 
 test("option: focusCleanup true", async ({ page }) => {
@@ -1024,17 +1028,19 @@ test("option: focusCleanup true", async ({ page }) => {
     dv.validate(form, { focusCleanup: true });
     dv.valid(form);
 
+    const isVisible = el => el.style.display !== "none";
+
     const usernameError = form.querySelector("#username").nextElementSibling;
-    const ret = [usernameError.style.display];
+    const ret = [isVisible(usernameError)];
 
     usernameError.focus();
     usernameError.dispatchEvent(new Event("focusin"));
-    ret.push(usernameError.style.display);
+    ret.push(isVisible(usernameError));
 
     return ret;
   });
 
-  expect(result).toEqual(["block", "none"]);
+  expect(result).toEqual([true, false]);
 });
 
 test("option: focusCleanup with wrapper", async ({ page }) => {

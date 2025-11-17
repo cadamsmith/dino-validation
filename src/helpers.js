@@ -171,3 +171,33 @@ export function isBlankElement(element) {
 
   return value === undefined || value === null || value.length === 0;
 }
+
+const displayDataMap = new WeakMap();
+
+/**
+ * Shows an element by restoring its original display value.
+ * Matches jQuery's .show() behavior.
+ * @param {HTMLElement} element - Element to show
+ */
+export function showElement(element) {
+  const storedDisplay = displayDataMap.get(element);
+  if (storedDisplay) {
+    element.style.display = storedDisplay;
+    displayDataMap.delete(element);
+  } else {
+    element.style.display = '';
+  }
+}
+
+/**
+ * Hides an element by setting display to none, storing the original display value.
+ * Matches jQuery's .hide() behavior.
+ * @param {HTMLElement} element - Element to hide
+ */
+export function hideElement(element) {
+  if (element.style.display !== 'none') {
+    // Store current display value
+    displayDataMap.set(element, element.style.display || getComputedStyle(element).display);
+    element.style.display = 'none';
+  }
+}

@@ -2,11 +2,13 @@ import {
   elementValue,
   escapeCssMeta,
   findByName,
+  hideElement,
   idOrName,
   isBlankElement,
   isCheckableElement,
   isVisible,
   objectLength,
+  showElement,
 } from './helpers.js';
 import { getRules } from './rules.js';
 import { getMessage } from './messages.js';
@@ -351,10 +353,7 @@ export class Validator {
 
     this.toHide = this.toHide.filter(el => !this.toShow.includes(el));
     this.hideErrors();
-    this.addWrapper(this.toShow).forEach(el => {
-      // TODO: this should restore to previous state instead of always using display:block
-      el.style.display = "block";
-    });
+    this.addWrapper(this.toShow).forEach(showElement);
   }
 
   formatAndAdd(element, rule) {
@@ -473,8 +472,7 @@ export class Validator {
         el.innerText = "";
       }
 
-      // TODO: match jquery and remember old display state
-      this.addWrapper(el).forEach(e => e.style.display = "none");
+      this.addWrapper(el).forEach(hideElement);
     }
   }
 
