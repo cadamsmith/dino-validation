@@ -6,7 +6,7 @@ test("validate on blur", async ({ page }) => {
 
   const result = await page.evaluate(() => {
     const errorFirstname = document.querySelector("#errorFirstname");
-    dv.helpers.hideElement(errorFirstname);
+    dvTestHelpers.hideElement(errorFirstname);
 
     const e = document.querySelector("#firstname");
     const v = dv.validate("#testForm1");
@@ -15,7 +15,7 @@ test("validate on blur", async ({ page }) => {
       return v.size() === expected;
     }
     function checkLabels(expected) {
-      return v.errors().filter(el => dv.helpers.isVisible(el)).length === expected;
+      return v.errors().filter(el => dvTestHelpers.isVisible(el)).length === expected;
     }
     function blur(target) {
       target.dispatchEvent(new Event("focusout", { bubbles: true }));

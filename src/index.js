@@ -81,13 +81,5 @@ export function addMethod(name, method, message) {
   }
 }
 
-export const helpers = {
-  isBlankElement,
-  elementValue,
-  hideElement,
-  showElement,
-  isVisible
-};
-
 export { store as messages } from "./messages.js";
 export { store as methods } from "./methods.js";

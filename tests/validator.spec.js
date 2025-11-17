@@ -1140,7 +1140,7 @@ test("ignore hidden elements", async ({ page }) => {
     const ret = [v.form()];
 
     const username = document.querySelector("#userForm [name=username]");
-    dv.helpers.hideElement(username);
+    dvTestHelpers.hideElement(username);
     ret.push(v.form());
 
     return ret;
@@ -1161,10 +1161,10 @@ test("ignore hidden elements at start", async ({ page }) => {
     const username = document.querySelector("#userForm [name=username]");
 
     form.reset();
-    dv.helpers.hideElement(username);
+    dvTestHelpers.hideElement(username);
     const ret = [v.form()];
 
-    dv.helpers.showElement(username);
+    dvTestHelpers.showElement(username);
     ret.push(v.form());
 
     return ret;

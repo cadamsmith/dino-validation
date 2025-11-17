@@ -18,8 +18,8 @@ async function runMethodTests(page, methodName, form, testData) {
       }
       else {
         element = document.querySelector(element);
-        blank = dv.helpers.isBlankElement(element);
-        value = dv.helpers.elementValue(element);
+        blank = dvTestHelpers.isBlankElement(element);
+        value = dvTestHelpers.elementValue(element);
       }
 
       checks.push(method.call(v, blank, value, element, param) === expected);

@@ -3,12 +3,21 @@ const jsBuilds = [
   {
     input: './src/index.js',
     output: {
-      file: 'dist/js/dino-validation.umd.js',
+      file: 'dist/js/dv.umd.js',
       format: 'umd',
       name: 'dv',
       sourcemap: true
-    },
-    external: ['jquery'],
+    }
+  },
+  // JS UMD: test helpers
+  {
+    input: './src/testHelpers.js',
+    output: {
+      file: 'tests/js/dv-test-helpers.umd.js',
+      format: 'umd',
+      name: 'dvTestHelpers',
+      sourcemap: true
+    }
   },
 ];
 
