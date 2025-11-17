@@ -17,7 +17,9 @@ const methods = {
   "dateISO": (blank, value, element, param) => dateISO(blank, value),
   "number": (blank, value, element, param) => number(blank, value),
   "digits": (blank, value, element, param) => digits(blank, value),
-  "equalTo": (blank, value, element, param) => equalTo(blank, value, element, param)
+  "equalTo": (blank, value, element, param) => equalTo(blank, value, element, param),
+  "regex": (blank, value, element, param) => regex(blank, value, element, param),
+  "nonalphamin": (blank, value, element, param) => nonAlphaMin(blank, value, element, param)
 };
 
 /**
@@ -199,4 +201,39 @@ function digits(blank, value) {
 function equalTo(blank, value, element, param) {
   const target = document.querySelector(param);
   return value === target.value;
+}
+
+/**
+ * Validates that the field value matches a regular expression.
+ * @param {boolean} blank - whether the field is blank
+ * @param {string} value - field value
+ * @param {HTMLElement} element - form element
+ * @param {string} param - regular expression pattern
+ * @return {boolean} - true if blank or value matches pattern
+ */
+function regex(blank, value, element, param) {
+  if (blank) {
+    return true;
+  }
+
+  const match = new RegExp(param).exec(value);
+  return match && (match.index === 0) && (match[0].length === value.length);
+}
+
+/**
+ * Validates that the field value contains at least a minimum number of non-alphanumeric characters.
+ * Used for password strength validation.
+ * @param {boolean} blank - whether the field is blank
+ * @param {string} value - field value
+ * @param {HTMLElement} element - form element
+ * @param {number} param - minimum number of non-alphanumeric characters required
+ * @return {boolean} - true if blank or value has enough non-alphanumeric characters
+ */
+function nonAlphaMin(blank, value, element, param) {
+  if (blank || !param) {
+    return true;
+  }
+
+  const match = value.match(/\W/g);
+  return match && match.length >= param;
 }
