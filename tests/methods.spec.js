@@ -327,3 +327,17 @@ test("equalTo", async ({ page }) => {
 
   results.forEach(r => expect(r).toBe(true));
 });
+
+test("creditcard", async ({ page }) => {
+  await page.goto("");
+
+  const results = await runMethodTests(page, "creditcard", "#form", [
+    { blank: false, value: "4111-1111-1111-1111", expected: true },
+    { blank: false, value: "4111 1111 1111 1111", expected: true },
+
+    { blank: false, value: "41111", expected: false },
+    { blank: false, value: "asdf", expected: false },
+  ]);
+
+  results.forEach(r => expect(r).toBe(true));
+});
