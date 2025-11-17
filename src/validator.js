@@ -31,6 +31,7 @@ export class Validator {
     ignore: ":hidden",
     errorClass: "error",
     validClass: "valid",
+    errorElement: "label",
     wrapper: null,
     errorLabelContainer: null,
     errorContainer: null,
@@ -320,7 +321,7 @@ export class Validator {
    */
   errors() {
     const errorClass = this.errorClasses.join(".");
-    return [...this.errorContext.querySelectorAll(`label.${errorClass}`)];
+    return [...this.errorContext.querySelectorAll(`${this.settings.errorElement}.${errorClass}`)];
   }
 
   showErrors() {
@@ -497,7 +498,7 @@ export class Validator {
     else {
       const elementID = idOrName(element);
 
-      const newError = document.createElement("label");
+      const newError = document.createElement(this.settings.errorElement);
       newError.setAttribute("id", `${elementID}-error`);
       newError.classList.add(...this.errorClasses);
       newError.innerHTML = message || "";
