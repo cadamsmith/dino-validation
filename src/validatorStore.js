@@ -1,1 +1,1 @@
-export const validatorStore = new Map();
+export const validatorStore = new WeakMap();
