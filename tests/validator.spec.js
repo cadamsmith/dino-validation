@@ -1126,3 +1126,67 @@ test("option: errorClass with multiple classes", async ({ page }) => {
 
   expect(result).toEqual([true, true, true, false, false, false]);
 });
+
+test("ignore hidden elements", async ({ page }) => {
+  await page.goto("");
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector("#userForm");
+    const v = dv.validate(form, {
+      rules: { "username": "required" }
+    });
+
+    form.reset();
+    const ret = [v.form()];
+
+    const username = document.querySelector("#userForm [name=username]");
+    dv.helpers.hideElement(username);
+    ret.push(v.form());
+
+    return ret;
+  });
+
+  expect(result).toEqual([false, true]);
+});
+
+test("ignore hidden elements at start", async ({ page }) => {
+  await page.goto("");
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector("#userForm");
+    const v = dv.validate(form, {
+      rules: { "username": "required" }
+    });
+
+    const username = document.querySelector("#userForm [name=username]");
+
+    form.reset();
+    dv.helpers.hideElement(username);
+    const ret = [v.form()];
+
+    dv.helpers.showElement(username);
+    ret.push(v.form());
+
+    return ret;
+  });
+
+  expect(result).toEqual([true, false]);
+});
+
+test("Specify error messages through data attributes", async ({ page }) => {
+  await page.goto("");
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector("#dataMessages");
+    const name = document.querySelector("#dataMessagesName");
+    dv.validate(form);
+
+    form.reset();
+    dv.valid(name);
+
+    const label = document.querySelector("#dataMessages .error:not(input)");
+    return label.innerText;
+  });
+
+  expect(result).toBe("You must enter a value here");
+});

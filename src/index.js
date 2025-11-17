@@ -8,6 +8,7 @@ import {
   hideElement,
   isBlankElement,
   isVisible,
+  showElement,
 } from './helpers.js';
 
 export function validate(selector, options) {
@@ -84,6 +85,7 @@ export const helpers = {
   isBlankElement,
   elementValue,
   hideElement,
+  showElement,
   isVisible
 };
 
