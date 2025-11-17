@@ -3,7 +3,12 @@ import { validatorStore } from './validatorStore.js';
 import { addClassRules, getRules, normalizeRule } from './rules.js';
 import { store as methodStore } from './methods.js';
 import { store as messageStore } from './messages.js';
-import { elementValue, isBlankElement } from './helpers.js';
+import {
+  elementValue,
+  hideElement,
+  isBlankElement,
+  isVisible,
+} from './helpers.js';
 
 export function validate(selector, options) {
   const element = selector instanceof HTMLElement
@@ -77,7 +82,9 @@ export function addMethod(name, method, message) {
 
 export const helpers = {
   isBlankElement,
-  elementValue
+  elementValue,
+  hideElement,
+  isVisible
 };
 
 export { store as messages } from "./messages.js";
