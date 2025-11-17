@@ -66,15 +66,47 @@ export function elementValue(element) {
     const checked = findByName(element.form, element.name).filter(el => el.matches(":checked"));
     return checked.map(el => el.value);
   }
-  else if (element.type === "number" && typeof element.validity !== "undefined") {
+  if (element.type === "number" && typeof element.validity !== "undefined") {
     return element.validity.badInput ? "NaN" : element.value;
   }
-
+  if (element.type === "file") {
+    return fileInputValue(element);
+  }
   if (typeof element.value === "string") {
     return element.value.replace(/\r/g, "");
   }
 
   return element.value;
+}
+
+/**
+ * Get the value of a file input element.
+ * @param element - file input element
+ * @return {string} - file path or file name
+ */
+export function fileInputValue(element) {
+  const value = element.value;
+
+  // Modern browser (chrome & safari)
+  if (value.substring(0, 12) === "C:\\fakepath\\") {
+    return value.substring(12);
+  }
+
+  // Legacy browsers
+  // Unix-based path
+  let idx = value.lastIndexOf("/");
+  if (idx >= 0) {
+    return value.substring(idx + 1);
+  }
+
+  // Windows-based path
+  idx = value.lastIndexOf("\\");
+  if (idx >= 0) {
+    return value.substring(idx + 1);
+  }
+
+  // Just the file name
+  return value;
 }
 
 /**
