@@ -221,3 +221,109 @@ test("required", async ({ page }) => {
 
   results.forEach(r => expect(r).toBe(true));
 });
+
+test("minlength", async ({ page }) => {
+  await page.goto("");
+
+  const results = await runMethodTests(page, "minlength", "#form", [
+    { element: "#text1", param: 2, expected: true },
+    { element: "#text1c", param: 2, expected: true },
+    { element: "#text3", param: 2, expected: true },
+    { element: "#check2", param: 2, expected: true },
+    { element: "#check3", param: 2, expected: true },
+    { element: "#select1", param: 2, expected: true },
+    { element: "#select3", param: 2, expected: true },
+    { element: "#select4", param: 2, expected: true },
+    { element: "#select5", param: 2, expected: true },
+
+    { element: "#text2", param: 2, expected: false },
+    { element: "#check1", param: 2, expected: false },
+    { element: "#select2", param: 2, expected: false },
+  ]);
+
+  results.forEach(r => expect(r).toBe(true));
+});
+
+test("maxlength", async ({ page }) => {
+  await page.goto("");
+
+  const results = await runMethodTests(page, "maxlength", "#form", [
+    { element: "#text1", param: 4, expected: true },
+    { element: "#text2", param: 4, expected: true },
+    { element: "#text2", param: 4, expected: true },
+    { element: "#check1", param: 4, expected: true },
+    { element: "#check2", param: 4, expected: true },
+    { element: "#select1", param: 4, expected: true },
+    { element: "#select2", param: 4, expected: true },
+    { element: "#select3", param: 4, expected: true },
+
+    { element: "#text3", param: 4, expected: false },
+    { element: "#check3", param: 4, expected: false },
+    { element: "#select4", param: 4, expected: false },
+  ]);
+
+  results.forEach(r => expect(r).toBe(true));
+});
+
+test("rangelength", async ({ page }) => {
+  await page.goto("");
+
+  const results = await runMethodTests(page, "rangelength", "#form", [
+    { element: "#text1", param: [2, 4], expected: true },
+
+    { element: "#text2", param: [2, 4], expected: false },
+    { element: "#text3", param: [2, 4], expected: false },
+  ]);
+
+  results.forEach(r => expect(r).toBe(true));
+});
+
+test("min", async ({ page }) => {
+  await page.goto("");
+
+  const results = await runMethodTests(page, "min", "#form", [
+    { element: "#value2", param: 8, expected: true },
+    { element: "#value3", param: 8, expected: true },
+
+    { element: "#value1", param: 8, expected: false },
+  ]);
+
+  results.forEach(r => expect(r).toBe(true));
+});
+
+test("max", async ({ page }) => {
+  await page.goto("");
+
+  const results = await runMethodTests(page, "max", "#form", [
+    { element: "#value1", param: 12, expected: true },
+    { element: "#value2", param: 12, expected: true },
+
+    { element: "#value3", param: 12, expected: false },
+  ]);
+
+  results.forEach(r => expect(r).toBe(true));
+});
+
+test("range", async ({ page }) => {
+  await page.goto("");
+
+  const results = await runMethodTests(page, "range", "#form", [
+    { element: "#value2", param: [4, 12], expected: true },
+
+    { element: "#value1", param: [4, 12], expected: false },
+    { element: "#value3", param: [4, 12], expected: false },
+  ]);
+
+  results.forEach(r => expect(r).toBe(true));
+});
+
+test("equalTo", async ({ page }) => {
+  await page.goto("");
+
+  const results = await runMethodTests(page, "equalTo", "#form", [
+    { blank: false, value: "Test", param: "#text1", expected: true },
+    { blank: false, value: "T", param: "#text2", expected: true },
+  ]);
+
+  results.forEach(r => expect(r).toBe(true));
+});
