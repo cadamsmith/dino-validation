@@ -5,22 +5,23 @@ import { getLength } from './helpers.js';
  * Each method receives (blank, value, element, param) and returns true if valid.
  */
 const methods = {
-  "required": (blank, value, element, param) => required(blank),
-  "minlength": (blank, value, element, param) => minLength(blank, value, element, param),
-  "maxlength": (blank, value, element, param) => maxLength(blank, value, element, param),
-  "rangelength": (blank, value, element, param) => rangeLength(blank, value, element, param),
-  "min": (blank, value, element, param) => min(blank, value, element, param),
-  "max": (blank, value, element, param) => max(blank, value, element, param),
-  "range": (blank, value, element, param) => range(blank, value, element, param),
-  "email": (blank, value, element, param) => email(blank, value),
-  "url": (blank, value, element, param) => url(blank, value),
-  "date": (blank, value, element, param) => date(blank, value),
-  "dateISO": (blank, value, element, param) => dateISO(blank, value),
-  "number": (blank, value, element, param) => number(blank, value),
-  "digits": (blank, value, element, param) => digits(blank, value),
-  "equalTo": (blank, value, element, param) => equalTo(blank, value, element, param),
-  "regex": (blank, value, element, param) => regex(blank, value, element, param),
-  "nonalphamin": (blank, value, element, param) => nonAlphaMin(blank, value, element, param)
+  "required": required,
+  "minlength": minLength,
+  "maxlength": maxLength,
+  "rangelength": rangeLength,
+  "min": min,
+  "max": max,
+  "range": range,
+  "email": email,
+  "url": url,
+  "date": date,
+  "dateISO": dateISO,
+  "number": number,
+  "digits": digits,
+  "equalTo": equalTo,
+  "regex": regex,
+  "nonalphamin": nonAlphaMin,
+  "creditcard": creditCard
 };
 
 /**
@@ -31,7 +32,7 @@ export const store = {
    * Returns all registered validation method names.
    * @return {string[]} - array of method names
    */
-  keys: function() {
+  keys: function () {
     return Object.keys(methods);
   },
   /**
@@ -39,7 +40,7 @@ export const store = {
    * @param {string} key - method name
    * @return {Function} - validation method function
    */
-  get: function(key) {
+  get: function (key) {
     return methods[key];
   },
   /**
@@ -47,9 +48,9 @@ export const store = {
    * @param {string} key - method name
    * @param {Function} value - validation method function
    */
-  set: function(key, value) {
+  set: function (key, value) {
     methods[key] = value;
-  }
+  },
 };
 
 /**
@@ -70,7 +71,9 @@ function required(blank) {
  * @return {boolean} - true if blank or length meets minimum
  */
 function minLength(blank, value, element, param) {
-  const length = Array.isArray(value) ? value.length : getLength(value, element);
+  const length = Array.isArray(value)
+    ? value.length
+    : getLength(value, element);
   return blank || length >= param;
 }
 
@@ -83,7 +86,9 @@ function minLength(blank, value, element, param) {
  * @return {boolean} - true if blank or length within maximum
  */
 function maxLength(blank, value, element, param) {
-  const length = Array.isArray(value) ? value.length : getLength(value, element);
+  const length = Array.isArray(value)
+    ? value.length
+    : getLength(value, element);
   return blank || length <= param;
 }
 
@@ -96,7 +101,9 @@ function maxLength(blank, value, element, param) {
  * @return {boolean} - true if blank or length within range
  */
 function rangeLength(blank, value, element, param) {
-  const length = Array.isArray(value) ? value.length : getLength(value, element);
+  const length = Array.isArray(value)
+    ? value.length
+    : getLength(value, element);
   return blank || (length >= param[0] && length <= param[1]);
 }
 
@@ -143,7 +150,8 @@ function range(blank, value, element, param) {
  * @return {boolean} - true if blank or valid email format
  */
 function email(blank, value) {
-  const re = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  const re =
+    /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
   return blank || re.test(value);
 }
 
@@ -154,7 +162,8 @@ function email(blank, value) {
  * @return {boolean} - true if blank or valid URL format
  */
 function url(blank, value) {
-  const re = /^(?:(?:https?|ftp):)?\/\/(?:(?:[^\]\[?\/<~#`!@$^&*()+=}|:";',>{ ]|%[0-9A-Fa-f]{2})+(?::(?:[^\]\[?\/<~#`!@$^&*()+=}|:";',>{ ]|%[0-9A-Fa-f]{2})*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[\/?#]\S*)?$/i;
+  const re =
+    /^(?:(?:https?|ftp):)?\/\/(?:(?:[^\]\[?\/<~#`!@$^&*()+=}|:";',>{ ]|%[0-9A-Fa-f]{2})+(?::(?:[^\]\[?\/<~#`!@$^&*()+=}|:";',>{ ]|%[0-9A-Fa-f]{2})*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[\/?#]\S*)?$/i;
   return blank || re.test(value);
 }
 
@@ -228,7 +237,7 @@ function regex(blank, value, element, param) {
   }
 
   const match = new RegExp(param).exec(value);
-  return match && (match.index === 0) && (match[0].length === value.length);
+  return match && match.index === 0 && match[0].length === value.length;
 }
 
 /**
@@ -247,4 +256,43 @@ function nonAlphaMin(blank, value, element, param) {
 
   const match = value.match(/\W/g);
   return match && match.length >= param;
+}
+
+/**
+ * Validates that the field value matches a credit card number.
+ * based on https://en.wikipedia.org/wiki/Luhn_algorithm
+ * @param {boolean} blank - whether the field is blank
+ * @param {string} value - field value
+ * @return {boolean} - true if blank or value is a valid credit card number
+ */
+function creditCard(blank, value) {
+  if (blank) {
+    return true;
+  }
+
+  let nCheck = 0;
+  let bEven = false;
+
+  value = value.replace(/\D/g, '');
+
+  // Basing min and max length on
+  // https://dev.ean.com/general-info/valid-card-types/
+  if (value.length < 13 || value.length > 19) {
+    return false;
+  }
+
+  for (let n = value.length - 1; n >= 0; n--) {
+    const cDigit = value.charAt(n);
+    let nDigit = parseInt(cDigit, 10);
+    if (bEven) {
+      if ((nDigit *= 2) > 9) {
+        nDigit -= 9;
+      }
+    }
+
+    nCheck += nDigit;
+    bEven = !bEven;
+  }
+
+  return nCheck % 10 === 0;
 }

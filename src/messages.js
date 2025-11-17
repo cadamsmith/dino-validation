@@ -25,6 +25,7 @@ const messages = {
   step: format('Please enter a multiple of {0}.'),
   regex: format('Please enter a value that matches the pattern {0}.'),
   nonalphamin: format('Please enter at least {0} non-alphabetic characters.'),
+  creditcard: "Please enter a valid credit card number.",
 };
 
 /**
