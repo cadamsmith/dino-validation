@@ -6,7 +6,6 @@ const jsBuilds = [
       file: 'dist/js/dv.umd.js',
       format: 'umd',
       name: 'dv',
-      exports: 'default',
       sourcemap: true
     }
   },
@@ -16,7 +15,6 @@ const jsBuilds = [
       file: 'dist/js/dv-auto.umd.js',
       format: 'umd',
       name: 'dv',
-      exports: 'default',
       sourcemap: true
     }
   },

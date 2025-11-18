@@ -1,5 +1,7 @@
 # 🦖 dino-validation
 
+[![CI](https://github.com/cadamsmith/dino-validation/actions/workflows/ci.yml/badge.svg)](https://github.com/cadamsmith/dino-validation/actions/workflows/ci.yml)
+
 A vanilla JavaScript form validation library - no jQuery required.
 
 > ⚠️ **Work in Progress** - This library is currently under active development and not yet ready for production use.
