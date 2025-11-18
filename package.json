@@ -15,7 +15,20 @@
     "dist"
   ],
   "type": "module",
-  "main": "dist/dino-validation.js",
+  "main": "dist/js/dv.umd.js",
+  "module": "dist/js/dv.esm.js",
+  "exports": {
+    ".": {
+      "import": "./dist/js/dv.esm.js",
+      "require": "./dist/js/dv.umd.js",
+      "default": "./dist/js/dv.esm.js"
+    },
+    "./auto": {
+      "import": "./dist/js/dv-auto.esm.js",
+      "require": "./dist/js/dv-auto.umd.js",
+      "default": "./dist/js/dv-auto.esm.js"
+    }
+  },
   "license": "MIT",
   "devDependencies": {
     "@playwright/test": "^1.56.1",
