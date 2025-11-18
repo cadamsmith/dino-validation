@@ -1,5 +1,5 @@
 const jsBuilds = [
-  // JS UMD: main
+  // DV: JS UMD
   {
     input: './src/index.js',
     output: {
@@ -9,7 +9,16 @@ const jsBuilds = [
       sourcemap: true
     }
   },
-  // JS UMD: test helpers
+  {
+    input: './src/auto/index.js',
+    output: {
+      file: 'dist/js/dv-auto.umd.js',
+      format: 'umd',
+      name: 'dv',
+      sourcemap: true
+    }
+  },
+  // Test Helpers: JS UMD (not dist)
   {
     input: './src/testHelpers.js',
     output: {
