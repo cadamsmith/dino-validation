@@ -1,10 +1,12 @@
 import adapters from './adapters.js';
 import { parseDocument, parseElement } from './parsers.js';
 
-class AutoValidator {
+class ValidationParser {
   constructor() {
     this.adapters = adapters;
+  }
 
+  run() {
     // Auto-parse on DOM ready
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
@@ -26,6 +28,7 @@ class AutoValidator {
 }
 
 // Create singleton instance
-const auto = new AutoValidator();
+const parser = new ValidationParser();
+parser.run();
 
-export default auto;
+export default parser;
