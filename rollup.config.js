@@ -3,7 +3,7 @@ const jsBuilds = [
   {
     input: './src/index.js',
     output: {
-      file: 'dist/js/dv.umd.js',
+      file: 'dist/dv.umd.js',
       format: 'umd',
       name: 'dv',
       sourcemap: true,
@@ -13,7 +13,7 @@ const jsBuilds = [
   {
     input: './src/index.js',
     output: {
-      file: 'dist/js/dv.esm.js',
+      file: 'dist/dv.esm.js',
       format: 'esm',
       sourcemap: true,
     },
@@ -22,7 +22,7 @@ const jsBuilds = [
   {
     input: './src/auto/index.js',
     output: {
-      file: 'dist/js/dv-auto.umd.js',
+      file: 'dist/dv-auto.umd.js',
       format: 'umd',
       name: 'dv',
       sourcemap: true,
@@ -32,7 +32,7 @@ const jsBuilds = [
   {
     input: './src/auto/index.js',
     output: {
-      file: 'dist/js/dv-auto.esm.js',
+      file: 'dist/dv-auto.esm.js',
       format: 'esm',
       sourcemap: true,
     },

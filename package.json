@@ -15,18 +15,18 @@
     "dist"
   ],
   "type": "module",
-  "main": "dist/js/dv.umd.js",
-  "module": "dist/js/dv.esm.js",
+  "main": "dist/dv.umd.js",
+  "module": "dist/dv.esm.js",
   "exports": {
     ".": {
-      "import": "./dist/js/dv.esm.js",
-      "require": "./dist/js/dv.umd.js",
-      "default": "./dist/js/dv.esm.js"
+      "import": "./dist/dv.esm.js",
+      "require": "./dist/dv.umd.js",
+      "default": "./dist/dv.esm.js"
     },
     "./auto": {
-      "import": "./dist/js/dv-auto.esm.js",
-      "require": "./dist/js/dv-auto.umd.js",
-      "default": "./dist/js/dv-auto.esm.js"
+      "import": "./dist/dv-auto.esm.js",
+      "require": "./dist/dv-auto.umd.js",
+      "default": "./dist/dv-auto.esm.js"
     }
   },
   "license": "MIT",
