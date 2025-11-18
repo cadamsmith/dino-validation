@@ -1,9 +1,30 @@
+/**
+ * @fileoverview Core validation library for client-side form validation.
+ * Provides programmatic API for validating forms and form elements.
+ */
+
 import { Validator } from './validator.js';
 import { validatorStore } from './validatorStore.js';
 import { addClassRules, getRules, normalizeRule } from './rules.js';
 import { store as methods } from './methods.js';
 import { store as messages } from './messages.js';
 
+/**
+ * Creates or retrieves a validator for a form or form element.
+ * If a validator already exists for the element, returns the existing validator.
+ * 
+ * @param {string|HTMLElement} selector - CSS selector string or HTMLElement to validate
+ * @param {Object} [options] - Validation options including rules, messages, and callbacks
+ * @returns {Validator|undefined} Validator instance or undefined if element not found
+ * @example
+ * // Validate a form with rules
+ * dv.validate('#myForm', {
+ *   rules: {
+ *     email: { required: true, email: true },
+ *     password: { required: true, minlength: 8 }
+ *   }
+ * });
+ */
 export function validate(selector, options) {
   const element = selector instanceof HTMLElement
     ? selector
@@ -23,6 +44,24 @@ export function validate(selector, options) {
   return validator;
 }
 
+/**
+ * Validates form or form elements and returns whether they are valid.
+ * Triggers validation and returns the result without submitting the form.
+ * 
+ * @param {string|HTMLElement|HTMLElement[]} selector - Element(s) to validate:
+ * CSS selector, element, or array of elements
+ * @returns {boolean} True if all elements are valid, false otherwise
+ * @example
+ * // Check if form is valid
+ * if (dv.valid('#myForm')) {
+ *   console.log('Form is valid!');
+ * }
+ * 
+ * // Check specific fields
+ * if (dv.valid(['#email', '#password'])) {
+ *   console.log('Email and password are valid!');
+ * }
+ */
 export function valid(selector) {
   let elements = [];
   if (typeof selector === 'string') {
@@ -54,6 +93,16 @@ export function valid(selector) {
   return valid;
 }
 
+/**
+ * Gets the validation rules for an element.
+ * 
+ * @param {string|HTMLElement} selector - CSS selector string or HTMLElement
+ * @returns {Object} Object containing validation rules for the element
+ * @example
+ * // Get rules for an input
+ * const emailRules = dv.rules('#email');
+ * console.log(emailRules); // { required: true, email: true }
+ */
 export function rules(selector) {
   const element = selector instanceof HTMLElement
     ? selector
@@ -62,6 +111,26 @@ export function rules(selector) {
   return getRules(element);
 }
 
+/**
+ * Adds a custom validation method.
+ * The method can be used in validation rules by its name.
+ * 
+ * @param {string} name - Name of the validation method
+ * @param {Function} method - Validation function that returns true if valid
+ * @param {string} [message] - Default error message for this validation method
+ * @example
+ * // Add a custom phone validation method
+ * dv.addMethod('phone', function(blank, value, element) {
+ *   return blank || /^\d{3}-\d{3}-\d{4}$/.test(value);
+ * }, 'Please enter a valid phone number (xxx-xxx-xxxx)');
+ * 
+ * // Use in validation rules
+ * dv.validate('#myForm', {
+ *   rules: {
+ *     phoneNumber: { phone: true }
+ *   }
+ * });
+ */
 export function addMethod(name, method, message) {
   methods.set(name, method);
   if (message) {
@@ -73,8 +142,22 @@ export function addMethod(name, method, message) {
   }
 }
 
-export { messages, methods };
+/**
+ * Map of validation error messages.
+ * @type {Map<string, string>}
+ */
+export { messages };
 
+/**
+ * Map of validation methods.
+ * @type {Map<string, Function>}
+ */
+export { methods };
+
+/**
+ * Default export containing all validation functions and stores.
+ * @namespace
+ */
 export default {
   validate,
   valid,
