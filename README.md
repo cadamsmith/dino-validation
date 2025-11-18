@@ -26,6 +26,21 @@ dv.validate('#myForm', { rules: { email: { required: true } } });
 <!-- Automatically validates on page load -->
 ```
 
+## Browser Support
+
+This library supports all modern evergreen browsers. It requires ES6+ support (browsers from 2017+).
+
+**Desktop:**
+- Chrome/Edge (last 2 versions)
+- Firefox (last 2 versions)
+- Safari (last 2 versions)
+
+**Mobile:**
+- Safari iOS (last 2 versions)
+- Chrome Android (last 2 versions)
+
+Browsers tested in CI using Playwright to ensure cross-browser compatibility.
+
 ### Local Setup
 
 ```bash
