@@ -13,12 +13,15 @@ export function getRules(element) {
     return;
   }
 
-  let data = normalizeRules({
-    ...classRules(element),
-    ...attributeRules(element),
-    ...dataRules(element),
-    ...staticRules(element)
-  }, element);
+  let data = normalizeRules(
+    {
+      ...classRules(element),
+      ...attributeRules(element),
+      ...dataRules(element),
+      ...staticRules(element),
+    },
+    element,
+  );
 
   // Make sure required is at front
   if (data.required) {
@@ -42,7 +45,7 @@ let classRuleSettings = {
   dateISO: { dateISO: true },
   number: { number: true },
   digits: { digits: true },
-  creditcard: { creditcard: true }
+  creditcard: { creditcard: true },
 };
 
 /**
@@ -53,8 +56,7 @@ let classRuleSettings = {
 export function addClassRules(className, rules) {
   if (className.constructor === String) {
     classRuleSettings[className] = rules;
-  }
-  else {
+  } else {
     classRuleSettings = { ...classRuleSettings, ...className };
   }
 }
@@ -81,22 +83,21 @@ function normalizeRules(rules, element) {
 
   // Evaluate parameters
   Object.entries(rules).forEach(([key, value]) => {
-    rules[key] = typeof value === "function" ? value(element) : value;
+    rules[key] = typeof value === 'function' ? value(element) : value;
   });
 
   // Clean number parameters
-  ["minlength", "maxlength"].forEach(ruleKey => {
+  ['minlength', 'maxlength'].forEach((ruleKey) => {
     if (rules[ruleKey]) {
       rules[ruleKey] = Number(rules[ruleKey]);
     }
   });
-  ["rangelength", "range"].forEach(ruleKey => {
+  ['rangelength', 'range'].forEach((ruleKey) => {
     if (rules[ruleKey]) {
       if (Array.isArray(rules[ruleKey])) {
         rules[ruleKey] = [rules[ruleKey][0], rules[ruleKey][1]].map(Number);
-      }
-      else {
-        const parts = rules[ruleKey].replace(/[\[\]]/g, "").split(/[\s,]+/);
+      } else {
+        const parts = rules[ruleKey].replace(/[\[\]]/g, '').split(/[\s,]+/);
         rules[ruleKey] = [parts[0], parts[1]].map(Number);
       }
     }
@@ -112,10 +113,10 @@ function normalizeRules(rules, element) {
  */
 function classRules(element) {
   let rules = {};
-  const classes = element.getAttribute("class");
+  const classes = element.getAttribute('class');
 
   if (classes) {
-    classes.split(" ").forEach(className => {
+    classes.split(' ').forEach((className) => {
       if (className in classRuleSettings) {
         rules = { ...rules, ...classRuleSettings[className] };
       }
@@ -132,16 +133,16 @@ function classRules(element) {
  */
 function attributeRules(element) {
   const rules = {};
-  const type = element.getAttribute("type");
+  const type = element.getAttribute('type');
 
   for (const method of methodStore.keys()) {
     let value = element.getAttribute(method);
 
     // Support for <input required> in both html5 and older browsers
-    if (method === "required") {
+    if (method === 'required') {
       // Some browsers return an empty string for the required attribute
       // and non-HTML5 browsers might have required="" markup
-      if (value === "") {
+      if (value === '') {
         value = true;
       }
 
@@ -167,17 +168,19 @@ function attributeRules(element) {
  */
 function dataRules(element) {
   const rules = {};
-  const type = element.getAttribute("type");
+  const type = element.getAttribute('type');
 
   for (const method of methodStore.keys()) {
-    const datasetKey = "rule" + method.charAt(0).toUpperCase() + method.substring(1).toLowerCase()
+    const datasetKey =
+      'rule' +
+      method.charAt(0).toUpperCase() +
+      method.substring(1).toLowerCase();
     let value = element.dataset[datasetKey];
 
     // Cast empty attributes like `data-rule-required` to `true`
-    if (value === "" || value === "true") {
+    if (value === '' || value === 'true') {
       value = true;
-    }
-    else if (value === "false") {
+    } else if (value === 'false') {
       value = false;
     }
 
@@ -214,16 +217,20 @@ export function staticRules(element) {
 function normalizeAttributeRule(rules, type, method, value) {
   // Convert the value to a number for number inputs, and for text for backwards compability
   // allows type="date" and others to be compared as strings
-  if (/min|max|step/.test(method) && (type === null || /number|range|text/.test(type)) && value !== null) {
+  if (
+    /min|max|step/.test(method) &&
+    (type === null || /number|range|text/.test(type)) &&
+    value !== null
+  ) {
     value = Number(value);
   }
 
   if (value || value === 0) {
     rules[method] = value;
-  } else if (type === method && type !== "range") {
+  } else if (type === method && type !== 'range') {
     // Exception: the jquery validate 'range' method
     // does not test for the html5 'range' type
-    rules[type === "date" ? "dateISO" : method] = true;
+    rules[type === 'date' ? 'dateISO' : method] = true;
   }
 }
 
@@ -234,12 +241,12 @@ function normalizeAttributeRule(rules, type, method, value) {
  * @return {Object} - normalized rule object
  */
 export function normalizeRule(data) {
-  if (typeof data !== "string") {
+  if (typeof data !== 'string') {
     return data;
   }
 
   const transformed = {};
-  data.split(/\s/).forEach(token => {
+  data.split(/\s/).forEach((token) => {
     transformed[token] = true;
   });
 

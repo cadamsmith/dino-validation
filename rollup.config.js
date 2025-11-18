@@ -6,8 +6,8 @@ const jsBuilds = [
       file: 'dist/js/dv.umd.js',
       format: 'umd',
       name: 'dv',
-      sourcemap: true
-    }
+      sourcemap: true,
+    },
   },
   {
     input: './src/auto/index.js',
@@ -15,8 +15,8 @@ const jsBuilds = [
       file: 'dist/js/dv-auto.umd.js',
       format: 'umd',
       name: 'dv',
-      sourcemap: true
-    }
+      sourcemap: true,
+    },
   },
   // Test Helpers: JS UMD (not dist)
   {
@@ -25,8 +25,8 @@ const jsBuilds = [
       file: 'tests/js/dv-test-helpers.umd.js',
       format: 'umd',
       name: 'dvTestHelpers',
-      sourcemap: true
-    }
+      sourcemap: true,
+    },
   },
 ];
 

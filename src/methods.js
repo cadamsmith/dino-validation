@@ -5,23 +5,23 @@ import { getLength } from './helpers.js';
  * Each method receives (blank, value, element, param) and returns true if valid.
  */
 const methods = {
-  "required": required,
-  "minlength": minLength,
-  "maxlength": maxLength,
-  "rangelength": rangeLength,
-  "min": min,
-  "max": max,
-  "range": range,
-  "email": email,
-  "url": url,
-  "date": date,
-  "dateISO": dateISO,
-  "number": number,
-  "digits": digits,
-  "equalTo": equalTo,
-  "regex": regex,
-  "nonalphamin": nonAlphaMin,
-  "creditcard": creditCard
+  required: required,
+  minlength: minLength,
+  maxlength: maxLength,
+  rangelength: rangeLength,
+  min: min,
+  max: max,
+  range: range,
+  email: email,
+  url: url,
+  date: date,
+  dateISO: dateISO,
+  number: number,
+  digits: digits,
+  equalTo: equalTo,
+  regex: regex,
+  nonalphamin: nonAlphaMin,
+  creditcard: creditCard,
 };
 
 /**

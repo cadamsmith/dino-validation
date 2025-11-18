@@ -1,12 +1,12 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 
-test("rules() - internal - input", async ({ page }) => {
-  await page.goto("");
+test('rules() - internal - input', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    const element = document.querySelector("#firstname");
-    dv.validate("#testForm1");
+    const element = document.querySelector('#firstname');
+    dv.validate('#testForm1');
 
     return dv.rules(element);
   });
@@ -14,15 +14,15 @@ test("rules() - internal - input", async ({ page }) => {
   expect(result).toEqual({ required: true, minlength: 2 });
 });
 
-test("rules(), ignore method:false", async ({ page }) => {
-  await page.goto("");
+test('rules(), ignore method:false', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    const element = document.querySelector("#firstnamec");
-    dv.validate("#testForm1clean", {
+    const element = document.querySelector('#firstnamec');
+    dv.validate('#testForm1clean', {
       rules: {
-        firstnamec: { required: false, minlength: 2 }
-      }
+        firstnamec: { required: false, minlength: 2 },
+      },
     });
 
     return dv.rules(element);
@@ -31,24 +31,24 @@ test("rules(), ignore method:false", async ({ page }) => {
   expect(result).toEqual({ minlength: 2 });
 });
 
-test("rules() HTML5 required (no value)", async ({ page }) => {
-  await page.goto("");
+test('rules() HTML5 required (no value)', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    const element = document.querySelector("#testForm11text1");
-    dv.validate("#testForm11");
+    const element = document.querySelector('#testForm11text1');
+    dv.validate('#testForm11');
     return dv.rules(element);
   });
 
   expect(result).toEqual({ required: true });
 });
 
-test("rules() - internal - select", async ({ page }) => {
-  await page.goto("");
+test('rules() - internal - select', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    const element = document.querySelector("#meal");
-    dv.validate("#testForm3");
+    const element = document.querySelector('#meal');
+    dv.validate('#testForm3');
 
     return dv.rules(element);
   });
@@ -56,16 +56,16 @@ test("rules() - internal - select", async ({ page }) => {
   expect(result).toEqual({ required: true });
 });
 
-test("rules() - external", async ({ page }) => {
-  await page.goto("");
+test('rules() - external', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    const element = document.querySelector("#text1");
+    const element = document.querySelector('#text1');
 
-    dv.validate("#form", {
+    dv.validate('#form', {
       rules: {
-        action: { date: true, min: 5 }
-      }
+        action: { date: true, min: 5 },
+      },
     });
 
     return dv.rules(element);
@@ -74,20 +74,20 @@ test("rules() - external", async ({ page }) => {
   expect(result).toEqual({ date: true, min: 5 });
 });
 
-test("rules() - external - complete form", async ({ page }) => {
-  await page.goto("");
+test('rules() - external - complete form', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
     let executed = false;
-    dv.addMethod("verifyTest", function() {
+    dv.addMethod('verifyTest', function () {
       executed = true;
       return true;
     });
 
-    const v = dv.validate("#form", {
+    const v = dv.validate('#form', {
       rules: {
-        action: { verifyTest: true }
-      }
+        action: { verifyTest: true },
+      },
     });
     v.form();
 
@@ -97,15 +97,15 @@ test("rules() - external - complete form", async ({ page }) => {
   expect(result).toBe(true);
 });
 
-test("rules() - internal - input (2)", async ({ page }) => {
-  await page.goto("");
+test('rules() - internal - input (2)', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    const element = document.querySelector("#form8input");
-    dv.validate("#testForm8");
+    const element = document.querySelector('#form8input');
+    dv.validate('#testForm8');
 
     return dv.rules(element);
   });
 
-  expect(result).toEqual({ required: true, number: true, rangelength: [ 2, 8 ] });
+  expect(result).toEqual({ required: true, number: true, rangelength: [2, 8] });
 });

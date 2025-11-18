@@ -16,35 +16,35 @@ export function validationInfo(form) {
   }
 
   const options = {
-    errorClass: "input-validation-error",
-    errorElement: "span",
+    errorClass: 'input-validation-error',
+    errorElement: 'span',
     messages: {},
     rules: {},
-    errorPlacement: function(error, element) {
+    errorPlacement: function (error, element) {
       onError.call(form, error, element);
     },
-    invalidHandler: function(event, validator) {
+    invalidHandler: function (event, validator) {
       onErrors.call(form, event, validator);
     },
-    success: function(error) {
+    success: function (error) {
       onSuccess.call(form, error);
-    }
+    },
   };
 
   const onResetProxy = onReset.bind(form);
 
   const info = {
     options,
-    attachValidation: function() {
-      form.removeEventListener("reset", onResetProxy);
-      form.addEventListener("reset", onResetProxy);
+    attachValidation: function () {
+      form.removeEventListener('reset', onResetProxy);
+      form.addEventListener('reset', onResetProxy);
 
       dv.validate(form, this.options);
     },
-    validate: function() {
+    validate: function () {
       dv.validate(form);
       return dv.valid(form);
-    }
+    },
   };
 
   validationInfoStore.set(form, info);

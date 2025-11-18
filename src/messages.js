@@ -25,7 +25,7 @@ const messages = {
   step: format('Please enter a multiple of {0}.'),
   regex: format('Please enter a value that matches the pattern {0}.'),
   nonalphamin: format('Please enter at least {0} non-alphabetic characters.'),
-  creditcard: "Please enter a valid credit card number.",
+  creditcard: 'Please enter a valid credit card number.',
 };
 
 /**
@@ -36,7 +36,7 @@ export const store = {
    * Returns all registered message keys.
    * @return {string[]} - array of message keys
    */
-  keys: function() {
+  keys: function () {
     return Object.keys(messages);
   },
   /**
@@ -44,7 +44,7 @@ export const store = {
    * @param {string} key - validation method name
    * @return {string|Function} - error message string or function
    */
-  get: function(key) {
+  get: function (key) {
     return messages[key];
   },
   /**
@@ -52,9 +52,9 @@ export const store = {
    * @param {string} key - validation method name
    * @param {string|Function} value - error message string or function
    */
-  set: function(key, value) {
+  set: function (key, value) {
     messages[key] = value;
-  }
+  },
 };
 
 /**
@@ -66,7 +66,7 @@ export const store = {
  * @return {string} - formatted error message
  */
 export function getMessage(element, rule, settings) {
-  if (typeof rule === "string") {
+  if (typeof rule === 'string') {
     rule = { method: rule };
   }
 
@@ -75,16 +75,15 @@ export function getMessage(element, rule, settings) {
     customDataMessage(element, rule.method),
     element.title || undefined,
     store.get(rule.method),
-    `<strong>Warning: No message defined for ${element.name}</strong>`
+    `<strong>Warning: No message defined for ${element.name}</strong>`,
   );
 
   const regex = /\$?\{(\d+)}/g;
 
-  if (typeof message === "function") {
+  if (typeof message === 'function') {
     message = message(rule.parameters, element);
-  }
-  else if (regex.test(message)) {
-    message = format(message.replace(regex, "{$1}"), rule.parameters);
+  } else if (regex.test(message)) {
+    message = format(message.replace(regex, '{$1}'), rule.parameters);
   }
 
   return message;
@@ -110,7 +109,8 @@ function customMessage(name, method, settings) {
  * @return {string|undefined} - custom message from data attribute if present
  */
 function customDataMessage(element, method) {
-  const dataSetKey = "msg" + method.charAt(0).toUpperCase() + method.substring(1).toLowerCase();
+  const dataSetKey =
+    'msg' + method.charAt(0).toUpperCase() + method.substring(1).toLowerCase();
 
-  return element.dataset[dataSetKey] || element.dataset["msg"];
+  return element.dataset[dataSetKey] || element.dataset['msg'];
 }

@@ -30,10 +30,10 @@ export class Validator {
   containers = [];
 
   settings = {
-    ignore: ":hidden",
-    errorClass: "error",
-    validClass: "valid",
-    errorElement: "label",
+    ignore: ':hidden',
+    errorClass: 'error',
+    validClass: 'valid',
+    errorElement: 'label',
     wrapper: null,
     errorLabelContainer: null,
     errorContainer: null,
@@ -48,7 +48,7 @@ export class Validator {
     success: null,
     focusCleanup: false,
     rules: {},
-    messages: {}
+    messages: {},
   };
 
   /**
@@ -59,7 +59,7 @@ export class Validator {
     onFocusOut: null,
     onKeyUp: null,
     onClick: null,
-    onInvalidForm: null
+    onInvalidForm: null,
   };
 
   /**
@@ -69,10 +69,10 @@ export class Validator {
    */
   constructor(form, options) {
     this.currentForm = form;
-    this.settings = { ...this.settings, ...options};
+    this.settings = { ...this.settings, ...options };
 
     this.normalizeSettings();
-    
+
     this.init();
   }
 
@@ -82,22 +82,34 @@ export class Validator {
    */
   normalizeSettings() {
     // bind function settings to this validator instance\
-    ["onfocusin", "onfocusout", "onkeyup", "onclick", "highlight", "unhighlight", "errorPlacement", "invalidHandler"]
-      .forEach(key => {
-        if (this.settings[key]) {
-          this.settings[key] = this.settings[key].bind(this);
-        }
-      });
+    [
+      'onfocusin',
+      'onfocusout',
+      'onkeyup',
+      'onclick',
+      'highlight',
+      'unhighlight',
+      'errorPlacement',
+      'invalidHandler',
+    ].forEach((key) => {
+      if (this.settings[key]) {
+        this.settings[key] = this.settings[key].bind(this);
+      }
+    });
   }
 
   /**
    * Sets up DOM references and attaches event handlers to the form.
    */
   init() {
-    this.labelContainer = document.querySelector(this.settings.errorLabelContainer);
+    this.labelContainer = document.querySelector(
+      this.settings.errorLabelContainer,
+    );
     this.errorContext = this.labelContainer || this.currentForm;
-    this.containers = [document.querySelector(this.settings.errorContainer), this.labelContainer]
-      .filter(el => el !== null);
+    this.containers = [
+      document.querySelector(this.settings.errorContainer),
+      this.labelContainer,
+    ].filter((el) => el !== null);
 
     this.attachEventHandlers();
   }
@@ -107,19 +119,42 @@ export class Validator {
    */
   attachEventHandlers() {
     const focusTargets = [
-      "[type='text']", "[type='password']", "[type='file']", "select", "textarea", "[type='number']",
-      "[type='search']", "[type='tel']", "[type='url']", "[type='email']", "[type='datetime']",
-      "[type='date']", "[type='month']", "[type='week']", "[type='time']", "[type='datetime-local']",
-      "[type='range']", "[type='color']", "[type='radio']", "[type='checkbox']", "button", "input[type='button']"
+      "[type='text']",
+      "[type='password']",
+      "[type='file']",
+      'select',
+      'textarea',
+      "[type='number']",
+      "[type='search']",
+      "[type='tel']",
+      "[type='url']",
+      "[type='email']",
+      "[type='datetime']",
+      "[type='date']",
+      "[type='month']",
+      "[type='week']",
+      "[type='time']",
+      "[type='datetime-local']",
+      "[type='range']",
+      "[type='color']",
+      "[type='radio']",
+      "[type='checkbox']",
+      'button',
+      "input[type='button']",
     ];
 
-    const clickTargets = ["select", "option", "[type='radio']", "[type='checkbox']"];
+    const clickTargets = [
+      'select',
+      'option',
+      "[type='radio']",
+      "[type='checkbox']",
+    ];
 
     const delegate = (event, targets, handler) => {
       const element = event.target;
 
       // Ignore the element if it doesn't match one of the targets
-      if (!element.matches(targets.join(", "))) {
+      if (!element.matches(targets.join(', '))) {
         return;
       }
 
@@ -136,19 +171,32 @@ export class Validator {
       return handler(element, event);
     };
 
-    this.boundEventHandlers.onFocusIn = (e) => delegate(e, focusTargets, this.settings.onfocusin);
-    this.boundEventHandlers.onFocusOut = (e) => delegate(e, focusTargets, this.settings.onfocusout);
-    this.boundEventHandlers.onKeyUp = (e) => delegate(e, focusTargets, this.settings.onkeyup);
-    this.boundEventHandlers.onClick = (e) => delegate(e, clickTargets, this.settings.onclick);
+    this.boundEventHandlers.onFocusIn = (e) =>
+      delegate(e, focusTargets, this.settings.onfocusin);
+    this.boundEventHandlers.onFocusOut = (e) =>
+      delegate(e, focusTargets, this.settings.onfocusout);
+    this.boundEventHandlers.onKeyUp = (e) =>
+      delegate(e, focusTargets, this.settings.onkeyup);
+    this.boundEventHandlers.onClick = (e) =>
+      delegate(e, clickTargets, this.settings.onclick);
     this.boundEventHandlers.onInvalidForm = this.settings.invalidHandler;
 
-    this.currentForm.addEventListener("focusin", this.boundEventHandlers.onFocusIn);
-    this.currentForm.addEventListener("focusout", this.boundEventHandlers.onFocusOut);
-    this.currentForm.addEventListener("keyup", this.boundEventHandlers.onKeyUp);
-    this.currentForm.addEventListener("click", this.boundEventHandlers.onClick);
+    this.currentForm.addEventListener(
+      'focusin',
+      this.boundEventHandlers.onFocusIn,
+    );
+    this.currentForm.addEventListener(
+      'focusout',
+      this.boundEventHandlers.onFocusOut,
+    );
+    this.currentForm.addEventListener('keyup', this.boundEventHandlers.onKeyUp);
+    this.currentForm.addEventListener('click', this.boundEventHandlers.onClick);
 
     if (this.settings.invalidHandler) {
-      this.currentForm.addEventListener("invalid-form", this.boundEventHandlers.onInvalidForm);
+      this.currentForm.addEventListener(
+        'invalid-form',
+        this.boundEventHandlers.onInvalidForm,
+      );
     }
   }
 
@@ -178,10 +226,12 @@ export class Validator {
     this.submitted = { ...this.submitted, ...this.errorMap };
     this.invalid = { ...this.errorMap };
     if (!this.valid() && this.settings.invalidHandler) {
-      this.currentForm.dispatchEvent(new CustomEvent("invalid-form", {
-        detail: this,
-        bubbles: false
-      }));
+      this.currentForm.dispatchEvent(
+        new CustomEvent('invalid-form', {
+          detail: this,
+          bubbles: false,
+        }),
+      );
     }
     this.showErrors();
     return this.valid();
@@ -211,7 +261,7 @@ export class Validator {
     this.showErrors();
 
     // add aria-invalid status for screen readers
-    element.setAttribute("aria-invalid", !result);
+    element.setAttribute('aria-invalid', !result);
 
     return result;
   }
@@ -244,17 +294,18 @@ export class Validator {
   elements() {
     const rulesCache = {};
 
-    const selector = "input, select, textarea";
-    const notSelector = 'input[type="submit"], [type="reset"], [type="image"], [disabled]';
+    const selector = 'input, select, textarea';
+    const notSelector =
+      'input[type="submit"], [type="reset"], [type="image"], [disabled]';
 
     return [...this.currentForm.querySelectorAll(selector)]
-      .filter(el => !el.matches(notSelector) && !this.shouldIgnore(el))
-      .filter(el => {
+      .filter((el) => !el.matches(notSelector) && !this.shouldIgnore(el))
+      .filter((el) => {
         if (el.form !== this.currentForm) {
           return false;
         }
 
-        const name = el.name || el.getAttribute("name");
+        const name = el.name || el.getAttribute('name');
         if (name in rulesCache || !objectLength(getRules(el))) {
           return false;
         }
@@ -270,7 +321,7 @@ export class Validator {
    */
   validElements() {
     const invalid = this.invalidElements();
-    return this.currentElements.filter(el => !invalid.includes(el));
+    return this.currentElements.filter((el) => !invalid.includes(el));
   }
 
   /**
@@ -278,7 +329,7 @@ export class Validator {
    * @return {NodeList} - list of invalid form elements
    */
   invalidElements() {
-    return this.errorList.map(e => e.element);
+    return this.errorList.map((e) => e.element);
   }
 
   /**
@@ -309,8 +360,7 @@ export class Validator {
           this.formatAndAdd(element, rule);
           return false;
         }
-      }
-      catch (e) {
+      } catch (e) {
         throw e;
       }
     }
@@ -326,14 +376,22 @@ export class Validator {
    * @return {HTMLElement[]} - array of error label elements
    */
   errors() {
-    const errorClass = this.errorClasses.join(".");
-    return [...this.errorContext.querySelectorAll(`${this.settings.errorElement}.${errorClass}`)];
+    const errorClass = this.errorClasses.join('.');
+    return [
+      ...this.errorContext.querySelectorAll(
+        `${this.settings.errorElement}.${errorClass}`,
+      ),
+    ];
   }
 
   showErrors() {
     for (const error of this.errorList) {
       if (this.settings.highlight) {
-        this.settings.highlight(error.element, this.errorClasses, this.validClasses);
+        this.settings.highlight(
+          error.element,
+          this.errorClasses,
+          this.validClasses,
+        );
       }
       this.showLabel(error.element, error.message);
     }
@@ -350,11 +408,15 @@ export class Validator {
 
     if (this.settings.unhighlight) {
       for (const element of this.validElements()) {
-        this.settings.unhighlight(element, this.errorClasses, this.validClasses);
+        this.settings.unhighlight(
+          element,
+          this.errorClasses,
+          this.validClasses,
+        );
       }
     }
 
-    this.toHide = this.toHide.filter(el => !this.toShow.includes(el));
+    this.toHide = this.toHide.filter((el) => !this.toShow.includes(el));
     this.hideErrors();
     this.addWrapper(this.toShow).forEach(showElement);
   }
@@ -374,11 +436,11 @@ export class Validator {
 
   highlight(element, errorClasses, validClasses) {
     let targets = [element];
-    if (element.type === "radio") {
+    if (element.type === 'radio') {
       targets = findByName(element.form, element.name);
     }
 
-    targets.forEach(el => {
+    targets.forEach((el) => {
       el.classList.add(...errorClasses);
       el.classList.remove(...validClasses);
     });
@@ -386,11 +448,11 @@ export class Validator {
 
   unhighlight(element, errorClasses, validClasses) {
     let targets = [element];
-    if (element.type === "radio") {
+    if (element.type === 'radio') {
       targets = findByName(element.form, element.name);
     }
 
-    targets.forEach(el => {
+    targets.forEach((el) => {
       el.classList.remove(...errorClasses);
       el.classList.add(...validClasses);
     });
@@ -399,7 +461,11 @@ export class Validator {
   onFocusIn(element) {
     if (this.settings.focusCleanup) {
       if (this.settings.unhighlight) {
-        this.settings.unhighlight(element, this.errorClasses, this.validClasses);
+        this.settings.unhighlight(
+          element,
+          this.errorClasses,
+          this.validClasses,
+        );
       }
       this.hideErrors(element);
     }
@@ -417,7 +483,7 @@ export class Validator {
   }
 
   onKeyUp(element, event) {
-    if (event.which === 9 && elementValue(element) === "") {
+    if (event.which === 9 && elementValue(element) === '') {
       return;
     }
 
@@ -435,10 +501,7 @@ export class Validator {
     // Insert      => 45
     // Num lock    => 144
     // AltGr key   => 225
-    const excludedKeys = [
-      16, 17, 18, 20, 35, 36, 37,
-      38, 39, 40, 45, 144, 225
-    ];
+    const excludedKeys = [16, 17, 18, 20, 35, 36, 37, 38, 39, 40, 45, 144, 225];
     if (excludedKeys.includes(event.keyCode)) {
       return;
     }
@@ -456,7 +519,7 @@ export class Validator {
       this.element(element);
     }
     // Or option elements, check parent select in that case
-    else if ( element.parentNode.name in this.submitted ) {
+    else if (element.parentNode.name in this.submitted) {
       this.element(element.parentNode);
     }
   }
@@ -469,10 +532,10 @@ export class Validator {
     }
 
     for (const el of targets) {
-      el.innerText = "";
+      el.innerText = '';
 
       if (!this.containers.includes(el)) {
-        el.innerText = "";
+        el.innerText = '';
       }
 
       this.addWrapper(el).forEach(hideElement);
@@ -483,8 +546,9 @@ export class Validator {
     const result = Array.isArray(elements) ? elements : [elements];
 
     if (this.settings.wrapper) {
-      const wrappers = result.map(el => el.parentElement)
-        .filter(el => el.matches(this.settings.wrapper));
+      const wrappers = result
+        .map((el) => el.parentElement)
+        .filter((el) => el.matches(this.settings.wrapper));
 
       result.push(...wrappers);
     }
@@ -497,19 +561,18 @@ export class Validator {
 
     if (errors.length) {
       // Refresh error/success class
-      errors.forEach(el => {
+      errors.forEach((el) => {
         el.classList.remove(this.settings.validClass);
         el.classList.add(...this.errorClasses);
-        el.innerHTML = message || "";
+        el.innerHTML = message || '';
       });
-    }
-    else {
+    } else {
       const elementID = idOrName(element);
 
       const newError = document.createElement(this.settings.errorElement);
-      newError.setAttribute("id", `${elementID}-error`);
+      newError.setAttribute('id', `${elementID}-error`);
       newError.classList.add(...this.errorClasses);
-      newError.innerHTML = message || "";
+      newError.innerHTML = message || '';
 
       // Maintain reference to the element(s) to be placed into the DOM
       let insert = newError;
@@ -521,25 +584,22 @@ export class Validator {
 
       if (this.labelContainer) {
         this.labelContainer.appendChild(insert);
-      }
-      else if (this.settings.errorPlacement) {
+      } else if (this.settings.errorPlacement) {
         this.settings.errorPlacement(insert, element);
-      }
-      else {
+      } else {
         element.after(insert);
       }
 
-      newError.setAttribute("for", elementID);
+      newError.setAttribute('for', elementID);
 
       errors = [newError];
     }
 
     if (!message && this.settings.success) {
-      errors.forEach(e => e.innerText = "");
-      if (typeof this.settings.success === "string") {
-        errors.forEach(e => e.classList.add(this.settings.success));
-      }
-      else {
+      errors.forEach((e) => (e.innerText = ''));
+      if (typeof this.settings.success === 'string') {
+        errors.forEach((e) => e.classList.add(this.settings.success));
+      } else {
         this.settings.success(errors, element);
       }
     }
@@ -551,7 +611,7 @@ export class Validator {
     const name = escapeCssMeta(idOrName(element));
     const selector = `label[for='${name}'], label[for='${name}'] *`;
 
-    return this.errors().filter(el => el.matches(selector));
+    return this.errors().filter((el) => el.matches(selector));
   }
 
   numberOfInvalids() {
@@ -562,11 +622,26 @@ export class Validator {
     this.resetForm();
     validatorStore.delete(this.currentForm);
 
-    this.currentForm.removeEventListener("focusin", this.boundEventHandlers.onFocusIn);
-    this.currentForm.removeEventListener("focusout", this.boundEventHandlers.onFocusOut);
-    this.currentForm.removeEventListener("keyup", this.boundEventHandlers.onKeyUp);
-    this.currentForm.removeEventListener("click", this.boundEventHandlers.onClick);
-    this.currentForm.removeEventListener("invalid-form", this.boundEventHandlers.onInvalidForm);
+    this.currentForm.removeEventListener(
+      'focusin',
+      this.boundEventHandlers.onFocusIn,
+    );
+    this.currentForm.removeEventListener(
+      'focusout',
+      this.boundEventHandlers.onFocusOut,
+    );
+    this.currentForm.removeEventListener(
+      'keyup',
+      this.boundEventHandlers.onKeyUp,
+    );
+    this.currentForm.removeEventListener(
+      'click',
+      this.boundEventHandlers.onClick,
+    );
+    this.currentForm.removeEventListener(
+      'invalid-form',
+      this.boundEventHandlers.onInvalidForm,
+    );
   }
 
   resetForm() {
@@ -575,7 +650,7 @@ export class Validator {
     this.prepareForm();
     this.hideErrors();
 
-    this.elements().forEach(el => el.removeAttribute("aria-invalid"));
+    this.elements().forEach((el) => el.removeAttribute('aria-invalid'));
     this.resetElements();
   }
 
@@ -583,11 +658,12 @@ export class Validator {
     if (this.settings.unhighlight) {
       for (const element of this.elements()) {
         this.unhighlight(element, ...this.errorClasses, []);
-        findByName(element.form, element.name).forEach(el => el.classList.remove(...this.validClasses));
+        findByName(element.form, element.name).forEach((el) =>
+          el.classList.remove(...this.validClasses),
+        );
       }
-    }
-    else {
-      this.elements().forEach(el => {
+    } else {
+      this.elements().forEach((el) => {
         el.classList.remove(...this.errorClasses);
         el.classList.remove(...this.validClasses);
       });
@@ -600,7 +676,7 @@ export class Validator {
       targets = findByName(element.form, element.name);
     }
 
-    return targets.filter(t => !this.shouldIgnore(t))[0];
+    return targets.filter((t) => !this.shouldIgnore(t))[0];
   }
 
   /**
@@ -612,7 +688,7 @@ export class Validator {
     if (!this.settings.ignore) {
       return false;
     }
-    if (this.settings.ignore === ":hidden") {
+    if (this.settings.ignore === ':hidden') {
       return !isVisible(element);
     }
 
@@ -620,12 +696,10 @@ export class Validator {
   }
 
   get errorClasses() {
-    return this.settings.errorClass.split(" ")
-      .filter(Boolean);
+    return this.settings.errorClass.split(' ').filter(Boolean);
   }
 
   get validClasses() {
-    return this.settings.validClass.split(" ")
-      .filter(Boolean);
+    return this.settings.validClass.split(' ').filter(Boolean);
   }
 }

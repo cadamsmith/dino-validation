@@ -1,9 +1,9 @@
-import { elementValue, hideElement, isBlankElement, isVisible, showElement } from './helpers.js';
-
-export {
-  isBlankElement,
+import {
   elementValue,
   hideElement,
+  isBlankElement,
+  isVisible,
   showElement,
-  isVisible
-};
+} from './helpers.js';
+
+export { isBlankElement, elementValue, hideElement, showElement, isVisible };

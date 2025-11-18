@@ -39,7 +39,7 @@ export function findByName(form, name) {
  * @return {boolean} - true if element is radio or checkbox, false otherwise
  */
 export function isCheckableElement(element) {
-  return (/radio|checkbox/i).test(element.type);
+  return /radio|checkbox/i.test(element.type);
 }
 
 /**
@@ -50,10 +50,10 @@ export function isCheckableElement(element) {
  */
 export function escapeCssMeta(text) {
   if (text === undefined) {
-    return "";
+    return '';
   }
 
-  return text.replace(/([\\!"#$%&'()*+,./:;<=>?@\[\]^`{|}~])/g, "\\$1");
+  return text.replace(/([\\!"#$%&'()*+,./:;<=>?@\[\]^`{|}~])/g, '\\$1');
 }
 
 /**
@@ -62,18 +62,20 @@ export function escapeCssMeta(text) {
  * @return {string|string[]} - element value or array of values for checkboxes/radios
  */
 export function elementValue(element) {
-  if (element.type === "radio" || element.type === "checkbox") {
-    const checked = findByName(element.form, element.name).filter(el => el.matches(":checked"));
-    return checked.map(el => el.value);
+  if (element.type === 'radio' || element.type === 'checkbox') {
+    const checked = findByName(element.form, element.name).filter((el) =>
+      el.matches(':checked'),
+    );
+    return checked.map((el) => el.value);
   }
-  if (element.type === "number" && typeof element.validity !== "undefined") {
-    return element.validity.badInput ? "NaN" : element.value;
+  if (element.type === 'number' && typeof element.validity !== 'undefined') {
+    return element.validity.badInput ? 'NaN' : element.value;
   }
-  if (element.type === "file") {
+  if (element.type === 'file') {
     return fileInputValue(element);
   }
-  if (typeof element.value === "string") {
-    return element.value.replace(/\r/g, "");
+  if (typeof element.value === 'string') {
+    return element.value.replace(/\r/g, '');
   }
 
   return element.value;
@@ -88,19 +90,19 @@ export function fileInputValue(element) {
   const value = element.value;
 
   // Modern browser (chrome & safari)
-  if (value.substring(0, 12) === "C:\\fakepath\\") {
+  if (value.substring(0, 12) === 'C:\\fakepath\\') {
     return value.substring(12);
   }
 
   // Legacy browsers
   // Unix-based path
-  let idx = value.lastIndexOf("/");
+  let idx = value.lastIndexOf('/');
   if (idx >= 0) {
     return value.substring(idx + 1);
   }
 
   // Windows-based path
-  idx = value.lastIndexOf("\\");
+  idx = value.lastIndexOf('\\');
   if (idx >= 0) {
     return value.substring(idx + 1);
   }
@@ -131,7 +133,7 @@ export function findDefined(...args) {
  */
 export function format(source, params) {
   if (arguments.length === 1) {
-    return function() {
+    return function () {
       const args = [...arguments];
       args.unshift(source);
       return format.apply(null, args);
@@ -149,7 +151,7 @@ export function format(source, params) {
   }
 
   params.forEach((param, index) => {
-    source = source.replace(new RegExp(`\\{${index}\\}`, "g"), param);
+    source = source.replace(new RegExp(`\\{${index}\\}`, 'g'), param);
   });
 
   return source;
@@ -161,7 +163,9 @@ export function format(source, params) {
  * @return {string} - element id or name
  */
 export function idOrName(element) {
-  return (isCheckableElement(element) ? element.name : element.id) || element.name;
+  return (
+    (isCheckableElement(element) ? element.name : element.id) || element.name
+  );
 }
 
 /**
@@ -173,11 +177,12 @@ export function idOrName(element) {
 export function getLength(value, element) {
   const nodeName = element.nodeName.toLowerCase();
 
-  if (nodeName === "select") {
-    return element.querySelectorAll("option:checked").length;
-  }
-  else if (nodeName === "input" && isCheckableElement(element)) {
-    return findByName(element.form, element.name).filter(el => el.matches(":checked")).length;
+  if (nodeName === 'select') {
+    return element.querySelectorAll('option:checked').length;
+  } else if (nodeName === 'input' && isCheckableElement(element)) {
+    return findByName(element.form, element.name).filter((el) =>
+      el.matches(':checked'),
+    ).length;
   }
 
   return value.length;
@@ -191,8 +196,8 @@ export function getLength(value, element) {
 export function isBlankElement(element) {
   const value = elementValue(element);
 
-  if (element.nodeName.toLowerCase() === "select") {
-    const selected = [...element.selectedOptions].map(o => o.value);
+  if (element.nodeName.toLowerCase() === 'select') {
+    const selected = [...element.selectedOptions].map((o) => o.value);
 
     return selected.length === 0 || !selected[0];
   }
@@ -229,7 +234,10 @@ export function showElement(element) {
 export function hideElement(element) {
   if (element.style.display !== 'none') {
     // Store current display value
-    displayDataMap.set(element, element.style.display || getComputedStyle(element).display);
+    displayDataMap.set(
+      element,
+      element.style.display || getComputedStyle(element).display,
+    );
     element.style.display = 'none';
   }
 }

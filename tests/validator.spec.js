@@ -353,7 +353,7 @@ test('addMethod', async ({ page }) => {
     const ret = [method(!!e.value, e.value)];
 
     e.value = 'hi';
-    ret.push(method(!!e.value, e.value), dv.messages.get("hi"));
+    ret.push(method(!!e.value, e.value), dv.messages.get('hi'));
 
     return ret;
   });
@@ -632,7 +632,7 @@ test('hide(): container', async ({ page }) => {
       errorContainer: '#errorContainer',
     });
 
-    const isVisible = (el) => el.style.display !== "none";
+    const isVisible = (el) => el.style.display !== 'none';
 
     v.form();
     const ret = [isVisible(errorLabel)];
@@ -725,11 +725,9 @@ test('validation triggered on button', async ({ page }) => {
       new Event('keyup', { bubbles: true }),
     ];
 
-    const inputs = [
-      ...document.querySelectorAll("#formButton1, #formButton2")
-    ];
+    const inputs = [...document.querySelectorAll('#formButton1, #formButton2')];
     for (const event of events) {
-      inputs.forEach(i => i.dispatchEvent(event));
+      inputs.forEach((i) => i.dispatchEvent(event));
     }
 
     return new Promise((resolve) => {
@@ -742,18 +740,20 @@ test('validation triggered on button', async ({ page }) => {
   expect(result).toBe(6);
 });
 
-test("validation triggered on radio/checkbox when using mouseclick", async ({ page }) => {
-  await page.goto("");
+test('validation triggered on radio/checkbox when using mouseclick', async ({
+  page,
+}) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
     let triggeredEvents = 0;
-    dv.validate("#form", {
-      onclick: function() {
+    dv.validate('#form', {
+      onclick: function () {
         triggeredEvents++;
-      }
+      },
     });
 
-    const event = new Event("click", { bubbles: true });
+    const event = new Event('click', { bubbles: true });
 
     let input = document.querySelector("#form [type='radio']");
     input.dispatchEvent(event);
@@ -771,108 +771,124 @@ test("validation triggered on radio/checkbox when using mouseclick", async ({ pa
   expect(result).toBe(2);
 });
 
-test("showErrors(), allow empty string and null as default message", async ({ page }) => {
-  await page.goto("");
+test('showErrors(), allow empty string and null as default message', async ({
+  page,
+}) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    dv.validate("#userForm", {
+    dv.validate('#userForm', {
       rules: {
         username: {
           required: true,
-          minlength: 3
-        }
+          minlength: 3,
+        },
       },
       messages: {
         username: {
-          required: "",
-          minlength: "too short"
-        }
-      }
+          required: '',
+          minlength: 'too short',
+        },
+      },
     });
 
-    const ret = [dv.valid("#username")];
+    const ret = [dv.valid('#username')];
 
-    const usernameError = document.querySelector("#username").nextElementSibling;
-    ret.push(usernameError.matches(".error:not(input)"), usernameError.innerText);
+    const usernameError =
+      document.querySelector('#username').nextElementSibling;
+    ret.push(
+      usernameError.matches('.error:not(input)'),
+      usernameError.innerText,
+    );
 
-    document.querySelector("#username").value = "ab";
-    ret.push(dv.valid("#username"), usernameError.matches(".error:not(input)"), usernameError.innerText);
+    document.querySelector('#username').value = 'ab';
+    ret.push(
+      dv.valid('#username'),
+      usernameError.matches('.error:not(input)'),
+      usernameError.innerText,
+    );
 
-    document.querySelector("#username").value = "abc";
-    ret.push(dv.valid("#username"), usernameError.matches(".error:not(input)"), usernameError.style.display);
+    document.querySelector('#username').value = 'abc';
+    ret.push(
+      dv.valid('#username'),
+      usernameError.matches('.error:not(input)'),
+      usernameError.style.display,
+    );
 
     return ret;
   });
 
-  expect(result).toEqual([false, true, "", false, true, "too short", true, true, "none"]);
+  expect(result).toEqual([
+    false,
+    true,
+    '',
+    false,
+    true,
+    'too short',
+    true,
+    true,
+    'none',
+  ]);
 });
 
-test("showErrors() - external messages", async ({ page }) => {
-  await page.goto("");
+test('showErrors() - external messages', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    dv.addMethod("foo", function() { return false; });
-    dv.addMethod("bar", function() { return false; });
+    dv.addMethod('foo', function () {
+      return false;
+    });
+    dv.addMethod('bar', function () {
+      return false;
+    });
 
-    let f1Next = document.querySelector("#testForm4 #f1").nextElementSibling;
-    let f2Next = document.querySelector("#testForm4 #f2").nextElementSibling;
+    let f1Next = document.querySelector('#testForm4 #f1').nextElementSibling;
+    let f2Next = document.querySelector('#testForm4 #f2').nextElementSibling;
 
-    const ret = [
-      f1Next.matches(".error:not(input)"),
-      f2Next,
-    ];
+    const ret = [f1Next.matches('.error:not(input)'), f2Next];
 
-    const form = document.querySelector("#testForm4");
+    const form = document.querySelector('#testForm4');
     const v = dv.validate(form, {
       messages: {
-        f1: "Please!",
-        f2: "Wohoo!"
-      }
+        f1: 'Please!',
+        f2: 'Wohoo!',
+      },
     });
     v.form();
 
-    f1Next = document.querySelector("#testForm4 #f1").nextElementSibling;
-    f2Next = document.querySelector("#testForm4 #f2").nextElementSibling;
+    f1Next = document.querySelector('#testForm4 #f1').nextElementSibling;
+    f2Next = document.querySelector('#testForm4 #f2').nextElementSibling;
 
     ret.push(
-      f1Next.matches(".error:not(input)"),
+      f1Next.matches('.error:not(input)'),
       f1Next.innerText,
-      f2Next.matches(".error:not(input)"),
-      f2Next.innerText
+      f2Next.matches('.error:not(input)'),
+      f2Next.innerText,
     );
 
     return ret;
   });
 
-  expect(result).toEqual([false, null, true, "Please!", true, "Wohoo!"]);
+  expect(result).toEqual([false, null, true, 'Please!', true, 'Wohoo!']);
 });
 
-test("option: (un)highlight, default", async ({ page }) => {
-  await page.goto("");
+test('option: (un)highlight, default', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    dv.validate("#testForm1");
-    const e = document.querySelector("#firstname");
+    dv.validate('#testForm1');
+    const e = document.querySelector('#firstname');
 
-    const ret = [
-      e.classList.contains("error"),
-      e.classList.contains("valid")
-    ];
+    const ret = [e.classList.contains('error'), e.classList.contains('valid')];
 
     dv.valid(e);
 
-    ret.push(
-      e.classList.contains("error"),
-      e.classList.contains("valid")
-    );
+    ret.push(e.classList.contains('error'), e.classList.contains('valid'));
 
-    e.value = "hithere";
+    e.value = 'hithere';
     dv.valid(e);
 
-    ret.push(
-      e.classList.contains("error"),
-      e.classList.contains("valid")
-    );
+    ret.push(e.classList.contains('error'), e.classList.contains('valid'));
 
     return ret;
   });
@@ -880,23 +896,23 @@ test("option: (un)highlight, default", async ({ page }) => {
   expect(result).toEqual([false, false, true, false, false, true]);
 });
 
-test("option: (un)highlight, nothing", async ({ page }) => {
-  await page.goto("");
+test('option: (un)highlight, nothing', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    dv.validate("#testForm1", {
+    dv.validate('#testForm1', {
       highlight: false,
-      unhighlight: false
+      unhighlight: false,
     });
-    const e = document.querySelector("#firstname");
+    const e = document.querySelector('#firstname');
 
-    const ret = [e.classList.contains("error")];
-
-    dv.valid(e);
-    ret.push(e.classList.contains("error"));
+    const ret = [e.classList.contains('error')];
 
     dv.valid(e);
-    ret.push(e.classList.contains("error"));
+    ret.push(e.classList.contains('error'));
+
+    dv.valid(e);
+    ret.push(e.classList.contains('error'));
 
     return ret;
   });
@@ -904,75 +920,75 @@ test("option: (un)highlight, nothing", async ({ page }) => {
   expect(result).toEqual([false, false, false]);
 });
 
-test("option: (un)highlight, custom", async ({ page }) => {
-  await page.goto("");
+test('option: (un)highlight, custom', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
     const ret = [];
 
-    dv.validate("#testForm1clean", {
-      highlight: function(element, errorClasses) {
+    dv.validate('#testForm1clean', {
+      highlight: function (element, errorClasses) {
         ret.unshift(...errorClasses);
-        element.style.display = "none";
+        element.style.display = 'none';
       },
-      unhighlight: function(element, errorClasses) {
+      unhighlight: function (element, errorClasses) {
         ret.unshift(...errorClasses);
-        element.style.display = "block";
+        element.style.display = 'block';
       },
-      ignore: "",
-      errorClass: "invalid",
+      ignore: '',
+      errorClass: 'invalid',
       rules: {
-        firstnamec: "required"
-      }
+        firstnamec: 'required',
+      },
     });
 
-    const e = document.querySelector("#firstnamec");
-    ret.push(e.style.display !== "none");
+    const e = document.querySelector('#firstnamec');
+    ret.push(e.style.display !== 'none');
 
     dv.valid(e);
     ret.push(e.style.display);
 
-    e.value = "hithere";
+    e.value = 'hithere';
     dv.valid(e);
     ret.push(e.style.display);
 
     return ret;
   });
 
-  expect(result).toEqual(["invalid", "invalid", true, "none", "block"]);
+  expect(result).toEqual(['invalid', 'invalid', true, 'none', 'block']);
 });
 
-test("option: (un)highlight, custom2", async ({ page }) => {
-  await page.goto("");
+test('option: (un)highlight, custom2', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    dv.validate("#testForm1", {
-      highlight: function(element, errorClass) {
+    dv.validate('#testForm1', {
+      highlight: function (element, errorClass) {
         element.classList.add(errorClass);
-        if (element.nextElementSibling.matches(".error:not(input)")) {
+        if (element.nextElementSibling.matches('.error:not(input)')) {
           element.nextElementSibling.classList.add(errorClass);
         }
       },
-      unhighlight: function(element, errorClass) {
+      unhighlight: function (element, errorClass) {
         element.classList.remove(errorClass);
-        if (element.nextElementSibling.matches(".error:not(input)")) {
+        if (element.nextElementSibling.matches('.error:not(input)')) {
           element.nextElementSibling.classList.remove(errorClass);
         }
       },
-      errorClass: "invalid"
+      errorClass: 'invalid',
     });
 
-    const e = document.querySelector("#firstname");
-    const l = document.querySelector("#errorFirstname");
+    const e = document.querySelector('#firstname');
+    const l = document.querySelector('#errorFirstname');
 
-    const ret = [e.matches(".invalid"), l.matches(".invalid")];
+    const ret = [e.matches('.invalid'), l.matches('.invalid')];
 
     dv.valid(e);
-    ret.push(e.matches(".invalid"), l.matches(".invalid"));
+    ret.push(e.matches('.invalid'), l.matches('.invalid'));
 
-    e.value = "hithere";
+    e.value = 'hithere';
     dv.valid(e);
-    ret.push(e.matches(".invalid"), l.matches(".invalid"));
+    ret.push(e.matches('.invalid'), l.matches('.invalid'));
 
     return ret;
   });
@@ -980,15 +996,15 @@ test("option: (un)highlight, custom2", async ({ page }) => {
   expect(result).toEqual([false, false, true, true, false, false]);
 });
 
-test("option: errorPlacement", async ({ page }) => {
-  await page.goto("");
+test('option: errorPlacement', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
     return new Promise((resolve) => {
-      const v = dv.validate("#testForm1", {
-        errorPlacement: function() {
+      const v = dv.validate('#testForm1', {
+        errorPlacement: function () {
           resolve(this === v);
-        }
+        },
       });
 
       v.form();
@@ -998,17 +1014,17 @@ test("option: errorPlacement", async ({ page }) => {
   expect(result).toBe(true);
 });
 
-test("option: focusCleanup default false", async ({ page }) => {
-  await page.goto("");
+test('option: focusCleanup default false', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    const form = document.querySelector("#userForm");
+    const form = document.querySelector('#userForm');
     dv.validate(form);
     dv.valid(form);
 
-    const isVisible = el => el.style.display !== "none";
+    const isVisible = (el) => el.style.display !== 'none';
 
-    const usernameError = form.querySelector("#username").nextElementSibling;
+    const usernameError = form.querySelector('#username').nextElementSibling;
     const ret = [isVisible(usernameError)];
 
     usernameError.focus();
@@ -1020,21 +1036,21 @@ test("option: focusCleanup default false", async ({ page }) => {
   expect(result).toEqual([true, true]);
 });
 
-test("option: focusCleanup true", async ({ page }) => {
-  await page.goto("");
+test('option: focusCleanup true', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    const form = document.querySelector("#userForm");
+    const form = document.querySelector('#userForm');
     dv.validate(form, { focusCleanup: true });
     dv.valid(form);
 
-    const isVisible = el => el.style.display !== "none";
+    const isVisible = (el) => el.style.display !== 'none';
 
-    const usernameError = form.querySelector("#username").nextElementSibling;
+    const usernameError = form.querySelector('#username').nextElementSibling;
     const ret = [isVisible(usernameError)];
 
     usernameError.focus();
-    usernameError.dispatchEvent(new Event("focusin"));
+    usernameError.dispatchEvent(new Event('focusin'));
     ret.push(isVisible(usernameError));
 
     return ret;
@@ -1043,27 +1059,31 @@ test("option: focusCleanup true", async ({ page }) => {
   expect(result).toEqual([true, false]);
 });
 
-test("option: focusCleanup with wrapper", async ({ page }) => {
-  await page.goto("");
+test('option: focusCleanup with wrapper', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    const form = document.querySelector("#userForm");
+    const form = document.querySelector('#userForm');
     dv.validate(form, {
       focusCleanup: true,
-      wrapper: "span"
+      wrapper: 'span',
     });
     dv.valid(form);
 
-    const username = document.querySelector("#username");
+    const username = document.querySelector('#username');
 
     function isVisible(el) {
-      return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
+      return !!(
+        el.offsetWidth ||
+        el.offsetHeight ||
+        el.getClientRects().length
+      );
     }
 
-    function hasVisibleErrors () {
-      const wrappers = [...form.querySelectorAll("span")]
-        .filter(el => isVisible(el))
-        .map(el => el.querySelectorAll(".error#username-error"))
+    function hasVisibleErrors() {
+      const wrappers = [...form.querySelectorAll('span')]
+        .filter((el) => isVisible(el))
+        .map((el) => el.querySelectorAll('.error#username-error'))
         .flat();
 
       return wrappers.length > 0;
@@ -1072,7 +1092,7 @@ test("option: focusCleanup with wrapper", async ({ page }) => {
     const ret = [hasVisibleErrors()];
 
     username.focus();
-    username.dispatchEvent(new Event("focusin"));
+    username.dispatchEvent(new Event('focusin'));
     ret.push(hasVisibleErrors());
 
     return ret;
@@ -1081,44 +1101,48 @@ test("option: focusCleanup with wrapper", async ({ page }) => {
   expect(result).toEqual([true, false]);
 });
 
-test("option: errorClass with multiple classes", async ({ page }) => {
-  await page.goto("");
+test('option: errorClass with multiple classes', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    const form = document.querySelector("#userForm");
+    const form = document.querySelector('#userForm');
     dv.validate(form, {
       focusCleanup: true,
-      wrapper: "span",
-      errorClass: "error error1 error2"
+      wrapper: 'span',
+      errorClass: 'error error1 error2',
     });
     dv.valid(form);
 
     function isVisible(el) {
-      return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
+      return !!(
+        el.offsetWidth ||
+        el.offsetHeight ||
+        el.getClientRects().length
+      );
     }
 
     function containsErrorClass(name) {
-      const matches = [...form.querySelectorAll("span")]
-        .filter(el => isVisible(el))
-        .map(el => el.querySelectorAll(`.${name}#username-error`))
+      const matches = [...form.querySelectorAll('span')]
+        .filter((el) => isVisible(el))
+        .map((el) => el.querySelectorAll(`.${name}#username-error`))
         .flat();
 
       return matches.length > 0;
     }
 
     const ret = [
-      containsErrorClass("error"),
-      containsErrorClass("error1"),
-      containsErrorClass("error2")
+      containsErrorClass('error'),
+      containsErrorClass('error1'),
+      containsErrorClass('error2'),
     ];
 
-    const username = document.querySelector("#username");
+    const username = document.querySelector('#username');
     username.focus();
-    username.dispatchEvent(new Event("focusin"));
+    username.dispatchEvent(new Event('focusin'));
     ret.push(
-      containsErrorClass("error"),
-      containsErrorClass("error1"),
-      containsErrorClass("error2")
+      containsErrorClass('error'),
+      containsErrorClass('error1'),
+      containsErrorClass('error2'),
     );
 
     return ret;
@@ -1127,19 +1151,19 @@ test("option: errorClass with multiple classes", async ({ page }) => {
   expect(result).toEqual([true, true, true, false, false, false]);
 });
 
-test("ignore hidden elements", async ({ page }) => {
-  await page.goto("");
+test('ignore hidden elements', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    const form = document.querySelector("#userForm");
+    const form = document.querySelector('#userForm');
     const v = dv.validate(form, {
-      rules: { "username": "required" }
+      rules: { username: 'required' },
     });
 
     form.reset();
     const ret = [v.form()];
 
-    const username = document.querySelector("#userForm [name=username]");
+    const username = document.querySelector('#userForm [name=username]');
     dvTestHelpers.hideElement(username);
     ret.push(v.form());
 
@@ -1149,16 +1173,16 @@ test("ignore hidden elements", async ({ page }) => {
   expect(result).toEqual([false, true]);
 });
 
-test("ignore hidden elements at start", async ({ page }) => {
-  await page.goto("");
+test('ignore hidden elements at start', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    const form = document.querySelector("#userForm");
+    const form = document.querySelector('#userForm');
     const v = dv.validate(form, {
-      rules: { "username": "required" }
+      rules: { username: 'required' },
     });
 
-    const username = document.querySelector("#userForm [name=username]");
+    const username = document.querySelector('#userForm [name=username]');
 
     form.reset();
     dvTestHelpers.hideElement(username);
@@ -1173,20 +1197,20 @@ test("ignore hidden elements at start", async ({ page }) => {
   expect(result).toEqual([true, false]);
 });
 
-test("Specify error messages through data attributes", async ({ page }) => {
-  await page.goto("");
+test('Specify error messages through data attributes', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    const form = document.querySelector("#dataMessages");
-    const name = document.querySelector("#dataMessagesName");
+    const form = document.querySelector('#dataMessages');
+    const name = document.querySelector('#dataMessagesName');
     dv.validate(form);
 
     form.reset();
     dv.valid(name);
 
-    const label = document.querySelector("#dataMessages .error:not(input)");
+    const label = document.querySelector('#dataMessages .error:not(input)');
     return label.innerText;
   });
 
-  expect(result).toBe("You must enter a value here");
+  expect(result).toBe('You must enter a value here');
 });

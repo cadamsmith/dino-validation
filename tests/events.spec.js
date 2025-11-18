@@ -1,51 +1,54 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 
-test("validate on blur", async ({ page }) => {
-  await page.goto("");
+test('validate on blur', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    const errorFirstname = document.querySelector("#errorFirstname");
+    const errorFirstname = document.querySelector('#errorFirstname');
     dvTestHelpers.hideElement(errorFirstname);
 
-    const e = document.querySelector("#firstname");
-    const v = dv.validate("#testForm1");
+    const e = document.querySelector('#firstname');
+    const v = dv.validate('#testForm1');
 
     function checkErrors(expected) {
       return v.size() === expected;
     }
     function checkLabels(expected) {
-      return v.errors().filter(el => dvTestHelpers.isVisible(el)).length === expected;
+      return (
+        v.errors().filter((el) => dvTestHelpers.isVisible(el)).length ===
+        expected
+      );
     }
     function blur(target) {
-      target.dispatchEvent(new Event("focusout", { bubbles: true }));
-      target.dispatchEvent(new Event("blur", { bubbles: true }));
+      target.dispatchEvent(new Event('focusout', { bubbles: true }));
+      target.dispatchEvent(new Event('blur', { bubbles: true }));
     }
 
-    document.querySelector("#something").value = "";
+    document.querySelector('#something').value = '';
     blur(e);
     const ret = [checkErrors(0), checkLabels(0)];
 
-    e.value = "h";
+    e.value = 'h';
     blur(e);
     ret.push(checkErrors(1), checkLabels(1));
 
-    e.value = "hh";
+    e.value = 'hh';
     blur(e);
     ret.push(checkErrors(0), checkLabels(0));
 
-    e.value = "";
+    e.value = '';
     v.form();
     ret.push(checkErrors(3), checkLabels(3));
 
     blur(e);
     ret.push(checkErrors(1), checkLabels(3));
 
-    e.value = "h";
+    e.value = 'h';
     blur(e);
     ret.push(checkErrors(1), checkLabels(3));
 
-    e.value = "hh";
+    e.value = 'hh';
     blur(e);
     ret.push(checkErrors(0), checkLabels(2));
 
@@ -55,44 +58,44 @@ test("validate on blur", async ({ page }) => {
   expect(result).toEqual(Array(result.length).fill(true));
 });
 
-test("validate on keyup", async ({ page }) => {
-  await page.goto("");
+test('validate on keyup', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    const e = document.querySelector("#firstname");
-    const v = dv.validate("#testForm1");
+    const e = document.querySelector('#firstname');
+    const v = dv.validate('#testForm1');
 
     function checkErrors(expected) {
       return v.size() === expected;
     }
 
     function keyup(target) {
-      target.dispatchEvent(new Event("keyup", { bubbles: true }));
+      target.dispatchEvent(new Event('keyup', { bubbles: true }));
     }
 
     keyup(e);
     const ret = [checkErrors(0)];
 
-    e.value = "a";
+    e.value = 'a';
     keyup(e);
     ret.push(checkErrors(0));
 
-    e.value = "";
+    e.value = '';
     v.form();
     ret.push(checkErrors(2));
 
     keyup(e);
     ret.push(checkErrors(1));
 
-    e.value = "hh";
+    e.value = 'hh';
     keyup(e);
     ret.push(checkErrors(0));
 
-    e.value = "h";
+    e.value = 'h';
     keyup(e);
     ret.push(checkErrors(1));
 
-    e.value = "hh";
+    e.value = 'hh';
     keyup(e);
     ret.push(checkErrors(0));
 
@@ -102,12 +105,12 @@ test("validate on keyup", async ({ page }) => {
   expect(result).toEqual(Array(result.length).fill(true));
 });
 
-test("validate on not keyup, only blur", async ({ page }) => {
-  await page.goto("");
+test('validate on not keyup, only blur', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    const e = document.querySelector("#firstname");
-    const v = dv.validate("#testForm1", { onkeyup: false });
+    const e = document.querySelector('#firstname');
+    const v = dv.validate('#testForm1', { onkeyup: false });
 
     function checkErrors(expected) {
       return v.size() === expected;
@@ -115,12 +118,12 @@ test("validate on not keyup, only blur", async ({ page }) => {
 
     const ret = [checkErrors(0)];
 
-    e.value = "a";
-    e.dispatchEvent(new Event("keyup", { bubbles: true }));
+    e.value = 'a';
+    e.dispatchEvent(new Event('keyup', { bubbles: true }));
     ret.push(checkErrors(0));
 
-    e.dispatchEvent(new Event("blur", { bubbles: true }));
-    e.dispatchEvent(new Event("focusout", { bubbles: true }));
+    e.dispatchEvent(new Event('blur', { bubbles: true }));
+    e.dispatchEvent(new Event('focusout', { bubbles: true }));
     ret.push(checkErrors(1));
 
     return ret;
@@ -129,12 +132,12 @@ test("validate on not keyup, only blur", async ({ page }) => {
   expect(result).toEqual(Array(result.length).fill(true));
 });
 
-test("validate on keyup and blur", async ({ page }) => {
-  await page.goto("");
+test('validate on keyup and blur', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    const e = document.querySelector("#firstname");
-    const v = dv.validate("#testForm1");
+    const e = document.querySelector('#firstname');
+    const v = dv.validate('#testForm1');
 
     function checkErrors(expected) {
       return v.size() === expected;
@@ -142,12 +145,12 @@ test("validate on keyup and blur", async ({ page }) => {
 
     const ret = [checkErrors(0)];
 
-    e.value = "a";
-    e.dispatchEvent(new Event("keyup", { bubbles: true }));
+    e.value = 'a';
+    e.dispatchEvent(new Event('keyup', { bubbles: true }));
     ret.push(checkErrors(0));
 
-    e.dispatchEvent(new Event("blur", { bubbles: true }));
-    e.dispatchEvent(new Event("focusout", { bubbles: true }));
+    e.dispatchEvent(new Event('blur', { bubbles: true }));
+    e.dispatchEvent(new Event('focusout', { bubbles: true }));
     ret.push(checkErrors(1));
 
     return ret;
@@ -156,12 +159,12 @@ test("validate on keyup and blur", async ({ page }) => {
   expect(result).toEqual(Array(result.length).fill(true));
 });
 
-test("validate on keyup and blur (2)", async ({ page }) => {
-  await page.goto("");
+test('validate on keyup and blur (2)', async ({ page }) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    const e = document.querySelector("#firstname");
-    const v = dv.validate("#testForm1");
+    const e = document.querySelector('#firstname');
+    const v = dv.validate('#testForm1');
 
     function checkErrors(expected) {
       return v.size() === expected;
@@ -170,12 +173,12 @@ test("validate on keyup and blur (2)", async ({ page }) => {
     v.form();
     const ret = [checkErrors(2)];
 
-    e.value = "a";
-    e.dispatchEvent(new Event("keyup", { bubbles: true }));
+    e.value = 'a';
+    e.dispatchEvent(new Event('keyup', { bubbles: true }));
     ret.push(checkErrors(1));
 
-    e.value = "aa";
-    e.dispatchEvent(new Event("keyup", { bubbles: true }));
+    e.value = 'aa';
+    e.dispatchEvent(new Event('keyup', { bubbles: true }));
     ret.push(checkErrors(0));
 
     return ret;
@@ -184,55 +187,57 @@ test("validate on keyup and blur (2)", async ({ page }) => {
   expect(result).toEqual(Array(result.length).fill(true));
 });
 
-test("don't revalidate the field when pressing special characters", async ({ page }) => {
-  await page.goto("");
+test("don't revalidate the field when pressing special characters", async ({
+  page,
+}) => {
+  await page.goto('');
 
   const result = await page.evaluate(() => {
-    const e = document.querySelector("#firstname");
-    const v = dv.validate("#testForm1");
+    const e = document.querySelector('#firstname');
+    const v = dv.validate('#testForm1');
 
     function checkErrors(expected) {
       return v.size() === expected;
     }
 
     function triggerKeyup(element, keyCode) {
-      const event = new KeyboardEvent("keyup", { bubbles: true, keyCode });
+      const event = new KeyboardEvent('keyup', { bubbles: true, keyCode });
       element.dispatchEvent(event);
     }
 
     const excludedKeys = {
-      "Shift": 16,
-      "Ctrl": 17,
-      "Alt": 18,
-      "Caps lock": 20,
-      "End": 35,
-      "Home": 36,
-      "Left arrow": 37,
-      "Up arrow": 38,
-      "Right arrow": 39,
-      "Down arrow": 40,
-      "Insert": 45,
-      "Num lock": 144,
-      "Alt GR": 225
+      Shift: 16,
+      Ctrl: 17,
+      Alt: 18,
+      'Caps lock': 20,
+      End: 35,
+      Home: 36,
+      'Left arrow': 37,
+      'Up arrow': 38,
+      'Right arrow': 39,
+      'Down arrow': 40,
+      Insert: 45,
+      'Num lock': 144,
+      'Alt GR': 225,
     };
 
     // To make sure there is only one error, that one of #firstname field
-    e.value = "";
-    document.querySelector("#lastname").value = "something";
-    document.querySelector("#something").value = "something";
+    e.value = '';
+    document.querySelector('#lastname').value = 'something';
+    document.querySelector('#something').value = 'something';
 
     // Validate the form
     v.form();
     const ret = [checkErrors(1)];
 
-    e.value = "aaa";
-    Object.values(excludedKeys).forEach(code => {
+    e.value = 'aaa';
+    Object.values(excludedKeys).forEach((code) => {
       triggerKeyup(e, code);
       ret.push(checkErrors(1));
     });
 
-    e.value = "aaaa";
-    e.dispatchEvent(new Event("keyup", { bubbles: true }));
+    e.value = 'aaaa';
+    e.dispatchEvent(new Event('keyup', { bubbles: true }));
     ret.push(checkErrors(0));
 
     return ret;
