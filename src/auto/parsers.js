@@ -6,7 +6,7 @@ export function parseDocument() {
     .filter(f => f.querySelector("[data-val=true]") !== null);
 
   [...document.querySelectorAll("[data-val=true]")]
-    .forEach(el => this.parseElement(el));
+    .forEach(el => parseElement(el));
 
   forms.forEach(f => {
     const info = validationInfo(f);
