@@ -11,7 +11,7 @@ This library is a vanilla JavaScript port of these 2 libraries:
 - [jQuery Validation Plugin](https://github.com/jquery-validation/jquery-validation) by Jörn Zaefferer
 - [jQuery Unobtrusive Validation](https://github.com/aspnet/jquery-validation-unobtrusive) by .NET Foundation
 
-## Builds
+### Builds
 
 **`dv.umd.js`** - Core library with programmatic API (like jQuery Validation)
 
@@ -26,7 +26,7 @@ dv.validate('#myForm', { rules: { email: { required: true } } });
 <!-- Automatically validates on page load -->
 ```
 
-## Browser Support
+### Browser Support
 
 This library supports all modern evergreen browsers. It requires ES6+ support (browsers from 2017+).
 
