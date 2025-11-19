@@ -14,7 +14,7 @@ function setValidationValues(options, ruleName, value) {
 const adapters = {
   _: [],
 
-  add: function (adapterName, params, fn) {
+  add: function (adapterName, params, fn?: any) {
     // Called with no params, just a function
     if (!fn) {
       fn = params;
@@ -57,7 +57,7 @@ const adapters = {
     );
   },
 
-  addSingleVal: function (adapterName, attribute, ruleName) {
+  addSingleVal: function (adapterName, attribute, ruleName?: any) {
     return this.add(adapterName, [attribute || 'val'], function (options) {
       setValidationValues(
         options,

@@ -33,7 +33,7 @@ const jsBuilds = [
   },
   // DV Auto: UMD
   {
-    input: './src/auto/index.js',
+    input: './src/auto/index.ts',
     output: {
       dir: 'dist',
       entryFileNames: 'dv-auto.umd.js',
@@ -45,7 +45,7 @@ const jsBuilds = [
   },
   // DV Auto: ESM
   {
-    input: './src/auto/index.js',
+    input: './src/auto/index.ts',
     output: {
       dir: 'dist',
       entryFileNames: 'dv-auto.esm.js',

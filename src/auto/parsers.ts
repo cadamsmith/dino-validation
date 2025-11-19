@@ -2,11 +2,11 @@ import adapters from './adapters.js';
 import { validationInfo } from './validationInfo.js';
 
 export function parseDocument() {
-  const forms = [...document.querySelectorAll('form')].filter(
+  const forms = Array.from(document.querySelectorAll('form')).filter(
     (f) => f.querySelector('[data-val=true]') !== null,
   );
 
-  [...document.querySelectorAll('[data-val=true]')].forEach((el) =>
+  Array.from(document.querySelectorAll('[data-val=true]')).forEach((el) =>
     parseElement(el),
   );
 
