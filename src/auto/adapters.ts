@@ -25,7 +25,7 @@ const adapters = {
     return this;
   },
 
-  addBool: function (adapterName: string, ruleName: string) {
+  addBool: function (adapterName: string, ruleName?: string) {
     return this.add(adapterName, function (options: any) {
       setValidationValues(options, ruleName || adapterName, true);
     });
@@ -34,10 +34,10 @@ const adapters = {
   addMinMax: function (
     adapterName: string,
     minRuleName: string,
-    maxRuleName: string,
-    minMaxRuleName: string,
-    minAttribute: any,
-    maxAttribute: any,
+    maxRuleName?: string,
+    minMaxRuleName?: string,
+    minAttribute?: any,
+    maxAttribute?: any,
   ) {
     return this.add(
       adapterName,
@@ -47,11 +47,11 @@ const adapters = {
         const max = options.params.max;
 
         if (min && max) {
-          setValidationValues(options, minMaxRuleName, [min, max]);
+          setValidationValues(options, minMaxRuleName!, [min, max]);
         } else if (min) {
           setValidationValues(options, minRuleName, min);
         } else if (max) {
-          setValidationValues(options, maxRuleName, max);
+          setValidationValues(options, maxRuleName!, max);
         }
       },
     );

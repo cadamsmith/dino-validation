@@ -131,12 +131,10 @@ export function findDefined(...args: any[]) {
  * @param {...*} params - parameters to substitute into placeholders
  * @return {string|function} - formatted string or curried function if only source provided
  */
-export function format(source: string, params?: any) {
+export function format(source: string, params?: any[]) {
   if (arguments.length === 1) {
-    return function () {
-      const args = [...arguments];
-      args.unshift(source);
-      return format.apply(null, args);
+    return function (args: any[]) {
+      return format(source, args);
     };
   }
 
