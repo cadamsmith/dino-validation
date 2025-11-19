@@ -5,7 +5,7 @@ import { getLength } from './helpers.js';
  * Each method receives (blank, value, element, param) and returns true if valid.
  */
 const methods = {
-  required: required,
+  "required": required,
   minlength: minLength,
   maxlength: maxLength,
   rangelength: rangeLength,

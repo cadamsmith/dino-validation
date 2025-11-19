@@ -1,34 +1,31 @@
 import adapters from './adapters.js';
 import { parseDocument, parseElement } from './parsers.js';
 
-class ValidationParser {
-  constructor() {
-    this.adapters = adapters;
-  }
+// Re-export all base dv functionality
+export {
+  validate,
+  valid,
+  rules,
+  addMethod,
+  messages,
+  methods,
+  default as dv
+} from '../index.js';
 
-  run() {
-    // Auto-parse on DOM ready
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => {
-        this.parseDocument();
-      });
-    } else {
-      // DOM already loaded
-      this.parseDocument();
-    }
-  }
+const auto = {
+  adapters,
+  parseDocument,
+  parseElement
+};
 
-  parseDocument() {
-    return parseDocument();
-  }
-
-  parseElement(element) {
-    return parseElement(element);
-  }
+// Auto-parse on DOM ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    auto.parseDocument();
+  });
+} else {
+  // DOM already loaded
+  auto.parseDocument();
 }
 
-// Create singleton instance
-const parser = new ValidationParser();
-parser.run();
-
-export default parser;
+export default auto;

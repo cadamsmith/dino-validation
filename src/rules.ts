@@ -37,7 +37,7 @@ export function getRules(element) {
  * Default mapping of CSS class names to validation rules.
  * Allows class-based rule declaration like class="required email".
  */
-let classRuleSettings = {
+let classRuleSettings: Record<string, any> = {
   required: { required: true },
   email: { email: true },
   url: { url: true },
@@ -54,7 +54,7 @@ let classRuleSettings = {
  * @param {Object} [rules] - validation rules object (only used if className is a string)
  */
 export function addClassRules(className, rules) {
-  if (className.constructor === String) {
+  if (typeof className === 'string') {
     classRuleSettings[className] = rules;
   } else {
     classRuleSettings = { ...classRuleSettings, ...className };
@@ -68,7 +68,7 @@ export function addClassRules(className, rules) {
  * @param {HTMLElement} element - element the rules apply to
  * @return {Object} - normalized rules object
  */
-function normalizeRules(rules, element) {
+function normalizeRules(rules: Record<string, any>, element) {
   Object.entries(rules).forEach(([key, value]) => {
     // Ignore rule when param is explicitly false, eg. required:false
     if (value === false) {
@@ -77,7 +77,7 @@ function normalizeRules(rules, element) {
     }
 
     if (value.param) {
-      rules[key] = value.param !== undefined ? value.param : true;
+      rules[key] = value.param;
     }
   });
 
@@ -132,7 +132,7 @@ function classRules(element) {
  * @return {Object} - validation rules derived from HTML attributes
  */
 function attributeRules(element) {
-  const rules = {};
+  const rules: Record<string, any> = {};
   const type = element.getAttribute('type');
 
   for (const method of methodStore.keys()) {

@@ -524,7 +524,7 @@ export class Validator {
     }
   }
 
-  hideErrors(element) {
+  hideErrors(element?: any) {
     // we're either hiding all errors, or just the errors for a specific element
     let targets = this.toHide;
     if (element) {
@@ -556,7 +556,7 @@ export class Validator {
     return result;
   }
 
-  showLabel(element, message) {
+  showLabel(element, message?: any) {
     let errors = this.errorsFor(element);
 
     if (errors.length) {
@@ -657,7 +657,7 @@ export class Validator {
   resetElements() {
     if (this.settings.unhighlight) {
       for (const element of this.elements()) {
-        this.unhighlight(element, ...this.errorClasses, []);
+        this.unhighlight(element, this.errorClasses, []);
         findByName(element.form, element.name).forEach((el) =>
           el.classList.remove(...this.validClasses),
         );

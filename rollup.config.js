@@ -1,51 +1,77 @@
+import typescript from '@rollup/plugin-typescript';
+
 const jsBuilds = [
   // DV Core: UMD
   {
-    input: './src/index.js',
+    input: './src/index.ts',
     output: {
-      file: 'dist/dv.umd.js',
+      dir: 'dist',
+      entryFileNames: 'dv.umd.js',
       format: 'umd',
       name: 'dv',
       sourcemap: true,
     },
+    plugins: [typescript({ compilerOptions: { outDir: 'dist', declaration: false } })],
   },
   // DV Core: ESM
   {
-    input: './src/index.js',
+    input: './src/index.ts',
     output: {
-      file: 'dist/dv.esm.js',
+      dir: 'dist',
+      entryFileNames: 'dv.esm.js',
       format: 'esm',
       sourcemap: true,
     },
+    plugins: [typescript({ 
+      compilerOptions: { 
+        outDir: 'dist', 
+        declaration: true,
+        declarationDir: 'dist/types',
+        declarationMap: true
+      } 
+    })],
   },
   // DV Auto: UMD
   {
     input: './src/auto/index.js',
     output: {
-      file: 'dist/dv-auto.umd.js',
+      dir: 'dist',
+      entryFileNames: 'dv-auto.umd.js',
       format: 'umd',
       name: 'dv',
       sourcemap: true,
     },
+    plugins: [typescript({ compilerOptions: { outDir: 'dist', declaration: false } })],
   },
   // DV Auto: ESM
   {
     input: './src/auto/index.js',
     output: {
-      file: 'dist/dv-auto.esm.js',
+      dir: 'dist',
+      entryFileNames: 'dv-auto.esm.js',
       format: 'esm',
       sourcemap: true,
     },
+    plugins: [typescript({ 
+      compilerOptions: { 
+        outDir: 'dist', 
+        declaration: true,
+        declarationDir: 'dist/types/auto',
+        declarationMap: true
+      } 
+    })],
   },
   // Test Helpers: JS UMD (not dist)
   {
-    input: './src/testHelpers.js',
+    input: './src/testHelpers.ts',
     output: {
-      file: 'tests/js/dv-test-helpers.umd.js',
+      dir: 'tests/js',
+      entryFileNames: 'dv-test-helpers.umd.js',
       format: 'umd',
       name: 'dvTestHelpers',
       sourcemap: true,
     },
+    plugins: [typescript({ compilerOptions: { outDir: 'tests/js', declaration: false } })],
   },
 ];
 

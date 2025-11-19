@@ -25,7 +25,7 @@ import { store as messages } from './messages.js';
  *   }
  * });
  */
-export function validate(selector, options) {
+export function validate(selector, options?: any) {
   const element =
     selector instanceof HTMLElement
       ? selector
@@ -66,7 +66,7 @@ export function validate(selector, options) {
 export function valid(selector) {
   let elements = [];
   if (typeof selector === 'string') {
-    elements = [...document.querySelectorAll(selector)];
+    elements = Array.from(document.querySelectorAll(selector));
   } else if (selector instanceof HTMLElement) {
     elements = [selector];
   } else if (Array.isArray(selector)) {
