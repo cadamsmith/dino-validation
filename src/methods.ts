@@ -32,7 +32,7 @@ export const store = {
    * Returns all registered validation method names.
    * @return {string[]} - array of method names
    */
-  keys: function () {
+  keys: function (): string[] {
     return Object.keys(methods);
   },
   /**
@@ -40,7 +40,7 @@ export const store = {
    * @param {string} key - method name
    * @return {Function} - validation method function
    */
-  get: function (key: string) {
+  get: function (key: string): Function {
     return methods[key];
   },
   /**
@@ -48,7 +48,7 @@ export const store = {
    * @param {string} key - method name
    * @param {Function} value - validation method function
    */
-  set: function (key: string, value: any) {
+  set: function (key: string, value: any): void {
     methods[key] = value;
   },
 };

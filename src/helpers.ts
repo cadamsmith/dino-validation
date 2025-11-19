@@ -1,18 +1,18 @@
 /**
  * Returns true if the element is visible in the DOM.
- * @param {HTMLElement} el - element to check visibility
- * @return {boolean} - true if element is visible, false otherwise
+ * @param el - element to check visibility
+ * @return true if element is visible, false otherwise
  */
-export function isVisible(el: any) {
+export function isVisible(el: any): boolean {
   return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
 }
 
 /**
  * Returns the number of truthy properties in an object.
- * @param {Object} obj - object to count properties
- * @return {number} - count of truthy properties
+ * @param obj - object to count properties
+ * @return count of truthy properties
  */
-export function objectLength(obj: any) {
+export function objectLength(obj: any): number {
   let count = 0;
   for (const key in obj) {
     // This check allows counting elements with empty error message as invalid elements
@@ -25,30 +25,30 @@ export function objectLength(obj: any) {
 
 /**
  * Finds all form elements with the specified name attribute.
- * @param {HTMLFormElement} form - form element to search within
- * @param {string} name - name attribute to search for
- * @return {HTMLElement[]} - array of matching elements
+ * @param form - form element to search within
+ * @param name - name attribute to search for
+ * @return array of matching elements
  */
-export function findByName(form: any, name: string) {
+export function findByName(form: any, name: string): any[] {
   return [...form.querySelectorAll(`[name='${escapeCssMeta(name)}']`)];
 }
 
 /**
  * Returns true if the element is a radio button or checkbox.
- * @param {HTMLElement} element - element to check
- * @return {boolean} - true if element is radio or checkbox, false otherwise
+ * @param element - element to check
+ * @return true if element is radio or checkbox, false otherwise
  */
-export function isCheckableElement(element: any) {
+export function isCheckableElement(element: any): boolean {
   return /radio|checkbox/i.test(element.type);
 }
 
 /**
  * Escapes CSS meta-characters in a string for use in CSS selectors.
  * See https://api.jquery.com/category/selectors/ for CSS meta-characters that should be escaped.
- * @param {string} text - text to escape
- * @return {string} - escaped text safe for CSS selectors
+ * @param text - text to escape
+ * @return escaped text safe for CSS selectors
  */
-export function escapeCssMeta(text: string) {
+export function escapeCssMeta(text: string): string {
   if (text === undefined) {
     return '';
   }
@@ -58,8 +58,8 @@ export function escapeCssMeta(text: string) {
 
 /**
  * Gets the value of a form element, handling special cases for different input types.
- * @param {HTMLElement} element - form element to get value from
- * @return {string|string[]} - element value or array of values for checkboxes/radios
+ * @param element - form element to get value from
+ * @return element value or array of values for checkboxes/radios
  */
 export function elementValue(element: any): string | string[] {
   if (element.type === 'radio' || element.type === 'checkbox') {
@@ -84,9 +84,9 @@ export function elementValue(element: any): string | string[] {
 /**
  * Get the value of a file input element.
  * @param element - file input element
- * @return {string} - file path or file name
+ * @return file path or file name
  */
-export function fileInputValue(element: any) {
+export function fileInputValue(element: any): string {
   const value = element.value;
 
   // Modern browser (chrome & safari)
@@ -113,10 +113,10 @@ export function fileInputValue(element: any) {
 
 /**
  * Returns the first defined (non-undefined) argument from the provided arguments.
- * @param {...*} args - arguments to check
- * @return {*} - first defined argument or undefined if none found
+ * @param args - arguments to check
+ * @return first defined argument or undefined if none found
  */
-export function findDefined(...args: any[]) {
+export function findDefined(...args: any[]): any {
   for (const arg of args) {
     if (arg !== undefined) {
       return arg;
@@ -127,11 +127,11 @@ export function findDefined(...args: any[]) {
 
 /**
  * Formats a string by replacing {0}, {1}, etc. placeholders with provided parameters.
- * @param {string} source - template string with placeholders
- * @param {...*} params - parameters to substitute into placeholders
- * @return {string|function} - formatted string or curried function if only source provided
+ * @param source - template string with placeholders
+ * @param params - parameters to substitute into placeholders
+ * @return formatted string or curried function if only source provided
  */
-export function format(source: string, params?: any[]) {
+export function format(source: string, params?: any[]): string | Function {
   if (arguments.length === 1) {
     return function (args: any[]) {
       return format(source, args);
@@ -157,10 +157,10 @@ export function format(source: string, params?: any[]) {
 
 /**
  * Returns the id or name attribute of an element, preferring name for checkable elements.
- * @param {HTMLElement} element - element to get identifier from
- * @return {string} - element id or name
+ * @param element - element to get identifier from
+ * @return element id or name
  */
-export function idOrName(element: any) {
+export function idOrName(element: any): string {
   return (
     (isCheckableElement(element) ? element.name : element.id) || element.name
   );
@@ -168,11 +168,11 @@ export function idOrName(element: any) {
 
 /**
  * Gets the length of a form element's value, handling special cases for selects and checkables.
- * @param {*} value - element value
- * @param {HTMLElement} element - form element
- * @return {number} - length of the element's value
+ * @param value - element value
+ * @param element - form element
+ * @return length of the element's value
  */
-export function getLength(value: any, element: any) {
+export function getLength(value: any, element: any): number {
   const nodeName = element.nodeName.toLowerCase();
 
   if (nodeName === 'select') {
@@ -188,10 +188,10 @@ export function getLength(value: any, element: any) {
 
 /**
  * Returns true if the element has no value or is considered blank.
- * @param {HTMLElement} element - form element to check
- * @return {boolean} - true if element is blank, false otherwise
+ * @param element - form element to check
+ * @return true if element is blank, false otherwise
  */
-export function isBlankElement(element: any) {
+export function isBlankElement(element: any): boolean {
   const value = elementValue(element);
 
   if (element.nodeName.toLowerCase() === 'select') {
@@ -212,9 +212,9 @@ const displayDataMap = new WeakMap();
 /**
  * Shows an element by restoring its original display value.
  * Matches jQuery's .show() behavior.
- * @param {HTMLElement} element - Element to show
+ * @param element - Element to show
  */
-export function showElement(element: any) {
+export function showElement(element: any): void {
   const storedDisplay = displayDataMap.get(element);
   if (storedDisplay) {
     element.style.display = storedDisplay;
@@ -227,9 +227,9 @@ export function showElement(element: any) {
 /**
  * Hides an element by setting display to none, storing the original display value.
  * Matches jQuery's .hide() behavior.
- * @param {HTMLElement} element - Element to hide
+ * @param element - Element to hide
  */
-export function hideElement(element: any) {
+export function hideElement(element: any): void {
   if (element.style.display !== 'none') {
     // Store current display value
     displayDataMap.set(

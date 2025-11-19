@@ -60,12 +60,16 @@ export const store = {
 /**
  * Gets the appropriate error message for a validation rule failure.
  * Checks custom messages, data attributes, element title, and default messages in order.
- * @param {HTMLElement} element - form element that failed validation
- * @param {string|Object} rule - validation rule (string method name or object with method and parameters)
- * @param {Object} settings - validator settings that may contain custom messages
- * @return {string} - formatted error message
+ * @param element - form element that failed validation
+ * @param rule - validation rule (string method name or object with method and parameters)
+ * @param settings - validator settings that may contain custom messages
+ * @return formatted error message
  */
-export function getMessage(element: any, rule: any, settings: any) {
+export function getMessage(
+  element: any,
+  rule: any,
+  settings: Record<string, any>,
+) {
   if (typeof rule === 'string') {
     rule = { method: rule };
   }
@@ -91,12 +95,16 @@ export function getMessage(element: any, rule: any, settings: any) {
 
 /**
  * Gets a custom error message from validator settings.
- * @param {string} name - element name
- * @param {string} method - validation method name
- * @param {Object} settings - validator settings that may contain custom messages
- * @return {string|undefined} - custom message if defined
+ * @param name - element name
+ * @param method - validation method name
+ * @param settings - validator settings that may contain custom messages
+ * @return custom message if defined
  */
-function customMessage(name: string, method: any, settings: any) {
+function customMessage(
+  name: string,
+  method: string,
+  settings: Record<string, any>,
+) {
   const m = settings[name];
   return m && (m.constructor === String ? m : m[method]);
 }
@@ -104,11 +112,11 @@ function customMessage(name: string, method: any, settings: any) {
 /**
  * Gets a custom error message from element's data attributes.
  * Checks data-msg-{method} first, then falls back to data-msg.
- * @param {HTMLElement} element - form element
- * @param {string} method - validation method name
- * @return {string|undefined} - custom message from data attribute if present
+ * @param element - form element
+ * @param method - validation method name
+ * @return custom message from data attribute if present
  */
-function customDataMessage(element: any, method: any) {
+function customDataMessage(element: any, method: string): string | undefined {
   const dataSetKey =
     'msg' + method.charAt(0).toUpperCase() + method.substring(1).toLowerCase();
 
