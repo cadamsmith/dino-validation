@@ -9,18 +9,12 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
 
-    // Progressive strictness - start gentle
-    "strict": false,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
+    // Strictness options
+    "strict": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "strictBindCallApply": true,
-    "strictFunctionTypes": true,
-    "strictPropertyInitialization": true,
-    "noImplicitThis": true
+    "noUnusedParameters": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "tests"]
