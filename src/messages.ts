@@ -4,7 +4,7 @@ import { findDefined, format } from './helpers.js';
  * Default error messages for all validation methods.
  * Messages can be strings or functions that return formatted strings with parameters.
  */
-const messages: Record<string, any> = {
+const messages: Record<string, string | Function> = {
   required: 'This field is required.',
   remote: 'Please fix this field.',
   email: 'Please enter a valid email address.',
@@ -36,7 +36,7 @@ export const store = {
    * Returns all registered message keys.
    * @return {string[]} - array of message keys
    */
-  keys: function () {
+  keys: function (): string[] {
     return Object.keys(messages);
   },
   /**
@@ -44,7 +44,7 @@ export const store = {
    * @param {string} key - validation method name
    * @return {string|Function} - error message string or function
    */
-  get: function (key: string) {
+  get: function (key: string): string | Function | undefined {
     return messages[key];
   },
   /**
@@ -52,7 +52,7 @@ export const store = {
    * @param {string} key - validation method name
    * @param {string|Function} value - error message string or function
    */
-  set: function (key: string, value: any) {
+  set: function (key: string, value: string | Function): void {
     messages[key] = value;
   },
 };

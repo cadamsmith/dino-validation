@@ -61,7 +61,7 @@ export function escapeCssMeta(text: string) {
  * @param {HTMLElement} element - form element to get value from
  * @return {string|string[]} - element value or array of values for checkboxes/radios
  */
-export function elementValue(element: any) {
+export function elementValue(element: any): string | string[] {
   if (element.type === 'radio' || element.type === 'checkbox') {
     const checked = findByName(element.form, element.name).filter((el) =>
       el.matches(':checked'),
