@@ -437,7 +437,11 @@ export class Validator {
     this.toHide = this.errors().concat(this.containers);
   }
 
-  highlight(element: any, errorClasses: string[], validClasses: string[]): void {
+  highlight(
+    element: any,
+    errorClasses: string[],
+    validClasses: string[],
+  ): void {
     let targets = [element];
     if (element.type === 'radio') {
       targets = findByName(element.form, element.name);
@@ -449,7 +453,11 @@ export class Validator {
     });
   }
 
-  unhighlight(element: any, errorClasses: string[], validClasses: string[]): void {
+  unhighlight(
+    element: any,
+    errorClasses: string[],
+    validClasses: string[],
+  ): void {
     let targets = [element];
     if (element.type === 'radio') {
       targets = findByName(element.form, element.name);
