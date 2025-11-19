@@ -9,13 +9,13 @@ export {
   addMethod,
   messages,
   methods,
-  default as dv
+  default as dv,
 } from '../index.js';
 
 const auto = {
   adapters,
   parseDocument,
-  parseElement
+  parseElement,
 };
 
 // Auto-parse on DOM ready

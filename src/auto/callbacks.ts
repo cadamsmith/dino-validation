@@ -33,7 +33,7 @@ export function onError(error, inputElement) {
  * Handles display of validation summary with all errors.
  * @this {HTMLFormElement}
  */
-export function onErrors(event, validator) {
+export function onErrors(_event, validator) {
   const container = this.querySelector('[data-valmsg-summary=true]');
   const list = container.querySelector('ul');
 

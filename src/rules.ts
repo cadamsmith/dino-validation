@@ -10,7 +10,7 @@ import { store as methodStore } from './methods.js';
 export function getRules(element) {
   // If nothing is selected, return empty object; can't chain anyway
   if (element == null || element.form == null) {
-    return;
+    return {};
   }
 
   let data = normalizeRules(

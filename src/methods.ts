@@ -5,7 +5,7 @@ import { getLength } from './helpers.js';
  * Each method receives (blank, value, element, param) and returns true if valid.
  */
 const methods = {
-  "required": required,
+  required: required,
   minlength: minLength,
   maxlength: maxLength,
   rangelength: rangeLength,
@@ -111,11 +111,11 @@ function rangeLength(blank, value, element, param) {
  * Validates that the field value is greater than or equal to a minimum value.
  * @param {boolean} blank - whether the field is blank
  * @param {number} value - field value
- * @param {HTMLElement} element - form element
+ * @param {HTMLElement} _element - form element
  * @param {number} param - minimum value required
  * @return {boolean} - true if blank or value meets minimum
  */
-function min(blank, value, element, param) {
+function min(blank, value, _element, param) {
   return blank || value >= param;
 }
 
@@ -123,11 +123,11 @@ function min(blank, value, element, param) {
  * Validates that the field value is less than or equal to a maximum value.
  * @param {boolean} blank - whether the field is blank
  * @param {number} value - field value
- * @param {HTMLElement} element - form element
+ * @param {HTMLElement} _element - form element
  * @param {number} param - maximum value allowed
  * @return {boolean} - true if blank or value within maximum
  */
-function max(blank, value, element, param) {
+function max(blank, value, _element, param) {
   return blank || value <= param;
 }
 
@@ -135,11 +135,11 @@ function max(blank, value, element, param) {
  * Validates that the field value is within a specified numeric range.
  * @param {boolean} blank - whether the field is blank
  * @param {number} value - field value
- * @param {HTMLElement} element - form element
+ * @param {HTMLElement} _element - form element
  * @param {number[]} param - array of [min, max] values
  * @return {boolean} - true if blank or value within range
  */
-function range(blank, value, element, param) {
+function range(blank, value, _element, param) {
   return blank || (value >= param[0] && value <= param[1]);
 }
 
@@ -212,13 +212,13 @@ function digits(blank, value) {
 
 /**
  * Validates that the field value equals the value of another field (e.g., password confirmation).
- * @param {boolean} blank - whether the field is blank
+ * @param {boolean} _blank - whether the field is blank
  * @param {string} value - field value
- * @param {HTMLElement} element - form element
+ * @param {HTMLElement} _element - form element
  * @param {string} param - CSS selector for the target element to compare against
  * @return {boolean} - true if values match
  */
-function equalTo(blank, value, element, param) {
+function equalTo(_blank, value, _element, param) {
   const target = document.querySelector(param);
   return value === target.value;
 }
@@ -227,11 +227,11 @@ function equalTo(blank, value, element, param) {
  * Validates that the field value matches a regular expression.
  * @param {boolean} blank - whether the field is blank
  * @param {string} value - field value
- * @param {HTMLElement} element - form element
+ * @param {HTMLElement} _element - form element
  * @param {string} param - regular expression pattern
  * @return {boolean} - true if blank or value matches pattern
  */
-function regex(blank, value, element, param) {
+function regex(blank, value, _element, param) {
   if (blank) {
     return true;
   }
@@ -245,11 +245,11 @@ function regex(blank, value, element, param) {
  * Used for password strength validation.
  * @param {boolean} blank - whether the field is blank
  * @param {string} value - field value
- * @param {HTMLElement} element - form element
+ * @param {HTMLElement} _element - form element
  * @param {number} param - minimum number of non-alphanumeric characters required
  * @return {boolean} - true if blank or value has enough non-alphanumeric characters
  */
-function nonAlphaMin(blank, value, element, param) {
+function nonAlphaMin(blank, value, _element, param) {
   if (blank || !param) {
     return true;
   }

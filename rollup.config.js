@@ -11,7 +11,9 @@ const jsBuilds = [
       name: 'dv',
       sourcemap: true,
     },
-    plugins: [typescript({ compilerOptions: { outDir: 'dist', declaration: false } })],
+    plugins: [
+      typescript({ compilerOptions: { outDir: 'dist', declaration: false } }),
+    ],
   },
   // DV Core: ESM
   {
@@ -22,14 +24,16 @@ const jsBuilds = [
       format: 'esm',
       sourcemap: true,
     },
-    plugins: [typescript({ 
-      compilerOptions: { 
-        outDir: 'dist', 
-        declaration: true,
-        declarationDir: 'dist/types',
-        declarationMap: true
-      } 
-    })],
+    plugins: [
+      typescript({
+        compilerOptions: {
+          outDir: 'dist',
+          declaration: true,
+          declarationDir: 'dist/types',
+          declarationMap: true,
+        },
+      }),
+    ],
   },
   // DV Auto: UMD
   {
@@ -41,7 +45,9 @@ const jsBuilds = [
       name: 'dv',
       sourcemap: true,
     },
-    plugins: [typescript({ compilerOptions: { outDir: 'dist', declaration: false } })],
+    plugins: [
+      typescript({ compilerOptions: { outDir: 'dist', declaration: false } }),
+    ],
   },
   // DV Auto: ESM
   {
@@ -52,14 +58,16 @@ const jsBuilds = [
       format: 'esm',
       sourcemap: true,
     },
-    plugins: [typescript({ 
-      compilerOptions: { 
-        outDir: 'dist', 
-        declaration: true,
-        declarationDir: 'dist/types/auto',
-        declarationMap: true
-      } 
-    })],
+    plugins: [
+      typescript({
+        compilerOptions: {
+          outDir: 'dist',
+          declaration: true,
+          declarationDir: 'dist/types/auto',
+          declarationMap: true,
+        },
+      }),
+    ],
   },
   // Test Helpers: JS UMD (not dist)
   {
@@ -71,7 +79,11 @@ const jsBuilds = [
       name: 'dvTestHelpers',
       sourcemap: true,
     },
-    plugins: [typescript({ compilerOptions: { outDir: 'tests/js', declaration: false } })],
+    plugins: [
+      typescript({
+        compilerOptions: { outDir: 'tests/js', declaration: false },
+      }),
+    ],
   },
 ];
 
