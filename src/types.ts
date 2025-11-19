@@ -16,7 +16,7 @@ export interface ValidatorSettings {
   invalidHandler: Function | null;
   success: string | Function | null;
   focusCleanup: boolean;
-  rules: Record<string, any>;
+  rules: Record<string, ValidationRuleset | string>;
   messages: Record<string, any>;
 }
 
@@ -25,3 +25,9 @@ export interface ValidationError {
   message: any;
   method: string;
 }
+
+export interface ValidationRuleset {
+  [key: string]: RulePrimitive | { param: RulePrimitive };
+}
+
+export type RulePrimitive = boolean | string | number | [number, number];

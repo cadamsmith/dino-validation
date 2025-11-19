@@ -10,11 +10,11 @@ import {
   objectLength,
   showElement,
 } from './helpers';
-import { getRules } from './rules';
+import { getRules, normalizeRule } from './rules';
 import { getMessage } from './messages';
 import { validatorStore } from './validatorStore';
 import { store as methodStore } from './methods';
-import { ValidationError, ValidatorSettings } from './types';
+import { ValidationError, ValidationRuleset, ValidatorSettings } from './types';
 
 export class Validator {
   currentForm: HTMLFormElement;
@@ -29,6 +29,9 @@ export class Validator {
   currentElements: any[] = [];
   labelContainer: HTMLElement | null = null;
   containers: HTMLElement[] = [];
+
+  /** normalized rules */
+  rules: Record<string, ValidationRuleset> = {};
 
   settings: ValidatorSettings = {
     ignore: ':hidden',
@@ -73,7 +76,6 @@ export class Validator {
     this.settings = { ...this.settings, ...options };
 
     this.normalizeSettings();
-
     this.init();
   }
 
@@ -116,6 +118,11 @@ export class Validator {
       containers.push(document.querySelector(this.settings.errorContainer));
     }
     this.containers = containers.filter(Boolean) as HTMLElement[];
+
+    this.rules = {};
+    Object.entries(this.settings.rules).forEach(([key, value]) => {
+      this.rules[key] = normalizeRule(value);
+    });
 
     this.attachEventHandlers();
   }
@@ -312,7 +319,7 @@ export class Validator {
         }
 
         const name = el.name || el.getAttribute('name');
-        if (name in rulesCache || !objectLength(getRules(el))) {
+        if (name in rulesCache || !objectLength(getRules(el, this.rules))) {
           return false;
         }
 
@@ -346,7 +353,7 @@ export class Validator {
   check(element: any): boolean {
     element = this.validationTargetFor(element);
 
-    const rules = getRules(element);
+    const rules = getRules(element, this.rules);
     const value = elementValue(element);
     const isBlank = isBlankElement(element);
 

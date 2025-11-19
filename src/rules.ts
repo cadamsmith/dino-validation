@@ -1,13 +1,17 @@
-import { validatorStore } from './validatorStore';
 import { store as methodStore } from './methods';
+import { ValidationRuleset } from './types';
 
 /**
  * Gets all validation rules for an element from multiple sources.
  * Merges rules from CSS classes, HTML attributes, data attributes, and programmatic settings.
- * @param {HTMLElement} element - form element to get rules for
+ * @param element - form element to get rules for
+ * @param settings - validator rule settings
  * @return {Object} - object containing all validation rules with the required rule first
  */
-export function getRules(element: any): Record<string, any> {
+export function getRules(
+  element: any,
+  settings: Record<string, ValidationRuleset>,
+): Record<string, any> {
   // If nothing is selected, return empty object; can't chain anyway
   if (element == null || element.form == null) {
     return {};
@@ -18,9 +22,8 @@ export function getRules(element: any): Record<string, any> {
       ...classRules(element),
       ...attributeRules(element),
       ...dataRules(element),
-      ...staticRules(element),
-    },
-    element,
+      ...staticRules(element, settings),
+    }
   );
 
   // Make sure required is at front
@@ -37,7 +40,7 @@ export function getRules(element: any): Record<string, any> {
  * Default mapping of CSS class names to validation rules.
  * Allows class-based rule declaration like class="required email".
  */
-let classRuleSettings: Record<string, any> = {
+const classRuleSettings: Record<string, ValidationRuleset> = {
   required: { required: true },
   email: { email: true },
   url: { url: true },
@@ -50,31 +53,21 @@ let classRuleSettings: Record<string, any> = {
 
 /**
  * Adds or updates validation rules for a CSS class name.
- * @param {string|Object} className - class name to associate with rules, or object of className: rules pairs
- * @param {Object} [rules] - validation rules object (only used if className is a string)
+ * @param className - class name to associate with rules
  */
-export function addClassRules(
-  className: string | Record<string, any>,
-  rules: string | Record<string, any>,
-): void {
-  if (typeof className === 'string') {
-    classRuleSettings[className] = rules;
-  } else {
-    classRuleSettings = { ...classRuleSettings, ...className };
-  }
+export function addClassRule(className: string): void {
+  classRuleSettings[className] = normalizeRule(className);
 }
 
 /**
  * Normalizes and processes validation rules for an element.
  * Removes false rules, evaluates function parameters, and converts string/number values.
  * @param rules - raw validation rules object
- * @param element - element the rules apply to
  * @return normalized rules object
  */
 function normalizeRules(
-  rules: Record<string, any>,
-  element: any,
-): Record<string, any> {
+  rules: ValidationRuleset,
+): ValidationRuleset {
   Object.entries(rules).forEach(([key, value]) => {
     // Ignore rule when param is explicitly false, eg. required:false
     if (value === false) {
@@ -82,14 +75,9 @@ function normalizeRules(
       return;
     }
 
-    if (value.param) {
+    if (typeof value === "object" && 'param' in value && value.param) {
       rules[key] = value.param;
     }
-  });
-
-  // Evaluate parameters
-  Object.entries(rules).forEach(([key, value]) => {
-    rules[key] = typeof value === 'function' ? value(element) : value;
   });
 
   // Clean number parameters
@@ -101,10 +89,10 @@ function normalizeRules(
   ['rangelength', 'range'].forEach((ruleKey) => {
     if (rules[ruleKey]) {
       if (Array.isArray(rules[ruleKey])) {
-        rules[ruleKey] = [rules[ruleKey][0], rules[ruleKey][1]].map(Number);
+        rules[ruleKey] = [rules[ruleKey][0], rules[ruleKey][1]].map(Number) as [number, number];
       } else {
-        const parts = rules[ruleKey].replace(/[\[\]]/g, '').split(/[\s,]+/);
-        rules[ruleKey] = [parts[0], parts[1]].map(Number);
+        const parts = rules[ruleKey].toString().replace(/[\[\]]/g, '').split(/[\s,]+/);
+        rules[ruleKey] = [parts[0], parts[1]].map(Number) as [number, number];
       }
     }
   });
@@ -117,12 +105,12 @@ function normalizeRules(
  * @param element - element to extract rules from
  * @return validation rules derived from CSS classes
  */
-function classRules(element: any): Record<string, any> {
+function classRules(element: any): ValidationRuleset {
   let rules = {};
   const classes = element.getAttribute('class');
 
   if (classes) {
-    classes.split(' ').forEach((className: any) => {
+    classes.split(' ').forEach((className: string) => {
       if (className in classRuleSettings) {
         rules = { ...rules, ...classRuleSettings[className] };
       }
@@ -137,8 +125,8 @@ function classRules(element: any): Record<string, any> {
  * @param element - element to extract rules from
  * @return validation rules derived from HTML attributes
  */
-function attributeRules(element: any): Record<string, any> {
-  const rules: Record<string, any> = {};
+function attributeRules(element: any): ValidationRuleset {
+  const rules: ValidationRuleset = {};
   const type = element.getAttribute('type');
 
   for (const method of methodStore.keys()) {
@@ -160,7 +148,7 @@ function attributeRules(element: any): Record<string, any> {
   }
 
   // 'maxlength' may be returned as -1, 2147483647 ( IE ) and 524288 ( safari ) for text inputs
-  if (rules.maxlength && /-1|2147483647|524288/.test(rules.maxlength)) {
+  if (rules.maxlength && /-1|2147483647|524288/.test(rules.maxlength.toString())) {
     delete rules.maxlength;
   }
 
@@ -172,7 +160,7 @@ function attributeRules(element: any): Record<string, any> {
  * @param element - element to extract rules from
  * @return validation rules derived from data attributes
  */
-function dataRules(element: any): Record<string, any> {
+function dataRules(element: any): ValidationRuleset {
   const rules = {};
   const type = element.getAttribute('type');
 
@@ -199,17 +187,18 @@ function dataRules(element: any): Record<string, any> {
 /**
  * Gets validation rules defined programmatically in validator settings.
  * @param element - element to get rules for
+ * @param settings - Validator rule settings
  * @return validation rules from validator settings
  */
-export function staticRules(element: any): Record<string, any> {
-  let rules = {};
-  const validator = validatorStore.get(element.form);
-
-  if (validator.settings.rules) {
-    rules = normalizeRule(validator.settings.rules[element.name]) || {};
+export function staticRules(
+  element: any,
+  settings: Record<string, ValidationRuleset>,
+): ValidationRuleset {
+  if (!settings || !settings[element.name]) {
+    return {};
   }
 
-  return rules;
+  return normalizeRule(settings[element.name]!) || {};
 }
 
 /**
@@ -221,7 +210,7 @@ export function staticRules(element: any): Record<string, any> {
  * @param value - attribute value
  */
 function normalizeAttributeRule(
-  rules: any,
+  rules: ValidationRuleset,
   type: string,
   method: string,
   value: any,
@@ -251,14 +240,12 @@ function normalizeAttributeRule(
  * @param data - rule string or object
  * @return normalized rule object
  */
-export function normalizeRule(
-  data: string | Record<string, any>,
-): Record<string, any> {
+export function normalizeRule(data: ValidationRuleset | string): ValidationRuleset {
   if (typeof data !== 'string') {
     return data;
   }
 
-  const transformed: Record<string, boolean> = {};
+  const transformed: ValidationRuleset = {};
   data.split(/\s/).forEach((token) => {
     transformed[token] = true;
   });

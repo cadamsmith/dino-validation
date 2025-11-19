@@ -47,6 +47,9 @@
     "ci": "npm run build && npm run check-format && npm run test",
     "build": "npm run type-check && rollup -c",
     "test": "npx playwright test",
+    "test:firefox": "npx playwright test --project=firefox",
+    "test:chrome": "npx playwright test --project=chrome",
+    "test:webkit": "npx playwright test --project=webkit",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
     "type-check": "tsc --noEmit"

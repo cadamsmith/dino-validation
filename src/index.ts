@@ -5,7 +5,7 @@
 
 import { Validator } from './validator';
 import { validatorStore } from './validatorStore';
-import { addClassRules, getRules, normalizeRule } from './rules';
+import { addClassRule, getRules } from './rules';
 import { store as methods } from './methods';
 import { store as messages } from './messages';
 import { ValidatorSettings } from './types';
@@ -27,13 +27,16 @@ import { ValidatorSettings } from './types';
  * });
  */
 export function validate(
-  selector: string | HTMLElement,
+  selector: string | Element | null,
   options?: Partial<ValidatorSettings>,
-) {
+): Validator | undefined {
+  if (!selector) {
+    console.warn("No element selected, can't validate.");
+    return;
+  }
+
   const element =
-    selector instanceof HTMLElement
-      ? selector
-      : document.querySelector(selector);
+    selector instanceof Element ? selector : document.querySelector(selector);
 
   if (!element) {
     console.warn("No element selected, can't validate.");
@@ -60,9 +63,9 @@ export function validate(
  * Validates form or form elements and returns whether they are valid.
  * Triggers validation and returns the result without submitting the form.
  *
- * @param {string|HTMLElement|HTMLElement[]} selector - Element(s) to validate:
+ * @param selector - Element(s) to validate:
  * CSS selector, element, or array of elements
- * @returns {boolean} True if all elements are valid, false otherwise
+ * @returns True if all elements are valid, false otherwise
  * @example
  * // Check if form is valid
  * if (dv.valid('#myForm')) {
@@ -74,7 +77,7 @@ export function validate(
  *   console.log('Email and password are valid!');
  * }
  */
-export function valid(selector: string | HTMLElement | HTMLElement[]) {
+export function valid(selector: string | HTMLElement | HTMLElement[]): boolean {
   let elements: any[] = [];
   if (typeof selector === 'string') {
     elements = Array.from(document.querySelectorAll(selector));
@@ -85,12 +88,15 @@ export function valid(selector: string | HTMLElement | HTMLElement[]) {
   }
 
   if (elements[0].matches('form')) {
-    return validate(elements[0]).form();
+    return validate(elements[0])?.form() ?? false;
   }
 
   const errorList: any[] = [];
   let valid = true;
   const validator = validate(elements[0].form);
+  if (!validator) {
+    return false;
+  }
 
   elements.forEach((el) => {
     valid = validator.element(el) && valid;
@@ -106,20 +112,25 @@ export function valid(selector: string | HTMLElement | HTMLElement[]) {
 /**
  * Gets the validation rules for an element.
  *
- * @param {string|HTMLElement} selector - CSS selector string or HTMLElement
- * @returns {Object} Object containing validation rules for the element
+ * @param selector - CSS selector string or HTMLElement
+ * @returns Object containing validation rules for the element
  * @example
  * // Get rules for an input
  * const emailRules = dv.rules('#email');
  * console.log(emailRules); // { required: true, email: true }
  */
-export function rules(selector: string | HTMLElement) {
+export function rules(selector: string | HTMLElement): Record<string, any> {
   const element =
     selector instanceof HTMLElement
       ? selector
       : document.querySelector(selector);
 
-  return getRules(element);
+  const validator = validate((element as any).form);
+  if (!validator) {
+    return {};
+  }
+
+  return getRules(element, validator.rules);
 }
 
 /**
@@ -142,14 +153,13 @@ export function rules(selector: string | HTMLElement) {
  *   }
  * });
  */
-export function addMethod(name: string, method: any, message: any) {
+export function addMethod(name: string, method: Function, message: any) {
   methods.set(name, method);
   if (message) {
     messages.set(name, message);
   }
   if (method.length < 3) {
-    const rules = normalizeRule(name);
-    addClassRules(name, rules);
+    addClassRule(name);
   }
 }
 

@@ -84,7 +84,9 @@ export function onReset(this: any) {
   formResetFlagStore.set(this, true);
   try {
     const validator = validatorStore.get(this);
-    validator.resetForm();
+    if (validator) {
+      validator.resetForm();
+    }
   } finally {
     formResetFlagStore.delete(this);
   }
