@@ -3,7 +3,7 @@
  * @param {HTMLElement} el - element to check visibility
  * @return {boolean} - true if element is visible, false otherwise
  */
-export function isVisible(el) {
+export function isVisible(el: any) {
   return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
 }
 
@@ -12,7 +12,7 @@ export function isVisible(el) {
  * @param {Object} obj - object to count properties
  * @return {number} - count of truthy properties
  */
-export function objectLength(obj) {
+export function objectLength(obj: any) {
   let count = 0;
   for (const key in obj) {
     // This check allows counting elements with empty error message as invalid elements
@@ -29,7 +29,7 @@ export function objectLength(obj) {
  * @param {string} name - name attribute to search for
  * @return {HTMLElement[]} - array of matching elements
  */
-export function findByName(form, name) {
+export function findByName(form: any, name: string) {
   return [...form.querySelectorAll(`[name='${escapeCssMeta(name)}']`)];
 }
 
@@ -38,7 +38,7 @@ export function findByName(form, name) {
  * @param {HTMLElement} element - element to check
  * @return {boolean} - true if element is radio or checkbox, false otherwise
  */
-export function isCheckableElement(element) {
+export function isCheckableElement(element: any) {
   return /radio|checkbox/i.test(element.type);
 }
 
@@ -48,7 +48,7 @@ export function isCheckableElement(element) {
  * @param {string} text - text to escape
  * @return {string} - escaped text safe for CSS selectors
  */
-export function escapeCssMeta(text) {
+export function escapeCssMeta(text: string) {
   if (text === undefined) {
     return '';
   }
@@ -61,7 +61,7 @@ export function escapeCssMeta(text) {
  * @param {HTMLElement} element - form element to get value from
  * @return {string|string[]} - element value or array of values for checkboxes/radios
  */
-export function elementValue(element) {
+export function elementValue(element: any) {
   if (element.type === 'radio' || element.type === 'checkbox') {
     const checked = findByName(element.form, element.name).filter((el) =>
       el.matches(':checked'),
@@ -86,7 +86,7 @@ export function elementValue(element) {
  * @param element - file input element
  * @return {string} - file path or file name
  */
-export function fileInputValue(element) {
+export function fileInputValue(element: any) {
   const value = element.value;
 
   // Modern browser (chrome & safari)
@@ -116,7 +116,7 @@ export function fileInputValue(element) {
  * @param {...*} args - arguments to check
  * @return {*} - first defined argument or undefined if none found
  */
-export function findDefined(...args) {
+export function findDefined(...args: any[]) {
   for (const arg of args) {
     if (arg !== undefined) {
       return arg;
@@ -131,7 +131,7 @@ export function findDefined(...args) {
  * @param {...*} params - parameters to substitute into placeholders
  * @return {string|function} - formatted string or curried function if only source provided
  */
-export function format(source, params?: any) {
+export function format(source: string, params?: any) {
   if (arguments.length === 1) {
     return function () {
       const args = [...arguments];
@@ -150,7 +150,7 @@ export function format(source, params?: any) {
     params = [params];
   }
 
-  params.forEach((param, index) => {
+  params.forEach((param: any, index: number) => {
     source = source.replace(new RegExp(`\\{${index}\\}`, 'g'), param);
   });
 
@@ -162,7 +162,7 @@ export function format(source, params?: any) {
  * @param {HTMLElement} element - element to get identifier from
  * @return {string} - element id or name
  */
-export function idOrName(element) {
+export function idOrName(element: any) {
   return (
     (isCheckableElement(element) ? element.name : element.id) || element.name
   );
@@ -174,7 +174,7 @@ export function idOrName(element) {
  * @param {HTMLElement} element - form element
  * @return {number} - length of the element's value
  */
-export function getLength(value, element) {
+export function getLength(value: any, element: any) {
   const nodeName = element.nodeName.toLowerCase();
 
   if (nodeName === 'select') {
@@ -193,7 +193,7 @@ export function getLength(value, element) {
  * @param {HTMLElement} element - form element to check
  * @return {boolean} - true if element is blank, false otherwise
  */
-export function isBlankElement(element) {
+export function isBlankElement(element: any) {
   const value = elementValue(element);
 
   if (element.nodeName.toLowerCase() === 'select') {
@@ -216,7 +216,7 @@ const displayDataMap = new WeakMap();
  * Matches jQuery's .show() behavior.
  * @param {HTMLElement} element - Element to show
  */
-export function showElement(element) {
+export function showElement(element: any) {
   const storedDisplay = displayDataMap.get(element);
   if (storedDisplay) {
     element.style.display = storedDisplay;
@@ -231,7 +231,7 @@ export function showElement(element) {
  * Matches jQuery's .hide() behavior.
  * @param {HTMLElement} element - Element to hide
  */
-export function hideElement(element) {
+export function hideElement(element: any) {
   if (element.style.display !== 'none') {
     // Store current display value
     displayDataMap.set(

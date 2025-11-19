@@ -4,7 +4,7 @@ import { getLength } from './helpers.js';
  * Internal registry of all validation methods.
  * Each method receives (blank, value, element, param) and returns true if valid.
  */
-const methods = {
+const methods: Record<string, any> = {
   required: required,
   minlength: minLength,
   maxlength: maxLength,
@@ -40,7 +40,7 @@ export const store = {
    * @param {string} key - method name
    * @return {Function} - validation method function
    */
-  get: function (key) {
+  get: function (key: string) {
     return methods[key];
   },
   /**
@@ -48,7 +48,7 @@ export const store = {
    * @param {string} key - method name
    * @param {Function} value - validation method function
    */
-  set: function (key, value) {
+  set: function (key: string, value: any) {
     methods[key] = value;
   },
 };
@@ -58,7 +58,7 @@ export const store = {
  * @param {boolean} blank - whether the field is blank
  * @return {boolean} - true if field is not blank
  */
-function required(blank) {
+function required(blank: boolean) {
   return !blank;
 }
 
@@ -70,7 +70,7 @@ function required(blank) {
  * @param {number} param - minimum length required
  * @return {boolean} - true if blank or length meets minimum
  */
-function minLength(blank, value, element, param) {
+function minLength(blank: boolean, value: any, element: any, param: any) {
   const length = Array.isArray(value)
     ? value.length
     : getLength(value, element);
@@ -85,7 +85,7 @@ function minLength(blank, value, element, param) {
  * @param {number} param - maximum length allowed
  * @return {boolean} - true if blank or length within maximum
  */
-function maxLength(blank, value, element, param) {
+function maxLength(blank: boolean, value: any, element: any, param: any) {
   const length = Array.isArray(value)
     ? value.length
     : getLength(value, element);
@@ -100,7 +100,7 @@ function maxLength(blank, value, element, param) {
  * @param {number[]} param - array of [min, max] length values
  * @return {boolean} - true if blank or length within range
  */
-function rangeLength(blank, value, element, param) {
+function rangeLength(blank: boolean, value: any, element: any, param: any) {
   const length = Array.isArray(value)
     ? value.length
     : getLength(value, element);
@@ -115,7 +115,7 @@ function rangeLength(blank, value, element, param) {
  * @param {number} param - minimum value required
  * @return {boolean} - true if blank or value meets minimum
  */
-function min(blank, value, _element, param) {
+function min(blank: boolean, value: any, _element: any, param: any) {
   return blank || value >= param;
 }
 
@@ -127,7 +127,7 @@ function min(blank, value, _element, param) {
  * @param {number} param - maximum value allowed
  * @return {boolean} - true if blank or value within maximum
  */
-function max(blank, value, _element, param) {
+function max(blank: boolean, value: any, _element: any, param: any) {
   return blank || value <= param;
 }
 
@@ -139,7 +139,7 @@ function max(blank, value, _element, param) {
  * @param {number[]} param - array of [min, max] values
  * @return {boolean} - true if blank or value within range
  */
-function range(blank, value, _element, param) {
+function range(blank: boolean, value: any, _element: any, param: any) {
   return blank || (value >= param[0] && value <= param[1]);
 }
 
@@ -149,7 +149,7 @@ function range(blank, value, _element, param) {
  * @param {string} value - field value
  * @return {boolean} - true if blank or valid email format
  */
-function email(blank, value) {
+function email(blank: boolean, value: any) {
   const re =
     /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
   return blank || re.test(value);
@@ -161,7 +161,7 @@ function email(blank, value) {
  * @param {string} value - field value
  * @return {boolean} - true if blank or valid URL format
  */
-function url(blank, value) {
+function url(blank: boolean, value: any) {
   const re =
     /^(?:(?:https?|ftp):)?\/\/(?:(?:[^\]\[?\/<~#`!@$^&*()+=}|:";',>{ ]|%[0-9A-Fa-f]{2})+(?::(?:[^\]\[?\/<~#`!@$^&*()+=}|:";',>{ ]|%[0-9A-Fa-f]{2})*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[\/?#]\S*)?$/i;
   return blank || re.test(value);
@@ -173,7 +173,7 @@ function url(blank, value) {
  * @param {string} value - field value
  * @return {boolean} - true if blank or valid date string
  */
-function date(blank, value) {
+function date(blank: boolean, value: any) {
   return blank || !/Invalid|NaN/.test(new Date(value).toString());
 }
 
@@ -183,7 +183,7 @@ function date(blank, value) {
  * @param {string} value - field value
  * @return {boolean} - true if blank or valid ISO date format
  */
-function dateISO(blank, value) {
+function dateISO(blank: boolean, value: any) {
   const re = /^\d{4}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])$/;
   return blank || re.test(value);
 }
@@ -194,7 +194,7 @@ function dateISO(blank, value) {
  * @param {string} value - field value
  * @return {boolean} - true if blank or valid number format
  */
-function number(blank, value) {
+function number(blank: boolean, value: any) {
   const re = /^(?:-?\d+|-?\d{1,3}(?:,\d{3})+)?(?:-?\.\d+)?$/;
   return blank || re.test(value);
 }
@@ -205,7 +205,7 @@ function number(blank, value) {
  * @param {string} value - field value
  * @return {boolean} - true if blank or contains only digits
  */
-function digits(blank, value) {
+function digits(blank: boolean, value: any) {
   const re = /^\d+$/;
   return blank || re.test(value);
 }
@@ -218,7 +218,7 @@ function digits(blank, value) {
  * @param {string} param - CSS selector for the target element to compare against
  * @return {boolean} - true if values match
  */
-function equalTo(_blank, value, _element, param) {
+function equalTo(_blank: boolean, value: any, _element: any, param: any) {
   const target = document.querySelector(param);
   return value === target.value;
 }
@@ -231,7 +231,7 @@ function equalTo(_blank, value, _element, param) {
  * @param {string} param - regular expression pattern
  * @return {boolean} - true if blank or value matches pattern
  */
-function regex(blank, value, _element, param) {
+function regex(blank: boolean, value: any, _element: any, param: any) {
   if (blank) {
     return true;
   }
@@ -249,7 +249,7 @@ function regex(blank, value, _element, param) {
  * @param {number} param - minimum number of non-alphanumeric characters required
  * @return {boolean} - true if blank or value has enough non-alphanumeric characters
  */
-function nonAlphaMin(blank, value, _element, param) {
+function nonAlphaMin(blank: boolean, value: any, _element: any, param: any) {
   if (blank || !param) {
     return true;
   }
@@ -265,7 +265,7 @@ function nonAlphaMin(blank, value, _element, param) {
  * @param {string} value - field value
  * @return {boolean} - true if blank or value is a valid credit card number
  */
-function creditCard(blank, value) {
+function creditCard(blank: boolean, value: any) {
   if (blank) {
     return true;
   }

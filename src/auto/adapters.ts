@@ -4,7 +4,7 @@ import {
   getModelPrefix,
 } from './helpers.js';
 
-function setValidationValues(options, ruleName, value) {
+function setValidationValues(options: any, ruleName: string, value: any) {
   options.rules[ruleName] = value;
   if (options.message) {
     options.messages[ruleName] = options.message;
@@ -12,9 +12,9 @@ function setValidationValues(options, ruleName, value) {
 }
 
 const adapters = {
-  _: [],
+  _: [] as any[],
 
-  add: function (adapterName, params, fn?: any) {
+  add: function (adapterName: string, params: any, fn?: any) {
     // Called with no params, just a function
     if (!fn) {
       fn = params;
@@ -25,24 +25,24 @@ const adapters = {
     return this;
   },
 
-  addBool: function (adapterName, ruleName) {
-    return this.add(adapterName, function (options) {
+  addBool: function (adapterName: string, ruleName: string) {
+    return this.add(adapterName, function (options: any) {
       setValidationValues(options, ruleName || adapterName, true);
     });
   },
 
   addMinMax: function (
-    adapterName,
-    minRuleName,
-    maxRuleName,
-    minMaxRuleName,
-    minAttribute,
-    maxAttribute,
+    adapterName: string,
+    minRuleName: string,
+    maxRuleName: string,
+    minMaxRuleName: string,
+    minAttribute: any,
+    maxAttribute: any,
   ) {
     return this.add(
       adapterName,
       [minAttribute || 'min', maxAttribute || 'max'],
-      function (options) {
+      function (options: any) {
         const min = options.params.min;
         const max = options.params.max;
 
@@ -57,8 +57,12 @@ const adapters = {
     );
   },
 
-  addSingleVal: function (adapterName, attribute, ruleName?: any) {
-    return this.add(adapterName, [attribute || 'val'], function (options) {
+  addSingleVal: function (
+    adapterName: string,
+    attribute: string,
+    ruleName?: any,
+  ) {
+    return this.add(adapterName, [attribute || 'val'], function (options: any) {
       setValidationValues(
         options,
         ruleName || adapterName,
@@ -83,7 +87,7 @@ adapters
   .addMinMax('minlength', 'minlength')
   .addMinMax('maxlength', 'minlength', 'maxlength');
 
-adapters.add('equalto', ['other'], function (options) {
+adapters.add('equalto', ['other'], function (options: any) {
   const prefix = getModelPrefix(options.element.name);
   const other = options.params.other;
   const fullOtherName = escapeAttributeValue(appendModelPrefix(other, prefix));
@@ -94,7 +98,7 @@ adapters.add('equalto', ['other'], function (options) {
   setValidationValues(options, 'equalTo', element);
 });
 
-adapters.add('required', function (options) {
+adapters.add('required', function (options: any) {
   if (
     options.element.tagName.toUpperCase() !== 'INPUT' ||
     options.element.type.toUpperCase() !== 'CHECKBOX'
@@ -103,19 +107,23 @@ adapters.add('required', function (options) {
   }
 });
 
-adapters.add('password', ['min', 'nonalphamin', 'regex'], function (options) {
-  if (options.params.min) {
-    setValidationValues(options, 'minlength', options.params.min);
-  }
-  if (options.params.nonalphamin) {
-    setValidationValues(options, 'nonalphamin', options.params.nonalphamin);
-  }
-  if (options.params.regex) {
-    setValidationValues(options, 'regex', options.params.regex);
-  }
-});
+adapters.add(
+  'password',
+  ['min', 'nonalphamin', 'regex'],
+  function (options: any) {
+    if (options.params.min) {
+      setValidationValues(options, 'minlength', options.params.min);
+    }
+    if (options.params.nonalphamin) {
+      setValidationValues(options, 'nonalphamin', options.params.nonalphamin);
+    }
+    if (options.params.regex) {
+      setValidationValues(options, 'regex', options.params.regex);
+    }
+  },
+);
 
-adapters.add('fileextensions', ['extensions'], function (options) {
+adapters.add('fileextensions', ['extensions'], function (options: any) {
   setValidationValues(options, 'extension', options.params.extensions);
 });
 

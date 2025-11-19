@@ -8,7 +8,7 @@ const formResetFlagStore = new WeakMap();
  * Handles display of a single field validation error.
  * @this {HTMLFormElement}
  */
-export function onError(error, inputElement) {
+export function onError(error: any, inputElement: any) {
   const escapedName = escapeAttributeValue(inputElement.name);
   const container = this.querySelector(`[data-valmsg-for='${escapedName}']`);
   const replaceAttributeValue = container.getAttribute('data-valmsg-replace');
@@ -33,7 +33,7 @@ export function onError(error, inputElement) {
  * Handles display of validation summary with all errors.
  * @this {HTMLFormElement}
  */
-export function onErrors(_event, validator) {
+export function onErrors(_event: any, validator: any) {
   const container = this.querySelector('[data-valmsg-summary=true]');
   const list = container.querySelector('ul');
 
@@ -42,7 +42,7 @@ export function onErrors(_event, validator) {
     container.classList.add('validation-summary-errors');
     container.classList.remove('validation-summary-valid');
 
-    validator.errorList.forEach((err) => {
+    validator.errorList.forEach((err: any) => {
       const message = document.createElement('li');
       message.innerHTML = err.message;
       list.appendChild(message);
@@ -54,7 +54,7 @@ export function onErrors(_event, validator) {
  * Handles hiding of field error when validation succeeds.
  * @this {HTMLFormElement}
  */
-export function onSuccess(error) {
+export function onSuccess(error: any) {
   const container = containerStore.get(error);
   if (!container) {
     return;

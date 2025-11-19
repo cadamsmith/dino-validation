@@ -4,7 +4,7 @@ import { findDefined, format } from './helpers.js';
  * Default error messages for all validation methods.
  * Messages can be strings or functions that return formatted strings with parameters.
  */
-const messages = {
+const messages: Record<string, any> = {
   required: 'This field is required.',
   remote: 'Please fix this field.',
   email: 'Please enter a valid email address.',
@@ -44,7 +44,7 @@ export const store = {
    * @param {string} key - validation method name
    * @return {string|Function} - error message string or function
    */
-  get: function (key) {
+  get: function (key: string) {
     return messages[key];
   },
   /**
@@ -52,7 +52,7 @@ export const store = {
    * @param {string} key - validation method name
    * @param {string|Function} value - error message string or function
    */
-  set: function (key, value) {
+  set: function (key: string, value: any) {
     messages[key] = value;
   },
 };
@@ -65,7 +65,7 @@ export const store = {
  * @param {Object} settings - validator settings that may contain custom messages
  * @return {string} - formatted error message
  */
-export function getMessage(element, rule, settings) {
+export function getMessage(element: any, rule: any, settings: any) {
   if (typeof rule === 'string') {
     rule = { method: rule };
   }
@@ -96,7 +96,7 @@ export function getMessage(element, rule, settings) {
  * @param {Object} settings - validator settings that may contain custom messages
  * @return {string|undefined} - custom message if defined
  */
-function customMessage(name, method, settings) {
+function customMessage(name: string, method: any, settings: any) {
   const m = settings[name];
   return m && (m.constructor === String ? m : m[method]);
 }
@@ -108,7 +108,7 @@ function customMessage(name, method, settings) {
  * @param {string} method - validation method name
  * @return {string|undefined} - custom message from data attribute if present
  */
-function customDataMessage(element, method) {
+function customDataMessage(element: any, method: any) {
   const dataSetKey =
     'msg' + method.charAt(0).toUpperCase() + method.substring(1).toLowerCase();
 

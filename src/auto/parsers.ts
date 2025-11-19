@@ -18,7 +18,7 @@ export function parseDocument() {
   });
 }
 
-export function parseElement(element) {
+export function parseElement(element: any) {
   const form = element.closest('form');
   // Cannot do client-side validation without a form
   if (!form) {
@@ -37,9 +37,9 @@ export function parseElement(element) {
       return;
     }
 
-    const paramValues = {};
+    const paramValues: Record<string, any> = {};
 
-    adapter.params.forEach((param) => {
+    adapter.params.forEach((param: any) => {
       paramValues[param] = element.getAttribute(`${prefix}-${param}`);
     });
 

@@ -9,7 +9,7 @@ const validationInfoStore = new WeakMap();
  * @param {HTMLFormElement} form - The form element
  * @return {Object} - Validation info object with options, attachValidation(), and validate() methods
  */
-export function validationInfo(form) {
+export function validationInfo(form: any) {
   const storedInfo = validationInfoStore.get(form);
   if (storedInfo) {
     return storedInfo;
@@ -20,13 +20,13 @@ export function validationInfo(form) {
     errorElement: 'span',
     messages: {},
     rules: {},
-    errorPlacement: function (error, element) {
+    errorPlacement: function (error: any, element: any) {
       onError.call(form, error, element);
     },
-    invalidHandler: function (event, validator) {
+    invalidHandler: function (event: any, validator: any) {
       onErrors.call(form, event, validator);
     },
-    success: function (error) {
+    success: function (error: any) {
       onSuccess.call(form, error);
     },
   };

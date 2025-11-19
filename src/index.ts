@@ -25,7 +25,7 @@ import { store as messages } from './messages.js';
  *   }
  * });
  */
-export function validate(selector, options?: any) {
+export function validate(selector: string | HTMLElement, options?: any) {
   const element =
     selector instanceof HTMLElement
       ? selector
@@ -63,8 +63,8 @@ export function validate(selector, options?: any) {
  *   console.log('Email and password are valid!');
  * }
  */
-export function valid(selector) {
-  let elements = [];
+export function valid(selector: string | HTMLElement | HTMLElement[]) {
+  let elements: any[] = [];
   if (typeof selector === 'string') {
     elements = Array.from(document.querySelectorAll(selector));
   } else if (selector instanceof HTMLElement) {
@@ -77,7 +77,7 @@ export function valid(selector) {
     return validate(elements[0]).form();
   }
 
-  const errorList = [];
+  const errorList: any[] = [];
   let valid = true;
   const validator = validate(elements[0].form);
 
@@ -102,7 +102,7 @@ export function valid(selector) {
  * const emailRules = dv.rules('#email');
  * console.log(emailRules); // { required: true, email: true }
  */
-export function rules(selector) {
+export function rules(selector: string | HTMLElement) {
   const element =
     selector instanceof HTMLElement
       ? selector
@@ -131,7 +131,7 @@ export function rules(selector) {
  *   }
  * });
  */
-export function addMethod(name, method, message) {
+export function addMethod(name: string, method: any, message: any) {
   methods.set(name, method);
   if (message) {
     messages.set(name, message);

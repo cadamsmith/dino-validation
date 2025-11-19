@@ -16,36 +16,36 @@ import { validatorStore } from './validatorStore.js';
 import { store as methodStore } from './methods.js';
 
 export class Validator {
-  currentForm = null;
-  submitted = {};
-  invalid = {};
-  successList = [];
-  errorList = [];
-  errorMap = {};
-  toShow = [];
-  toHide = [];
-  currentElements = [];
-  labelContainer = null;
-  errorContext = null;
-  containers = [];
+  currentForm: any = null;
+  submitted: Record<string, any> = {};
+  invalid: Record<string, any> = {};
+  successList: any[] = [];
+  errorList: any[] = [];
+  errorMap: Record<string, any> = {};
+  toShow: any[] = [];
+  toHide: any[] = [];
+  currentElements: any[] = [];
+  labelContainer: any = null;
+  errorContext: any = null;
+  containers: any[] = [];
 
-  settings = {
+  settings: Record<string, any> = {
     ignore: ':hidden',
     errorClass: 'error',
     validClass: 'valid',
     errorElement: 'label',
-    wrapper: null,
-    errorLabelContainer: null,
-    errorContainer: null,
+    wrapper: null as any,
+    errorLabelContainer: null as any,
+    errorContainer: null as any,
     onfocusin: this.onFocusIn,
     onfocusout: this.onFocusOut,
     onkeyup: this.onKeyUp,
     onclick: this.onClick,
     highlight: this.highlight,
     unhighlight: this.unhighlight,
-    errorPlacement: null,
-    invalidHandler: null,
-    success: null,
+    errorPlacement: null as any,
+    invalidHandler: null as any,
+    success: null as any,
     focusCleanup: false,
     rules: {},
     messages: {},
@@ -55,11 +55,11 @@ export class Validator {
    * stored event handlers for easy cleanup
    */
   boundEventHandlers = {
-    onFocusIn: null,
-    onFocusOut: null,
-    onKeyUp: null,
-    onClick: null,
-    onInvalidForm: null,
+    onFocusIn: null as any,
+    onFocusOut: null as any,
+    onKeyUp: null as any,
+    onClick: null as any,
+    onInvalidForm: null as any,
   };
 
   /**
@@ -67,7 +67,7 @@ export class Validator {
    * @param form - form element to validate
    * @param options - optional user configuration settings
    */
-  constructor(form, options) {
+  constructor(form: any, options: any) {
     this.currentForm = form;
     this.settings = { ...this.settings, ...options };
 
@@ -150,8 +150,8 @@ export class Validator {
       "[type='checkbox']",
     ];
 
-    const delegate = (event, targets, handler) => {
-      const element = event.target;
+    const delegate = (event: Event, targets: string[], handler: any) => {
+      const element = event.target as HTMLElement;
 
       // Ignore the element if it doesn't match one of the targets
       if (!element.matches(targets.join(', '))) {
@@ -160,7 +160,7 @@ export class Validator {
 
       // Ignore the element if it belongs to another form. This will happen mainly
       // when setting the `form` attribute of an input to the id of another form
-      if (this.currentForm !== element.form) {
+      if (this.currentForm !== (element as any).form) {
         return;
       }
 
@@ -171,13 +171,13 @@ export class Validator {
       return handler(element, event);
     };
 
-    this.boundEventHandlers.onFocusIn = (e) =>
+    this.boundEventHandlers.onFocusIn = (e: Event) =>
       delegate(e, focusTargets, this.settings.onfocusin);
-    this.boundEventHandlers.onFocusOut = (e) =>
+    this.boundEventHandlers.onFocusOut = (e: Event) =>
       delegate(e, focusTargets, this.settings.onfocusout);
-    this.boundEventHandlers.onKeyUp = (e) =>
+    this.boundEventHandlers.onKeyUp = (e: Event) =>
       delegate(e, focusTargets, this.settings.onkeyup);
-    this.boundEventHandlers.onClick = (e) =>
+    this.boundEventHandlers.onClick = (e: Event) =>
       delegate(e, clickTargets, this.settings.onclick);
     this.boundEventHandlers.onInvalidForm = this.settings.invalidHandler;
 
@@ -242,7 +242,7 @@ export class Validator {
    * @param element - element to validate
    * @return {boolean} - true if the element is valid, false otherwise
    */
-  element(element) {
+  element(element: any) {
     const target = this.validationTargetFor(element);
     if (target === undefined) {
       delete this.invalid[element.name];
@@ -266,7 +266,7 @@ export class Validator {
     return result;
   }
 
-  prepareElement(element) {
+  prepareElement(element: any) {
     this.reset();
     this.toHide = this.errorsFor(element);
   }
@@ -292,7 +292,7 @@ export class Validator {
    * @return {NodeList} - list of form elements
    */
   elements() {
-    const rulesCache = {};
+    const rulesCache: Record<string, boolean> = {};
 
     const selector = 'input, select, textarea';
     const notSelector =
@@ -337,7 +337,7 @@ export class Validator {
    * @param element - element to validate
    * @return {boolean} - true if the element is valid, false otherwise
    */
-  check(element) {
+  check(element: any) {
     element = this.validationTargetFor(element);
 
     const rules = getRules(element);
@@ -421,7 +421,7 @@ export class Validator {
     this.addWrapper(this.toShow).forEach(showElement);
   }
 
-  formatAndAdd(element, rule) {
+  formatAndAdd(element: any, rule: any) {
     const message = getMessage(element, rule, this.settings.messages);
 
     this.errorList.push({ message, element, method: rule.method });
@@ -434,7 +434,7 @@ export class Validator {
     this.toHide = this.errors().concat(this.containers);
   }
 
-  highlight(element, errorClasses, validClasses) {
+  highlight(element: any, errorClasses: string[], validClasses: string[]) {
     let targets = [element];
     if (element.type === 'radio') {
       targets = findByName(element.form, element.name);
@@ -446,7 +446,7 @@ export class Validator {
     });
   }
 
-  unhighlight(element, errorClasses, validClasses) {
+  unhighlight(element: any, errorClasses: string[], validClasses: string[]) {
     let targets = [element];
     if (element.type === 'radio') {
       targets = findByName(element.form, element.name);
@@ -458,7 +458,7 @@ export class Validator {
     });
   }
 
-  onFocusIn(element) {
+  onFocusIn(element: any) {
     if (this.settings.focusCleanup) {
       if (this.settings.unhighlight) {
         this.settings.unhighlight(
@@ -471,7 +471,7 @@ export class Validator {
     }
   }
 
-  onFocusOut(element) {
+  onFocusOut(element: any) {
     if (isCheckableElement(element)) {
       return;
     }
@@ -482,7 +482,7 @@ export class Validator {
     this.element(element);
   }
 
-  onKeyUp(element, event) {
+  onKeyUp(element: any, event: KeyboardEvent) {
     if (event.which === 9 && elementValue(element) === '') {
       return;
     }
@@ -513,7 +513,7 @@ export class Validator {
     this.element(element);
   }
 
-  onClick(element) {
+  onClick(element: any) {
     // Click on selects, radiobuttons and checkboxes
     if (element.name in this.submitted) {
       this.element(element);
@@ -542,7 +542,7 @@ export class Validator {
     }
   }
 
-  addWrapper(elements) {
+  addWrapper(elements: any) {
     const result = Array.isArray(elements) ? elements : [elements];
 
     if (this.settings.wrapper) {
@@ -556,7 +556,7 @@ export class Validator {
     return result;
   }
 
-  showLabel(element, message?: any) {
+  showLabel(element: any, message?: any) {
     let errors = this.errorsFor(element);
 
     if (errors.length) {
@@ -607,7 +607,7 @@ export class Validator {
     this.toShow.push(...errors);
   }
 
-  errorsFor(element) {
+  errorsFor(element: any) {
     const name = escapeCssMeta(idOrName(element));
     const selector = `label[for='${name}'], label[for='${name}'] *`;
 
@@ -670,7 +670,7 @@ export class Validator {
     }
   }
 
-  validationTargetFor(element) {
+  validationTargetFor(element: any) {
     let targets = [element];
     if (isCheckableElement(element)) {
       targets = findByName(element.form, element.name);
@@ -684,7 +684,7 @@ export class Validator {
    * @param element - element to check
    * @return {boolean} - true if the element should be skipped, false otherwise
    */
-  shouldIgnore(element) {
+  shouldIgnore(element: any) {
     if (!this.settings.ignore) {
       return false;
     }
