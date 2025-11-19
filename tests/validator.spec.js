@@ -335,6 +335,10 @@ test('Ignore elements that have form attribute set to other forms', async ({
   expect(result).toBe(true);
 });
 
+// TODO: validate elements outside form with form attribute
+
+// TODO: validate checkboxes outside form with form attribute
+
 test('addMethod', async ({ page }) => {
   await page.goto('');
 
@@ -501,6 +505,8 @@ test('form(): with equalTo', async ({ page }) => {
 
   expect(result).toEqual([false, true]);
 });
+
+// TODO: form(): with equalTo and onfocusout=false
 
 test('check(): simple', async ({ page }) => {
   await page.goto('');
@@ -770,6 +776,8 @@ test('validation triggered on radio/checkbox when using mouseclick', async ({
 
   expect(result).toBe(2);
 });
+
+// TODO: showErrors()
 
 test('showErrors(), allow empty string and null as default message', async ({
   page,
@@ -1151,6 +1159,56 @@ test('option: errorClass with multiple classes', async ({ page }) => {
   expect(result).toEqual([true, true, true, false, false, false]);
 });
 
+// TODO: defaultMessage(), empty title is ignored
+
+// TODO: #741: move message processing from formatAndAdd to defaultMessage
+
+// TODO: formatAndAdd
+
+// TODO: formatAndAdd2
+
+// TODO: formatAndAdd, auto detect substitution string
+
+// TODO: option invalidHandler
+
+// TODO: elementValue() finds radio/checkboxes only within the current form
+
+// TODO: elementValue() returns the file input's name without the prefix 'C:\\fakepath\\'
+
+// TODO: Required rule should not take precedence over number & digits rules
+
+// TODO: validating multiple checkboxes with 'required'
+
+// TODO: dynamic form
+
+// TODO: idOrName()
+
+// TODO: resetForm()
+
+// TODO: message from title
+
+// TODO: success option
+
+// TODO: success option2
+
+// TODO: success option3
+
+// TODO: successList
+
+// TODO: success isn't called for optional elements with no other rules
+
+// TODO: success is called for optional elements with other rules
+
+// TODO: success callback with element
+
+// TODO: all rules are evaluated
+
+// TODO: messages
+
+// TODO: option: ignore
+
+// TODO: option: subformRequired
+
 test('ignore hidden elements', async ({ page }) => {
   await page.goto('');
 
@@ -1214,3 +1272,57 @@ test('Specify error messages through data attributes', async ({ page }) => {
 
   expect(result).toBe('You must enter a value here');
 });
+
+// TODO: Specify error messages through data attributes
+
+// TODO: Updates pre-existing label if has error class
+
+// TODO: Min date set by attribute
+
+// TODO: Max date set by attribute
+
+// TODO: Min and Max date set by attributes greater
+
+// TODO: Min and Max date set by attributes less
+
+// TODO: Min date set by attribute valid
+
+// TODO: Max date set by attribute valid
+
+// TODO: Min and max date set by attributes valid
+
+// TODO: Min and max strings set by attributes greater
+
+// TODO: Min and max strings set by attributes less
+
+// TODO: Min, Max strings set by attributes valid
+
+// TODO: Min, Max set by data-rule valid
+
+// TODO: Calling blur on ignored element
+
+// TODO: Min and max type absent set by attributes greater
+
+// TODO: Min and max type absent set by attributes less
+
+// TODO: Min and max type absent set by attributes valid
+
+// TODO: Min and max range absent set by attributes valid
+
+// TODO: Min and max number absent set by attributes valid
+
+// TODO: Min and max number absent set by attributes greater
+
+// TODO: Min and max number absent set by attributes less
+
+// TODO: Rules allowed to have a value of zero invalid
+
+// TODO: Rules allowed to have a value of zero valid equal
+
+// TODO: Rules allowed to have a value of zero valid greater
+
+// TODO: Validation triggered on radio and checkbox via click
+
+// TODO: destroy()
+
+// TODO: #1618: Errorlist containing more errors than it should

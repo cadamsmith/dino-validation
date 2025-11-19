@@ -11,20 +11,18 @@ import { ValidationRuleset } from './types';
 export function getRules(
   element: any,
   settings: Record<string, ValidationRuleset>,
-): Record<string, any> {
+): ValidationRuleset {
   // If nothing is selected, return empty object; can't chain anyway
   if (element == null || element.form == null) {
     return {};
   }
 
-  let data = normalizeRules(
-    {
-      ...classRules(element),
-      ...attributeRules(element),
-      ...dataRules(element),
-      ...staticRules(element, settings),
-    }
-  );
+  let data = normalizeRules({
+    ...classRules(element),
+    ...attributeRules(element),
+    ...dataRules(element),
+    ...staticRules(element, settings),
+  });
 
   // Make sure required is at front
   if (data.required) {
@@ -65,9 +63,7 @@ export function addClassRule(className: string): void {
  * @param rules - raw validation rules object
  * @return normalized rules object
  */
-function normalizeRules(
-  rules: ValidationRuleset,
-): ValidationRuleset {
+function normalizeRules(rules: ValidationRuleset): ValidationRuleset {
   Object.entries(rules).forEach(([key, value]) => {
     // Ignore rule when param is explicitly false, eg. required:false
     if (value === false) {
@@ -75,7 +71,7 @@ function normalizeRules(
       return;
     }
 
-    if (typeof value === "object" && 'param' in value && value.param) {
+    if (typeof value === 'object' && 'param' in value && value.param) {
       rules[key] = value.param;
     }
   });
@@ -89,9 +85,15 @@ function normalizeRules(
   ['rangelength', 'range'].forEach((ruleKey) => {
     if (rules[ruleKey]) {
       if (Array.isArray(rules[ruleKey])) {
-        rules[ruleKey] = [rules[ruleKey][0], rules[ruleKey][1]].map(Number) as [number, number];
+        rules[ruleKey] = [rules[ruleKey][0], rules[ruleKey][1]].map(Number) as [
+          number,
+          number,
+        ];
       } else {
-        const parts = rules[ruleKey].toString().replace(/[\[\]]/g, '').split(/[\s,]+/);
+        const parts = rules[ruleKey]
+          .toString()
+          .replace(/[\[\]]/g, '')
+          .split(/[\s,]+/);
         rules[ruleKey] = [parts[0], parts[1]].map(Number) as [number, number];
       }
     }
@@ -148,7 +150,10 @@ function attributeRules(element: any): ValidationRuleset {
   }
 
   // 'maxlength' may be returned as -1, 2147483647 ( IE ) and 524288 ( safari ) for text inputs
-  if (rules.maxlength && /-1|2147483647|524288/.test(rules.maxlength.toString())) {
+  if (
+    rules.maxlength &&
+    /-1|2147483647|524288/.test(rules.maxlength.toString())
+  ) {
     delete rules.maxlength;
   }
 
@@ -213,9 +218,9 @@ function normalizeAttributeRule(
   rules: ValidationRuleset,
   type: string,
   method: string,
-  value: any,
+  value: string | number | boolean | null,
 ): void {
-  // Convert the value to a number for number inputs, and for text for backwards compability
+  // Convert the value to a number for number inputs, and for text for backwards compatability
   // allows type="date" and others to be compared as strings
   if (
     /min|max|step/.test(method) &&
@@ -240,7 +245,9 @@ function normalizeAttributeRule(
  * @param data - rule string or object
  * @return normalized rule object
  */
-export function normalizeRule(data: ValidationRuleset | string): ValidationRuleset {
+export function normalizeRule(
+  data: ValidationRuleset | string,
+): ValidationRuleset {
   if (typeof data !== 'string') {
     return data;
   }

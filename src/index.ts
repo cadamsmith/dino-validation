@@ -8,7 +8,11 @@ import { validatorStore } from './validatorStore';
 import { addClassRule, getRules } from './rules';
 import { store as methods } from './methods';
 import { store as messages } from './messages';
-import { ValidatorSettings } from './types';
+import {
+  ValidationMethod,
+  ValidationRuleset,
+  ValidatorSettings,
+} from './types';
 
 /**
  * Creates or retrieves a validator for a form or form element.
@@ -119,7 +123,7 @@ export function valid(selector: string | HTMLElement | HTMLElement[]): boolean {
  * const emailRules = dv.rules('#email');
  * console.log(emailRules); // { required: true, email: true }
  */
-export function rules(selector: string | HTMLElement): Record<string, any> {
+export function rules(selector: string | HTMLElement): ValidationRuleset {
   const element =
     selector instanceof HTMLElement
       ? selector
@@ -137,9 +141,9 @@ export function rules(selector: string | HTMLElement): Record<string, any> {
  * Adds a custom validation method.
  * The method can be used in validation rules by its name.
  *
- * @param {string} name - Name of the validation method
- * @param {Function} method - Validation function that returns true if valid
- * @param {string} [message] - Default error message for this validation method
+ * @param name - Name of the validation method
+ * @param method - Validation function that returns true if valid
+ * @param message - Default error message for this validation method
  * @example
  * // Add a custom phone validation method
  * dv.addMethod('phone', function(blank, value, element) {
@@ -153,7 +157,11 @@ export function rules(selector: string | HTMLElement): Record<string, any> {
  *   }
  * });
  */
-export function addMethod(name: string, method: Function, message: any) {
+export function addMethod(
+  name: string,
+  method: ValidationMethod,
+  message?: any,
+) {
   methods.set(name, method);
   if (message) {
     messages.set(name, message);
@@ -165,13 +173,11 @@ export function addMethod(name: string, method: Function, message: any) {
 
 /**
  * Map of validation error messages.
- * @type {Map<string, string>}
  */
 export { messages };
 
 /**
  * Map of validation methods.
- * @type {Map<string, Function>}
  */
 export { methods };
 

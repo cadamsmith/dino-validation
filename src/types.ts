@@ -27,7 +27,20 @@ export interface ValidationError {
 }
 
 export interface ValidationRuleset {
-  [key: string]: RulePrimitive | { param: RulePrimitive };
+  [key: string]:
+    | ValidationRulesetPrimitive
+    | { param: ValidationRulesetPrimitive };
 }
 
-export type RulePrimitive = boolean | string | number | [number, number];
+export type ValidationRulesetPrimitive =
+  | boolean
+  | string
+  | number
+  | [number, number];
+
+export type ValidationMethod = (
+  blank: boolean,
+  value: string | string[],
+  element: any,
+  param: any,
+) => boolean;

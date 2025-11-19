@@ -131,25 +131,33 @@ export function findDefined(...args: any[]): any {
  * @param params - parameters to substitute into placeholders
  * @return formatted string or curried function if only source provided
  */
-export function format(source: string, params?: any[]): string | Function {
-  if (arguments.length === 1) {
-    return function (args: any[]) {
-      return format(source, args);
+export function format(
+  source: string,
+  params?: any[],
+): ((...args: any[]) => string) | string {
+  // If no params provided, return a curried function
+  if (params === undefined) {
+    return function (...args: any[]) {
+      return formatString(source, args);
     };
   }
 
-  if (params === undefined) {
-    return source;
-  }
-  if (arguments.length > 2 && params.constructor !== Array) {
-    params = [...arguments].slice(1);
-  }
-  if (params.constructor !== Array) {
+  return formatString(source, params);
+}
+
+/**
+ * Internal helper to format a string with parameters.
+ * @param source - template string with placeholders
+ * @param params - parameters to substitute
+ * @return formatted string
+ */
+function formatString(source: string, params: any[]): string {
+  if (!Array.isArray(params)) {
     params = [params];
   }
 
   params.forEach((param: any, index: number) => {
-    source = source.replace(new RegExp(`\\{${index}\\}`, 'g'), param);
+    source = source.replace(new RegExp(`\\{${index}\\}`, 'g'), String(param));
   });
 
   return source;

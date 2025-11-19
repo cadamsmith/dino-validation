@@ -1,10 +1,11 @@
 import { getLength } from './helpers';
+import { ValidationMethod } from './types';
 
 /**
  * Internal registry of all validation methods.
  * Each method receives (blank, value, element, param) and returns true if valid.
  */
-const methods: Record<string, any> = {
+const methods: Record<string, ValidationMethod> = {
   required,
   minlength: minLength,
   maxlength: maxLength,
@@ -40,7 +41,7 @@ export const store = {
    * @param {string} key - method name
    * @return {Function} - validation method function
    */
-  get: function (key: string): Function {
+  get: function (key: string): ValidationMethod | undefined {
     return methods[key];
   },
   /**
@@ -48,7 +49,7 @@ export const store = {
    * @param {string} key - method name
    * @param {Function} value - validation method function
    */
-  set: function (key: string, value: any): void {
+  set: function (key: string, value: ValidationMethod): void {
     methods[key] = value;
   },
 };
