@@ -19,3 +19,9 @@ export interface ValidatorSettings {
   rules: Record<string, any>;
   messages: Record<string, any>;
 }
+
+export interface ValidationError {
+  element: any;
+  message: any;
+  method: string;
+}

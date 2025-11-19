@@ -8,14 +8,15 @@ import { validatorStore } from './validatorStore';
 import { addClassRules, getRules, normalizeRule } from './rules';
 import { store as methods } from './methods';
 import { store as messages } from './messages';
+import { ValidatorSettings } from './types';
 
 /**
  * Creates or retrieves a validator for a form or form element.
  * If a validator already exists for the element, returns the existing validator.
  *
- * @param {string|HTMLElement} selector - CSS selector string or HTMLElement to validate
- * @param {Object} [options] - Validation options including rules, messages, and callbacks
- * @returns {Validator|undefined} Validator instance or undefined if element not found
+ * @param selector - CSS selector string or HTMLElement to validate
+ * @param [options] - Validation options including rules, messages, and callbacks
+ * @returns Validator instance or undefined if element not found
  * @example
  * // Validate a form with rules
  * dv.validate('#myForm', {
@@ -25,14 +26,24 @@ import { store as messages } from './messages';
  *   }
  * });
  */
-export function validate(selector: string | HTMLElement, options?: any) {
+export function validate(
+  selector: string | HTMLElement,
+  options?: Partial<ValidatorSettings>,
+) {
   const element =
     selector instanceof HTMLElement
       ? selector
       : document.querySelector(selector);
 
   if (!element) {
-    console.warn("Nothing selected, can't validate, returning nothing.");
+    console.warn("No element selected, can't validate.");
+    return;
+  }
+  if (!(element instanceof HTMLFormElement)) {
+    const elementType = element.tagName || 'unknown element';
+    console.warn(
+      `Element must be a form element for validation. Received: ${elementType}`,
+    );
     return;
   }
 

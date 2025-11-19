@@ -14,39 +14,39 @@ import { getRules } from './rules';
 import { getMessage } from './messages';
 import { validatorStore } from './validatorStore';
 import { store as methodStore } from './methods';
-import { ValidatorSettings } from './types';
+import { ValidationError, ValidatorSettings } from './types';
 
 export class Validator {
-  currentForm: any = null;
+  currentForm: HTMLFormElement;
+  errorContext!: HTMLElement;
   submitted: Record<string, any> = {};
   invalid: Record<string, any> = {};
-  successList: any[] = [];
-  errorList: any[] = [];
+  successList: HTMLElement[] = [];
+  errorList: ValidationError[] = [];
   errorMap: Record<string, any> = {};
-  toShow: any[] = [];
-  toHide: any[] = [];
+  toShow: HTMLElement[] = [];
+  toHide: HTMLElement[] = [];
   currentElements: any[] = [];
-  labelContainer: any = null;
-  errorContext: any = null;
-  containers: any[] = [];
+  labelContainer: HTMLElement | null = null;
+  containers: HTMLElement[] = [];
 
   settings: ValidatorSettings = {
     ignore: ':hidden',
     errorClass: 'error',
     validClass: 'valid',
     errorElement: 'label',
-    wrapper: null as any,
-    errorLabelContainer: null as any,
-    errorContainer: null as any,
+    wrapper: null,
+    errorLabelContainer: null,
+    errorContainer: null,
     onfocusin: this.onFocusIn,
     onfocusout: this.onFocusOut,
     onkeyup: this.onKeyUp,
     onclick: this.onClick,
     highlight: this.highlight,
     unhighlight: this.unhighlight,
-    errorPlacement: null as any,
-    invalidHandler: null as any,
-    success: null as any,
+    errorPlacement: null,
+    invalidHandler: null,
+    success: null,
     focusCleanup: false,
     rules: {},
     messages: {},
@@ -68,7 +68,7 @@ export class Validator {
    * @param form - form element to validate
    * @param options - optional user configuration settings
    */
-  constructor(form: any, options?: Partial<ValidatorSettings>) {
+  constructor(form: HTMLFormElement, options?: Partial<ValidatorSettings>) {
     this.currentForm = form;
     this.settings = { ...this.settings, ...options };
 
@@ -104,15 +104,18 @@ export class Validator {
    * Sets up DOM references and attaches event handlers to the form.
    */
   init(): void {
-    this.labelContainer =
-      this.settings.errorLabelContainer &&
-      document.querySelector(this.settings.errorLabelContainer);
+    if (this.settings.errorLabelContainer) {
+      this.labelContainer = document.querySelector(
+        this.settings.errorLabelContainer,
+      );
+    }
     this.errorContext = this.labelContainer || this.currentForm;
-    this.containers = [
-      this.settings.errorContainer &&
-        document.querySelector(this.settings.errorContainer),
-      this.labelContainer,
-    ].filter((el) => el !== null);
+
+    const containers = [this.labelContainer];
+    if (this.settings.errorContainer) {
+      containers.push(document.querySelector(this.settings.errorContainer));
+    }
+    this.containers = containers.filter(Boolean) as HTMLElement[];
 
     this.attachEventHandlers();
   }
@@ -301,9 +304,9 @@ export class Validator {
     const notSelector =
       'input[type="submit"], [type="reset"], [type="image"], [disabled]';
 
-    return [...this.currentForm.querySelectorAll(selector)]
+    return Array.from(this.currentForm.querySelectorAll(selector))
       .filter((el) => !el.matches(notSelector) && !this.shouldIgnore(el))
-      .filter((el) => {
+      .filter((el: any) => {
         if (el.form !== this.currentForm) {
           return false;
         }
@@ -380,11 +383,11 @@ export class Validator {
    */
   errors(): any[] {
     const errorClass = this.errorClasses.join('.');
-    return [
-      ...this.errorContext.querySelectorAll(
+    return Array.from(
+      this.errorContext.querySelectorAll(
         `${this.settings.errorElement}.${errorClass}`,
       ),
-    ];
+    );
   }
 
   showErrors(): void {
