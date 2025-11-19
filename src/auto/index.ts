@@ -1,5 +1,5 @@
-import adapters from './adapters.js';
-import { parseDocument, parseElement } from './parsers.js';
+import adapters from './adapters';
+import { parseDocument, parseElement } from './parsers';
 
 // Re-export all base dv functionality
 export {
@@ -10,7 +10,7 @@ export {
   messages,
   methods,
   default as dv,
-} from '../index.js';
+} from '../index';
 
 const auto = {
   adapters,

@@ -3,11 +3,11 @@
  * Provides programmatic API for validating forms and form elements.
  */
 
-import { Validator } from './validator.js';
-import { validatorStore } from './validatorStore.js';
-import { addClassRules, getRules, normalizeRule } from './rules.js';
-import { store as methods } from './methods.js';
-import { store as messages } from './messages.js';
+import { Validator } from './validator';
+import { validatorStore } from './validatorStore';
+import { addClassRules, getRules, normalizeRule } from './rules';
+import { store as methods } from './methods';
+import { store as messages } from './messages';
 
 /**
  * Creates or retrieves a validator for a form or form element.

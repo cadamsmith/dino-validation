@@ -1,5 +1,5 @@
-import { onError, onErrors, onReset, onSuccess } from './callbacks.js';
-import * as dv from '../index.js';
+import { onError, onErrors, onReset, onSuccess } from './callbacks';
+import * as dv from '../index';
 
 const validationInfoStore = new WeakMap();
 

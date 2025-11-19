@@ -9,11 +9,11 @@ import {
   isVisible,
   objectLength,
   showElement,
-} from './helpers.js';
-import { getRules } from './rules.js';
-import { getMessage } from './messages.js';
-import { validatorStore } from './validatorStore.js';
-import { store as methodStore } from './methods.js';
+} from './helpers';
+import { getRules } from './rules';
+import { getMessage } from './messages';
+import { validatorStore } from './validatorStore';
+import { store as methodStore } from './methods';
 
 export class Validator {
   currentForm: any = null;

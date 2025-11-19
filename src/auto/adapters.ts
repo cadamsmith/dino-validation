@@ -2,7 +2,7 @@ import {
   appendModelPrefix,
   escapeAttributeValue,
   getModelPrefix,
-} from './helpers.js';
+} from './helpers';
 
 function setValidationValues(options: any, ruleName: string, value: any) {
   options.rules[ruleName] = value;

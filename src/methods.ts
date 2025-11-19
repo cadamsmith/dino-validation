@@ -1,4 +1,4 @@
-import { getLength } from './helpers.js';
+import { getLength } from './helpers';
 
 /**
  * Internal registry of all validation methods.

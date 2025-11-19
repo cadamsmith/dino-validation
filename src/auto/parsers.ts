@@ -1,5 +1,5 @@
-import adapters from './adapters.js';
-import { validationInfo } from './validationInfo.js';
+import adapters from './adapters';
+import { validationInfo } from './validationInfo';
 
 export function parseDocument() {
   const forms = Array.from(document.querySelectorAll('form')).filter(

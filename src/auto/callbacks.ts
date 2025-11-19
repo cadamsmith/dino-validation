@@ -1,5 +1,5 @@
-import { escapeAttributeValue } from './helpers.js';
-import { validatorStore } from '../validatorStore.js';
+import { escapeAttributeValue } from './helpers';
+import { validatorStore } from '../validatorStore';
 
 const containerStore = new WeakMap();
 const formResetFlagStore = new WeakMap();

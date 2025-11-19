@@ -1,5 +1,5 @@
-import { validatorStore } from './validatorStore.js';
-import { store as methodStore } from './methods.js';
+import { validatorStore } from './validatorStore';
+import { store as methodStore } from './methods';
 
 /**
  * Gets all validation rules for an element from multiple sources.

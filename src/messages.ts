@@ -1,4 +1,4 @@
-import { findDefined, format } from './helpers.js';
+import { findDefined, format } from './helpers';
 
 /**
  * Default error messages for all validation methods.
