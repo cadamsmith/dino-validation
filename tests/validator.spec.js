@@ -1159,17 +1159,127 @@ test('option: errorClass with multiple classes', async ({ page }) => {
   expect(result).toEqual([true, true, true, false, false, false]);
 });
 
-// TODO: defaultMessage(), empty title is ignored
+test('defaultMessage(), empty title is ignored', async ({ page }) => {
+  await page.goto('');
 
-// TODO: #741: move message processing from formatAndAdd to defaultMessage
+  const result = await page.evaluate(() => {
+    const v = dv.validate('#userForm');
 
-// TODO: formatAndAdd
+    const element = document.querySelector('#username');
 
-// TODO: formatAndAdd2
+    return [
+      v.getMessage(element, { method: 'required', parameters: true }),
+      v.getMessage(element, 'required'),
+    ];
+  });
 
-// TODO: formatAndAdd, auto detect substitution string
+  expect(result).toEqual([
+    'This field is required.',
+    'This field is required.',
+  ]);
+});
 
-// TODO: option invalidHandler
+test('#741: move message processing from formatAndAdd to defaultMessage', async ({
+  page,
+}) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const v = dv.validate('#testForm22');
+    const input = document.querySelector('#tF22Input');
+
+    const ret = [v.getMessage(input, { method: 'minlength', parameters: 5 })];
+    input.value = 'abc';
+    v.form();
+    ret.push(v.errorList[0].message);
+
+    return ret;
+  });
+
+  expect(result).toEqual([
+    'You should enter at least 5 characters.',
+    'You should enter at least 5 characters.',
+  ]);
+});
+
+test('formatAndAdd', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#form');
+    const v = dv.validate(form);
+    const fakeElement = { form, name: 'bar' };
+
+    v.formatAndAdd(fakeElement, { method: 'maxlength', parameters: 2 });
+    const ret = [v.errorList[0].message, v.errorList[0].element.name];
+
+    v.formatAndAdd(fakeElement, { method: 'range', parameters: [2, 4] });
+    ret.push(v.errorList[1].message);
+
+    v.formatAndAdd(fakeElement, { method: 'range', parameters: [0, 4] });
+    ret.push(v.errorList[2].message);
+
+    return ret;
+  });
+
+  expect(result).toEqual([
+    'Please enter no more than 2 characters.',
+    'bar',
+    'Please enter a value between 2 and 4.',
+    'Please enter a value between 0 and 4.',
+  ]);
+});
+
+test('formatAndAdd2', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#form');
+    const v = dv.validate(form);
+    const fakeElement = { form, name: 'bar' };
+
+    let scoped = {};
+
+    dv.messages.set('test1', function (param, element) {
+      scoped.this = this;
+      scoped.param = param;
+
+      return `element ${element.name} is not valid`;
+    });
+
+    v.formatAndAdd(fakeElement, { method: 'test1', parameters: 0 });
+
+    return [v.errorList[0].message, scoped.this === v, scoped.param];
+  });
+
+  expect(result).toEqual(['element bar is not valid', true, 0]);
+});
+
+test('formatAndAdd, auto detect substitution string', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const v = dv.validate('#testForm1clean', {
+      rules: {
+        firstnamec: {
+          required: true,
+          rangelength: [5, 10],
+        },
+      },
+      messages: {
+        firstnamec: {
+          rangelength: 'at least ${0}, up to {1}',
+        },
+      },
+    });
+
+    document.querySelector('#firstnamec').value = 'abc';
+    v.form();
+    return v.errorList[0].message;
+  });
+
+  expect(result).toBe('at least 5, up to 10');
+});
 
 // TODO: elementValue() finds radio/checkboxes only within the current form
 

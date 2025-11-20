@@ -1,4 +1,5 @@
 import { findDefined, format } from './helpers';
+import { Validator } from './validator';
 
 /**
  * Default error messages for all validation methods.
@@ -66,6 +67,7 @@ export const store = {
  * @return formatted error message
  */
 export function getMessage(
+  this: Validator,
   element: any,
   rule: any,
   settings: Record<string, any>,
@@ -85,7 +87,10 @@ export function getMessage(
   const regex = /\$?\{(\d+)}/g;
 
   if (typeof message === 'function') {
-    message = message(rule.parameters, element);
+    const params = Array.isArray(rule.parameters)
+      ? rule.parameters
+      : [rule.parameters];
+    message = message.call(this, ...params, element);
   } else if (regex.test(message)) {
     message = format(message.replace(regex, '{$1}'), rule.parameters);
   }
@@ -119,6 +124,10 @@ function customMessage(
 function customDataMessage(element: any, method: string): string | undefined {
   const dataSetKey =
     'msg' + method.charAt(0).toUpperCase() + method.substring(1).toLowerCase();
+
+  if (!element?.dataset) {
+    return;
+  }
 
   return element.dataset[dataSetKey] || element.dataset['msg'];
 }

@@ -435,7 +435,12 @@ export class Validator {
   }
 
   formatAndAdd(element: any, rule: any): void {
-    const message = getMessage(element, rule, this.settings.messages);
+    const message = getMessage.call(
+      this,
+      element,
+      rule,
+      this.settings.messages,
+    );
 
     this.errorList.push({ message, element, method: rule.method });
     this.errorMap[element.name] = message;
@@ -714,6 +719,10 @@ export class Validator {
     }
 
     return element.matches(this.settings.ignore);
+  }
+
+  getMessage(element: any, rule: any) {
+    return getMessage.call(this, element, rule, this.settings.messages);
   }
 
   get errorClasses(): string[] {
