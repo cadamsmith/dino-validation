@@ -1,8 +1,5 @@
 import { getValueLength } from './helpers';
-import {
-  FormControlElement,
-  ValidationMethod
-} from './types';
+import { FormControlElement, ValidationMethod } from './types';
 
 /**
  * Internal registry of all validation methods.

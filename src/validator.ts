@@ -400,7 +400,7 @@ export class Validator {
 
   showErrors(): void {
     for (const error of this.errorList) {
-      if (typeof this.settings.highlight !== "boolean") {
+      if (typeof this.settings.highlight !== 'boolean') {
         this.settings.highlight(
           error.element,
           this.errorClasses,
@@ -414,7 +414,7 @@ export class Validator {
       this.toShow = this.toShow.concat(this.containers);
     }
 
-    if (typeof this.settings.unhighlight !== "boolean") {
+    if (typeof this.settings.unhighlight !== 'boolean') {
       for (const element of this.validElements()) {
         this.settings.unhighlight(
           element,
@@ -484,7 +484,7 @@ export class Validator {
 
   onFocusIn(element: FormControlElement): void {
     if (this.settings.focusCleanup) {
-      if (typeof this.settings.unhighlight !== "boolean") {
+      if (typeof this.settings.unhighlight !== 'boolean') {
         this.settings.unhighlight(
           element,
           this.errorClasses,
@@ -726,7 +726,10 @@ export class Validator {
     return element.matches(this.settings.ignore);
   }
 
-  getMessage(element: FormControlElement, rule: string | {method: string, parameters?: ValidationRulesetParams}) {
+  getMessage(
+    element: FormControlElement,
+    rule: string | { method: string; parameters?: ValidationRulesetParams },
+  ) {
     return getMessage.call(this, element, rule, this.settings.messages);
   }
 
