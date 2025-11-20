@@ -31,7 +31,10 @@ export function objectLength(obj: any): number {
  * @param name - name attribute to search for
  * @return array of matching elements
  */
-export function findByName(form: HTMLFormElement, name: string): FormControlElement[] {
+export function findByName(
+  form: HTMLFormElement,
+  name: string,
+): FormControlElement[] {
   return Array.from(form.querySelectorAll(`[name='${escapeCssMeta(name)}']`));
 }
 

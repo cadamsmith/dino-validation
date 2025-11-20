@@ -119,7 +119,10 @@ function customMessage(
  * @param method - validation method name
  * @return custom message from data attribute if present
  */
-function customDataMessage(element: FormControlElement, method: string): string | undefined {
+function customDataMessage(
+  element: FormControlElement,
+  method: string,
+): string | undefined {
   const dataSetKey =
     'msg' + method.charAt(0).toUpperCase() + method.substring(1).toLowerCase();
 

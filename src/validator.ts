@@ -317,7 +317,9 @@ export class Validator {
     const notSelector =
       'input[type="submit"], [type="reset"], [type="image"], [disabled]';
 
-    return (Array.from(this.currentForm.querySelectorAll(selector)) as HTMLElement[])
+    return (
+      Array.from(this.currentForm.querySelectorAll(selector)) as HTMLElement[]
+    )
       .filter((el) => !el.matches(notSelector) && !this.shouldIgnore(el))
       .filter((el: any) => {
         if (el.form !== this.currentForm) {
@@ -552,7 +554,7 @@ export class Validator {
     }
     // Or option elements, check parent select in that case
     else if (element.parentNode && element.parentElement) {
-      const name = element.parentElement.getAttribute("name");
+      const name = element.parentElement.getAttribute('name');
 
       if (name && name in this.submitted) {
         this.element(element.parentNode as FormControlElement);
