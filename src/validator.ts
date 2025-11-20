@@ -18,6 +18,7 @@ import {
   FormControlElement,
   ValidationError,
   ValidationRuleset,
+  ValidationRulesetParams,
   ValidatorSettings,
 } from './types';
 
@@ -53,8 +54,6 @@ export class Validator {
     highlight: this.highlight,
     unhighlight: this.unhighlight,
     errorPlacement: null,
-    invalidHandler: null,
-    success: null,
     focusCleanup: false,
     rules: {},
     messages: {},
@@ -69,7 +68,6 @@ export class Validator {
     onFocusOut: null as any,
     onKeyUp: null as any,
     onClick: null as any,
-    onInvalidForm: null as any,
   };
 
   /**
@@ -198,7 +196,6 @@ export class Validator {
       delegate(e, focusTargets, this.settings.onkeyup);
     this.boundEventHandlers.onClick = (e: Event) =>
       delegate(e, clickTargets, this.settings.onclick);
-    this.boundEventHandlers.onInvalidForm = this.settings.invalidHandler;
 
     this.currentForm.addEventListener(
       'focusin',
@@ -210,13 +207,6 @@ export class Validator {
     );
     this.currentForm.addEventListener('keyup', this.boundEventHandlers.onKeyUp);
     this.currentForm.addEventListener('click', this.boundEventHandlers.onClick);
-
-    if (this.settings.invalidHandler) {
-      this.currentForm.addEventListener(
-        'invalid-form',
-        this.boundEventHandlers.onInvalidForm,
-      );
-    }
   }
 
   /**
@@ -244,14 +234,6 @@ export class Validator {
 
     this.submitted = { ...this.submitted, ...this.errorMap };
     this.invalid = { ...this.errorMap };
-    if (!this.valid() && this.settings.invalidHandler) {
-      this.currentForm.dispatchEvent(
-        new CustomEvent('invalid-form', {
-          detail: this,
-          bubbles: false,
-        }),
-      );
-    }
     this.showErrors();
     return this.valid();
   }
@@ -321,23 +303,30 @@ export class Validator {
     const notSelector =
       'input[type="submit"], [type="reset"], [type="image"], [disabled]';
 
-    return (
+    const elements = (
       Array.from(this.currentForm.querySelectorAll(selector)) as HTMLElement[]
-    )
-      .filter((el) => !el.matches(notSelector) && !this.shouldIgnore(el))
-      .filter((el: any) => {
-        if (el.form !== this.currentForm) {
-          return false;
-        }
+    ).filter(
+      (el) => !el.matches(notSelector) && !this.shouldIgnore(el),
+    ) as FormControlElement[];
 
-        const name = el.name || el.getAttribute('name');
-        if (name in rulesCache || !objectLength(getRules(el, this.rules))) {
-          return false;
-        }
+    return elements.filter((el) => {
+      const form = el.form;
+      if (form !== this.currentForm) {
+        return false;
+      }
 
-        rulesCache[name] = true;
-        return true;
-      }) as FormControlElement[];
+      const name = el.name || el.getAttribute('name');
+      if (
+        !name ||
+        name in rulesCache ||
+        !objectLength(getRules(el, this.rules))
+      ) {
+        return false;
+      }
+
+      rulesCache[name] = true;
+      return true;
+    });
   }
 
   /**
@@ -370,7 +359,7 @@ export class Validator {
     const isBlank = isBlankElement(element);
 
     for (const method in rules) {
-      const rule = { method, parameters: rules[method] };
+      const rule = { method, parameters: rules[method]! };
 
       const methodFunc = methodStore.get(method);
       if (!methodFunc) {
@@ -411,7 +400,7 @@ export class Validator {
 
   showErrors(): void {
     for (const error of this.errorList) {
-      if (this.settings.highlight) {
+      if (typeof this.settings.highlight !== "boolean") {
         this.settings.highlight(
           error.element,
           this.errorClasses,
@@ -425,13 +414,7 @@ export class Validator {
       this.toShow = this.toShow.concat(this.containers);
     }
 
-    if (this.settings.success) {
-      for (const el of this.successList) {
-        this.showLabel(el);
-      }
-    }
-
-    if (this.settings.unhighlight) {
+    if (typeof this.settings.unhighlight !== "boolean") {
       for (const element of this.validElements()) {
         this.settings.unhighlight(
           element,
@@ -443,10 +426,13 @@ export class Validator {
 
     this.toHide = this.toHide.filter((el) => !this.toShow.includes(el));
     this.hideErrors();
-    this.addWrapper(this.toShow).forEach(showElement);
+    this.addWrapper(...this.toShow).forEach(showElement);
   }
 
-  formatAndAdd(element: FormControlElement, rule: any): void {
+  formatAndAdd(
+    element: FormControlElement,
+    rule: { method: string; parameters: ValidationRulesetParams },
+  ): void {
     const message = getMessage.call(
       this,
       element,
@@ -498,7 +484,7 @@ export class Validator {
 
   onFocusIn(element: FormControlElement): void {
     if (this.settings.focusCleanup) {
-      if (this.settings.unhighlight) {
+      if (typeof this.settings.unhighlight !== "boolean") {
         this.settings.unhighlight(
           element,
           this.errorClasses,
@@ -584,21 +570,23 @@ export class Validator {
     }
   }
 
-  addWrapper(elements: any): any[] {
+  addWrapper(...elements: HTMLElement[]): HTMLElement[] {
     const result = Array.isArray(elements) ? elements : [elements];
 
-    if (this.settings.wrapper) {
-      const wrappers = result
-        .map((el) => el.parentElement)
-        .filter((el) => el.matches(this.settings.wrapper));
-
-      result.push(...wrappers);
+    if (!this.settings.wrapper) {
+      return result;
     }
+
+    const wrappers = result
+      .map((el) => el.parentElement)
+      .filter((el) => el && el.matches(this.settings.wrapper!));
+
+    result.push(...(wrappers as HTMLElement[]));
 
     return result;
   }
 
-  showLabel(element: FormControlElement, message?: any): void {
+  showLabel(element: FormControlElement, message?: string): void {
     let errors = this.errorsFor(element);
 
     if (errors.length) {
@@ -645,19 +633,10 @@ export class Validator {
       errors = [newError];
     }
 
-    if (!message && this.settings.success) {
-      errors.forEach((e) => (e.innerText = ''));
-      if (typeof this.settings.success === 'string') {
-        errors.forEach((e) => e.classList.add(this.settings.success));
-      } else {
-        this.settings.success(errors, element);
-      }
-    }
-
     this.toShow.push(...errors);
   }
 
-  errorsFor(element: FormControlElement): any[] {
+  errorsFor(element: FormControlElement): HTMLElement[] {
     const name = escapeCssMeta(idOrName(element));
     const describer = element.getAttribute('aria-describedby');
 
@@ -693,10 +672,6 @@ export class Validator {
     this.currentForm.removeEventListener(
       'click',
       this.boundEventHandlers.onClick,
-    );
-    this.currentForm.removeEventListener(
-      'invalid-form',
-      this.boundEventHandlers.onInvalidForm,
     );
   }
 
@@ -751,7 +726,7 @@ export class Validator {
     return element.matches(this.settings.ignore);
   }
 
-  getMessage(element: FormControlElement, rule: any) {
+  getMessage(element: FormControlElement, rule: string | {method: string, parameters?: ValidationRulesetParams}) {
     return getMessage.call(this, element, rule, this.settings.messages);
   }
 

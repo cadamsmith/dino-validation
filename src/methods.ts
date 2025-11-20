@@ -1,5 +1,8 @@
 import { getValueLength } from './helpers';
-import { ValidationMethod } from './types';
+import {
+  FormControlElement,
+  ValidationMethod
+} from './types';
 
 /**
  * Internal registry of all validation methods.
@@ -74,11 +77,15 @@ function required(blank: boolean): boolean {
 function minLength(
   blank: boolean,
   value: string | string[],
-  element: any,
+  element: FormControlElement,
   param: any,
 ): boolean {
+  if (blank) {
+    return true;
+  }
+
   const length = Array.isArray(value) ? value.length : getValueLength(element);
-  return blank || length >= param;
+  return length >= param;
 }
 
 /**
@@ -92,11 +99,15 @@ function minLength(
 function maxLength(
   blank: boolean,
   value: string | string[],
-  element: any,
+  element: FormControlElement,
   param: any,
 ): boolean {
+  if (blank) {
+    return true;
+  }
+
   const length = Array.isArray(value) ? value.length : getValueLength(element);
-  return blank || length <= param;
+  return length <= param;
 }
 
 /**
@@ -110,7 +121,7 @@ function maxLength(
 function rangeLength(
   blank: boolean,
   value: string | string[],
-  element: any,
+  element: FormControlElement,
   param: any,
 ): boolean {
   const length = Array.isArray(value) ? value.length : getValueLength(element);
@@ -128,7 +139,7 @@ function rangeLength(
 function min(
   blank: boolean,
   value: string | string[],
-  _element: any,
+  _element: FormControlElement,
   param: any,
 ): boolean {
   return blank || value >= param;
@@ -145,7 +156,7 @@ function min(
 function max(
   blank: boolean,
   value: string | string[],
-  _element: any,
+  _element: FormControlElement,
   param: any,
 ): boolean {
   return blank || value <= param;
@@ -162,7 +173,7 @@ function max(
 function range(
   blank: boolean,
   value: string | string[],
-  _element: any,
+  _element: FormControlElement,
   param: any,
 ): boolean {
   return blank || (value >= param[0] && value <= param[1]);
@@ -278,7 +289,7 @@ function digits(blank: boolean, value: string | string[]): boolean {
 function equalTo(
   _blank: boolean,
   value: string | string[],
-  _element: any,
+  _element: FormControlElement,
   param: any,
 ): boolean {
   const target = document.querySelector(param);
@@ -296,7 +307,7 @@ function equalTo(
 function regex(
   blank: boolean,
   value: string | string[],
-  _element: any,
+  _element: FormControlElement,
   param: any,
 ): boolean {
   if (blank) {
@@ -320,7 +331,7 @@ function regex(
 function nonAlphaMin(
   blank: boolean,
   value: string | string[],
-  _element: any,
+  _element: FormControlElement,
   param: any,
 ): boolean {
   if (blank || !param) {

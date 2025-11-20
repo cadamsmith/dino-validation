@@ -135,13 +135,17 @@ export function findDefined(...args: any[]): any {
  */
 export function format(
   source: string,
-  params?: any[],
+  params?: any,
 ): ((...args: any[]) => string) | string {
   // If no params provided, return a curried function
   if (params === undefined) {
     return function (args: any[]) {
       return formatString(source, args);
     };
+  }
+
+  if (!Array.isArray(params)) {
+    params = [params];
   }
 
   return formatString(source, params);

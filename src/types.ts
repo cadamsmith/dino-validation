@@ -6,15 +6,13 @@ export interface ValidatorSettings {
   wrapper: string | null;
   errorLabelContainer: string | null;
   errorContainer: string | null;
-  onfocusin: Function;
-  onfocusout: Function;
-  onkeyup: Function;
-  highlight: Function;
-  unhighlight: Function;
-  onclick: Function;
-  errorPlacement: Function | null;
-  invalidHandler: Function | null;
-  success: string | Function | null;
+  onfocusin: boolean | ((element: FormControlElement, event: Event) => void);
+  onfocusout: boolean | ((element: FormControlElement, event: Event) => void);
+  onkeyup: boolean | ((element: FormControlElement, event: KeyboardEvent) => void);
+  highlight: boolean | ((element: FormControlElement, errorClasses: string[], validClasses: string[]) => void);
+  unhighlight: boolean | ((element: FormControlElement, errorClasses: string[], validClasses: string[]) => void);
+  onclick: boolean | ((element: FormControlElement, event: Event) => void);
+  errorPlacement: ((error: HTMLElement, element: FormControlElement) => void) | null;
   focusCleanup: boolean;
   rules: Record<string, ValidationRuleset | string>;
   messages: Record<string, any>;
@@ -23,15 +21,16 @@ export interface ValidatorSettings {
 
 export interface ValidationError {
   element: FormControlElement;
-  message: any;
+  message: string;
   method: string;
 }
 
 export interface ValidationRuleset {
-  [key: string]:
-    | ValidationRulesetPrimitive
-    | { param: ValidationRulesetPrimitive };
+  [key: string]: ValidationRulesetParams;
 }
+
+export type ValidationRulesetParams = ValidationRulesetPrimitive
+  | { param: ValidationRulesetPrimitive };
 
 export type ValidationRulesetPrimitive =
   | boolean
@@ -42,8 +41,8 @@ export type ValidationRulesetPrimitive =
 export type ValidationMethod = (
   blank: boolean,
   value: string | string[],
-  element: any,
-  param: any,
+  element: FormControlElement,
+  param: ValidationRulesetParams,
 ) => boolean;
 
 export interface FormControlElement extends HTMLElement {

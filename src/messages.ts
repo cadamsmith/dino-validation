@@ -1,6 +1,6 @@
 import { findDefined, format } from './helpers';
 import { Validator } from './validator';
-import { FormControlElement } from './types';
+import { FormControlElement, ValidationRulesetParams } from './types';
 
 /**
  * Default error messages for all validation methods.
@@ -70,7 +70,7 @@ export const store = {
 export function getMessage(
   this: Validator,
   element: FormControlElement,
-  rule: any,
+  rule: string | { method: string; parameters?: ValidationRulesetParams },
   settings: Record<string, any>,
 ) {
   if (typeof rule === 'string') {
