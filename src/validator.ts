@@ -14,6 +14,7 @@ import { getRules, normalizeRule } from './rules';
 import { getMessage } from './messages';
 import { validatorStore } from './validatorStore';
 import { store as methodStore } from './methods';
+import { FormEventManager } from './eventDelegation';
 import {
   FormControlElement,
   ValidationError,
@@ -39,6 +40,9 @@ export class Validator {
   /** normalized rules */
   rules: Record<string, ValidationRuleset> = {};
 
+  /** event delegation manager */
+  private eventDelegator!: FormEventManager;
+
   settings: ValidatorSettings = {
     ignore: ':hidden',
     errorClass: 'error',
@@ -58,16 +62,6 @@ export class Validator {
     rules: {},
     messages: {},
     escapeHtml: false,
-  };
-
-  /**
-   * stored event handlers for easy cleanup
-   */
-  boundEventHandlers = {
-    onFocusIn: null as any,
-    onFocusOut: null as any,
-    onKeyUp: null as any,
-    onClick: null as any,
   };
 
   /**
@@ -128,85 +122,12 @@ export class Validator {
       this.rules[key] = normalizeRule(value);
     });
 
-    this.attachEventHandlers();
-  }
-
-  /**
-   * Registers delegated event listeners for focus, blur, keyup, and click events on form elements.
-   */
-  attachEventHandlers(): void {
-    const focusTargets = [
-      "[type='text']",
-      "[type='password']",
-      "[type='file']",
-      'select',
-      'textarea',
-      "[type='number']",
-      "[type='search']",
-      "[type='tel']",
-      "[type='url']",
-      "[type='email']",
-      "[type='datetime']",
-      "[type='date']",
-      "[type='month']",
-      "[type='week']",
-      "[type='time']",
-      "[type='datetime-local']",
-      "[type='range']",
-      "[type='color']",
-      "[type='radio']",
-      "[type='checkbox']",
-      'button',
-      "input[type='button']",
-    ];
-
-    const clickTargets = [
-      'select',
-      'option',
-      "[type='radio']",
-      "[type='checkbox']",
-    ];
-
-    const delegate = (event: Event, targets: string[], handler: any) => {
-      const element = event.target as HTMLElement;
-
-      // Ignore the element if it doesn't match one of the targets
-      if (!element.matches(targets.join(', '))) {
-        return;
-      }
-
-      // Ignore the element if it belongs to another form. This will happen mainly
-      // when setting the `form` attribute of an input to the id of another form
-      if (this.currentForm !== (element as any).form) {
-        return;
-      }
-
-      if (this.shouldIgnore(element)) {
-        return;
-      }
-
-      return handler(element, event);
-    };
-
-    this.boundEventHandlers.onFocusIn = (e: Event) =>
-      delegate(e, focusTargets, this.settings.onfocusin);
-    this.boundEventHandlers.onFocusOut = (e: Event) =>
-      delegate(e, focusTargets, this.settings.onfocusout);
-    this.boundEventHandlers.onKeyUp = (e: Event) =>
-      delegate(e, focusTargets, this.settings.onkeyup);
-    this.boundEventHandlers.onClick = (e: Event) =>
-      delegate(e, clickTargets, this.settings.onclick);
-
-    this.currentForm.addEventListener(
-      'focusin',
-      this.boundEventHandlers.onFocusIn,
+    this.eventDelegator = new FormEventManager(
+      this.currentForm,
+      this.settings,
+      (element) => this.shouldIgnore(element),
     );
-    this.currentForm.addEventListener(
-      'focusout',
-      this.boundEventHandlers.onFocusOut,
-    );
-    this.currentForm.addEventListener('keyup', this.boundEventHandlers.onKeyUp);
-    this.currentForm.addEventListener('click', this.boundEventHandlers.onClick);
+    this.eventDelegator.attachEventHandlers();
   }
 
   /**
@@ -506,8 +427,9 @@ export class Validator {
     this.element(element);
   }
 
-  onKeyUp(element: FormControlElement, event: KeyboardEvent): void {
-    if (event.which === 9 && elementValue(element) === '') {
+  onKeyUp(element: FormControlElement, event: Event): void {
+    const keyboardEvent = event as KeyboardEvent;
+    if (keyboardEvent.which === 9 && elementValue(element) === '') {
       return;
     }
 
@@ -526,7 +448,7 @@ export class Validator {
     // Num lock    => 144
     // AltGr key   => 225
     const excludedKeys = [16, 17, 18, 20, 35, 36, 37, 38, 39, 40, 45, 144, 225];
-    if (excludedKeys.includes(event.keyCode)) {
+    if (excludedKeys.includes(keyboardEvent.keyCode)) {
       return;
     }
 
@@ -656,23 +578,7 @@ export class Validator {
   destroy(): void {
     this.resetForm();
     validatorStore.delete(this.currentForm);
-
-    this.currentForm.removeEventListener(
-      'focusin',
-      this.boundEventHandlers.onFocusIn,
-    );
-    this.currentForm.removeEventListener(
-      'focusout',
-      this.boundEventHandlers.onFocusOut,
-    );
-    this.currentForm.removeEventListener(
-      'keyup',
-      this.boundEventHandlers.onKeyUp,
-    );
-    this.currentForm.removeEventListener(
-      'click',
-      this.boundEventHandlers.onClick,
-    );
+    this.eventDelegator.detachEventHandlers();
   }
 
   resetForm(): void {

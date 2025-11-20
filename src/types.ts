@@ -8,9 +8,7 @@ export interface ValidatorSettings {
   errorContainer: string | null;
   onfocusin: boolean | ((element: FormControlElement, event: Event) => void);
   onfocusout: boolean | ((element: FormControlElement, event: Event) => void);
-  onkeyup:
-    | boolean
-    | ((element: FormControlElement, event: KeyboardEvent) => void);
+  onkeyup: boolean | ((element: FormControlElement, event: Event) => void);
   highlight:
     | boolean
     | ((
