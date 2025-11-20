@@ -1,5 +1,5 @@
 import { store as methodStore } from './methods';
-import { ValidationRuleset } from './types';
+import { FormControlElement, ValidationRuleset } from './types';
 
 /**
  * Gets all validation rules for an element from multiple sources.
@@ -9,7 +9,7 @@ import { ValidationRuleset } from './types';
  * @return {Object} - object containing all validation rules with the required rule first
  */
 export function getRules(
-  element: any,
+  element: FormControlElement,
   settings: Record<string, ValidationRuleset>,
 ): ValidationRuleset {
   // If nothing is selected, return empty object; can't chain anyway
@@ -107,7 +107,7 @@ function normalizeRules(rules: ValidationRuleset): ValidationRuleset {
  * @param element - element to extract rules from
  * @return validation rules derived from CSS classes
  */
-function classRules(element: any): ValidationRuleset {
+function classRules(element: FormControlElement): ValidationRuleset {
   let rules = {};
   const classes = element.getAttribute('class');
 
@@ -127,12 +127,12 @@ function classRules(element: any): ValidationRuleset {
  * @param element - element to extract rules from
  * @return validation rules derived from HTML attributes
  */
-function attributeRules(element: any): ValidationRuleset {
+function attributeRules(element: FormControlElement): ValidationRuleset {
   const rules: ValidationRuleset = {};
-  const type = element.getAttribute('type');
+  const type = element.type;
 
   for (const method of methodStore.keys()) {
-    let value = element.getAttribute(method);
+    let value: string | null | boolean = element.getAttribute(method);
 
     // Support for <input required> in both html5 and older browsers
     if (method === 'required') {
@@ -165,16 +165,16 @@ function attributeRules(element: any): ValidationRuleset {
  * @param element - element to extract rules from
  * @return validation rules derived from data attributes
  */
-function dataRules(element: any): ValidationRuleset {
+function dataRules(element: FormControlElement): ValidationRuleset {
   const rules = {};
-  const type = element.getAttribute('type');
+  const type = element.type;
 
   for (const method of methodStore.keys()) {
     const datasetKey =
       'rule' +
       method.charAt(0).toUpperCase() +
       method.substring(1).toLowerCase();
-    let value = element.dataset[datasetKey];
+    let value: string | null | boolean = element.dataset[datasetKey] ?? null;
 
     // Cast empty attributes like `data-rule-required` to `true`
     if (value === '' || value === 'true') {
@@ -196,7 +196,7 @@ function dataRules(element: any): ValidationRuleset {
  * @return validation rules from validator settings
  */
 export function staticRules(
-  element: any,
+  element: FormControlElement,
   settings: Record<string, ValidationRuleset>,
 ): ValidationRuleset {
   if (!settings || !settings[element.name]) {

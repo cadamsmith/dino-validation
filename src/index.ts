@@ -9,6 +9,8 @@ import { addClassRule, getRules } from './rules';
 import { store as methods } from './methods';
 import { store as messages } from './messages';
 import {
+  FormControlElement,
+  ValidationError,
   ValidationMethod,
   ValidationRuleset,
   ValidatorSettings,
@@ -95,7 +97,7 @@ export function valid(selector: string | HTMLElement | HTMLElement[]): boolean {
     return validate(elements[0])?.form() ?? false;
   }
 
-  const errorList: any[] = [];
+  const errorList: ValidationError[] = [];
   let valid = true;
   const validator = validate(elements[0].form);
   if (!validator) {
@@ -134,7 +136,7 @@ export function rules(selector: string | HTMLElement): ValidationRuleset {
     return {};
   }
 
-  return getRules(element, validator.rules);
+  return getRules(element as FormControlElement, validator.rules);
 }
 
 /**

@@ -1,9 +1,11 @@
+import { FormControlElement } from './types';
+
 /**
  * Returns true if the element is visible in the DOM.
  * @param el - element to check visibility
  * @return true if element is visible, false otherwise
  */
-export function isVisible(el: any): boolean {
+export function isVisible(el: HTMLElement): boolean {
   return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
 }
 
@@ -29,8 +31,8 @@ export function objectLength(obj: any): number {
  * @param name - name attribute to search for
  * @return array of matching elements
  */
-export function findByName(form: any, name: string): any[] {
-  return [...form.querySelectorAll(`[name='${escapeCssMeta(name)}']`)];
+export function findByName(form: HTMLFormElement, name: string): FormControlElement[] {
+  return Array.from(form.querySelectorAll(`[name='${escapeCssMeta(name)}']`));
 }
 
 /**
@@ -38,8 +40,8 @@ export function findByName(form: any, name: string): any[] {
  * @param element - element to check
  * @return true if element is radio or checkbox, false otherwise
  */
-export function isCheckableElement(element: any): boolean {
-  return /radio|checkbox/i.test(element.type);
+export function isCheckableElement(element: FormControlElement): boolean {
+  return /radio|checkbox/i.test(element.type || '');
 }
 
 /**
@@ -61,7 +63,7 @@ export function escapeCssMeta(text: string): string {
  * @param element - form element to get value from
  * @return element value or array of values for checkboxes/radios
  */
-export function elementValue(element: any): string | string[] {
+export function elementValue(element: FormControlElement): string | string[] {
   if (element.type === 'radio' || element.type === 'checkbox') {
     const checked = findByName(element.form, element.name).filter((el) =>
       el.matches(':checked'),
@@ -74,11 +76,8 @@ export function elementValue(element: any): string | string[] {
   if (element.type === 'file') {
     return fileInputValue(element);
   }
-  if (typeof element.value === 'string') {
-    return element.value.replace(/\r/g, '');
-  }
 
-  return element.value;
+  return element.value.replace(/\r/g, '');
 }
 
 /**
@@ -86,7 +85,7 @@ export function elementValue(element: any): string | string[] {
  * @param element - file input element
  * @return file path or file name
  */
-export function fileInputValue(element: any): string {
+export function fileInputValue(element: FormControlElement): string {
   const value = element.value;
 
   // Modern browser (chrome & safari)
@@ -168,7 +167,7 @@ function formatString(source: string, params: any[]): string {
  * @param element - element to get identifier from
  * @return element id or name
  */
-export function idOrName(element: any): string {
+export function idOrName(element: FormControlElement): string {
   return (
     (isCheckableElement(element) ? element.name : element.id) || element.name
   );
@@ -176,12 +175,12 @@ export function idOrName(element: any): string {
 
 /**
  * Gets the length of a form element's value, handling special cases for selects and checkables.
- * @param value - element value
  * @param element - form element
  * @return length of the element's value
  */
-export function getLength(value: any, element: any): number {
+export function getValueLength(element: FormControlElement): number {
   const nodeName = element.nodeName.toLowerCase();
+  const value = elementValue(element);
 
   if (nodeName === 'select') {
     return element.querySelectorAll('option:checked').length;
@@ -199,17 +198,17 @@ export function getLength(value: any, element: any): number {
  * @param element - form element to check
  * @return true if element is blank, false otherwise
  */
-export function isBlankElement(element: any): boolean {
+export function isBlankElement(element: FormControlElement): boolean {
   const value = elementValue(element);
 
-  if (element.nodeName.toLowerCase() === 'select') {
-    const selected = [...element.selectedOptions].map((o) => o.value);
+  if (element.nodeName.toLowerCase() === 'select' && element.selectedOptions) {
+    const selected = Array.from(element.selectedOptions).map((o) => o.value);
 
     return selected.length === 0 || !selected[0];
   }
 
   if (isCheckableElement(element)) {
-    return getLength(value, element) === 0;
+    return getValueLength(element) === 0;
   }
 
   return value === undefined || value === null || value.length === 0;
@@ -222,7 +221,7 @@ const displayDataMap = new WeakMap();
  * Matches jQuery's .show() behavior.
  * @param element - Element to show
  */
-export function showElement(element: any): void {
+export function showElement(element: HTMLElement): void {
   const storedDisplay = displayDataMap.get(element);
   if (storedDisplay) {
     element.style.display = storedDisplay;
@@ -237,7 +236,7 @@ export function showElement(element: any): void {
  * Matches jQuery's .hide() behavior.
  * @param element - Element to hide
  */
-export function hideElement(element: any): void {
+export function hideElement(element: HTMLElement): void {
   if (element.style.display !== 'none') {
     // Store current display value
     displayDataMap.set(

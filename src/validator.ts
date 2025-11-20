@@ -14,19 +14,24 @@ import { getRules, normalizeRule } from './rules';
 import { getMessage } from './messages';
 import { validatorStore } from './validatorStore';
 import { store as methodStore } from './methods';
-import { ValidationError, ValidationRuleset, ValidatorSettings } from './types';
+import {
+  FormControlElement,
+  ValidationError,
+  ValidationRuleset,
+  ValidatorSettings,
+} from './types';
 
 export class Validator {
   currentForm: HTMLFormElement;
   errorContext!: HTMLElement;
   submitted: Record<string, any> = {};
   invalid: Record<string, any> = {};
-  successList: HTMLElement[] = [];
+  successList: FormControlElement[] = [];
   errorList: ValidationError[] = [];
   errorMap: Record<string, any> = {};
   toShow: HTMLElement[] = [];
   toHide: HTMLElement[] = [];
-  currentElements: any[] = [];
+  currentElements: FormControlElement[] = [];
   labelContainer: HTMLElement | null = null;
   containers: HTMLElement[] = [];
 
@@ -256,7 +261,7 @@ export class Validator {
    * @param element - element to validate
    * @return true if the element is valid, false otherwise
    */
-  element(element: any): boolean {
+  element(element: FormControlElement): boolean {
     const target = this.validationTargetFor(element);
     if (target === undefined) {
       delete this.invalid[element.name];
@@ -275,12 +280,12 @@ export class Validator {
     this.showErrors();
 
     // add aria-invalid status for screen readers
-    element.setAttribute('aria-invalid', !result);
+    element.setAttribute('aria-invalid', (!result).toString());
 
     return result;
   }
 
-  prepareElement(element: any): void {
+  prepareElement(element: FormControlElement): void {
     this.reset();
     this.toHide = this.errorsFor(element);
   }
@@ -305,14 +310,14 @@ export class Validator {
    * Returns a list of all form elements that need to be validated.
    * @return list of form elements
    */
-  elements(): any[] {
+  elements(): FormControlElement[] {
     const rulesCache: Record<string, boolean> = {};
 
     const selector = 'input, select, textarea';
     const notSelector =
       'input[type="submit"], [type="reset"], [type="image"], [disabled]';
 
-    return Array.from(this.currentForm.querySelectorAll(selector))
+    return (Array.from(this.currentForm.querySelectorAll(selector)) as HTMLElement[])
       .filter((el) => !el.matches(notSelector) && !this.shouldIgnore(el))
       .filter((el: any) => {
         if (el.form !== this.currentForm) {
@@ -326,14 +331,14 @@ export class Validator {
 
         rulesCache[name] = true;
         return true;
-      });
+      }) as FormControlElement[];
   }
 
   /**
    * Returns an array of currently valid elements from the last validation.
    * @return list of valid form elements
    */
-  validElements(): any[] {
+  validElements(): FormControlElement[] {
     const invalid = this.invalidElements();
     return this.currentElements.filter((el) => !invalid.includes(el));
   }
@@ -342,7 +347,7 @@ export class Validator {
    * Returns an array of currently invalid elements from the last validation.
    * @return list of invalid form elements
    */
-  invalidElements(): any[] {
+  invalidElements(): FormControlElement[] {
     return this.errorList.map((e) => e.element);
   }
 
@@ -351,7 +356,7 @@ export class Validator {
    * @param element - element to validate
    * @return true if the element is valid, false otherwise
    */
-  check(element: any): boolean {
+  check(element: FormControlElement): boolean {
     element = this.validationTargetFor(element);
 
     const rules = getRules(element, this.rules);
@@ -389,7 +394,7 @@ export class Validator {
    * Returns all error label elements currently in the DOM.
    * @return array of error label elements
    */
-  errors(): any[] {
+  errors(): HTMLElement[] {
     const errorClass = this.errorClasses.join('.');
     return Array.from(
       this.errorContext.querySelectorAll(
@@ -435,7 +440,7 @@ export class Validator {
     this.addWrapper(this.toShow).forEach(showElement);
   }
 
-  formatAndAdd(element: any, rule: any): void {
+  formatAndAdd(element: FormControlElement, rule: any): void {
     const message = getMessage.call(
       this,
       element,
@@ -454,7 +459,7 @@ export class Validator {
   }
 
   highlight(
-    element: any,
+    element: FormControlElement,
     errorClasses: string[],
     validClasses: string[],
   ): void {
@@ -470,7 +475,7 @@ export class Validator {
   }
 
   unhighlight(
-    element: any,
+    element: FormControlElement,
     errorClasses: string[],
     validClasses: string[],
   ): void {
@@ -485,7 +490,7 @@ export class Validator {
     });
   }
 
-  onFocusIn(element: any): void {
+  onFocusIn(element: FormControlElement): void {
     if (this.settings.focusCleanup) {
       if (this.settings.unhighlight) {
         this.settings.unhighlight(
@@ -498,7 +503,7 @@ export class Validator {
     }
   }
 
-  onFocusOut(element: any): void {
+  onFocusOut(element: FormControlElement): void {
     if (isCheckableElement(element)) {
       return;
     }
@@ -509,7 +514,7 @@ export class Validator {
     this.element(element);
   }
 
-  onKeyUp(element: any, event: KeyboardEvent): void {
+  onKeyUp(element: FormControlElement, event: KeyboardEvent): void {
     if (event.which === 9 && elementValue(element) === '') {
       return;
     }
@@ -540,18 +545,22 @@ export class Validator {
     this.element(element);
   }
 
-  onClick(element: any): void {
+  onClick(element: FormControlElement): void {
     // Click on selects, radiobuttons and checkboxes
     if (element.name in this.submitted) {
       this.element(element);
     }
     // Or option elements, check parent select in that case
-    else if (element.parentNode.name in this.submitted) {
-      this.element(element.parentNode);
+    else if (element.parentNode && element.parentElement) {
+      const name = element.parentElement.getAttribute("name");
+
+      if (name && name in this.submitted) {
+        this.element(element.parentNode as FormControlElement);
+      }
     }
   }
 
-  hideErrors(element?: any): void {
+  hideErrors(element?: FormControlElement): void {
     // we're either hiding all errors, or just the errors for a specific element
     let targets = this.toHide;
     if (element) {
@@ -583,7 +592,7 @@ export class Validator {
     return result;
   }
 
-  showLabel(element: any, message?: any): void {
+  showLabel(element: FormControlElement, message?: any): void {
     let errors = this.errorsFor(element);
 
     if (errors.length) {
@@ -642,7 +651,7 @@ export class Validator {
     this.toShow.push(...errors);
   }
 
-  errorsFor(element: any): any[] {
+  errorsFor(element: FormControlElement): any[] {
     const name = escapeCssMeta(idOrName(element));
     const describer = element.getAttribute('aria-describedby');
 
@@ -711,13 +720,13 @@ export class Validator {
     }
   }
 
-  validationTargetFor(element: any): any {
+  validationTargetFor(element: FormControlElement): FormControlElement {
     let targets = [element];
     if (isCheckableElement(element)) {
       targets = findByName(element.form, element.name);
     }
 
-    return targets.filter((t) => !this.shouldIgnore(t))[0];
+    return targets.filter((t) => !this.shouldIgnore(t))[0]!;
   }
 
   /**
@@ -725,7 +734,7 @@ export class Validator {
    * @param element - element to check
    * @return true if the element should be skipped, false otherwise
    */
-  shouldIgnore(element: any): boolean {
+  shouldIgnore(element: HTMLElement): boolean {
     if (!this.settings.ignore) {
       return false;
     }
@@ -736,7 +745,7 @@ export class Validator {
     return element.matches(this.settings.ignore);
   }
 
-  getMessage(element: any, rule: any) {
+  getMessage(element: FormControlElement, rule: any) {
     return getMessage.call(this, element, rule, this.settings.messages);
   }
 

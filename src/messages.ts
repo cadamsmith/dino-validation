@@ -1,5 +1,6 @@
 import { findDefined, format } from './helpers';
 import { Validator } from './validator';
+import { FormControlElement } from './types';
 
 /**
  * Default error messages for all validation methods.
@@ -68,7 +69,7 @@ export const store = {
  */
 export function getMessage(
   this: Validator,
-  element: any,
+  element: FormControlElement,
   rule: any,
   settings: Record<string, any>,
 ) {
@@ -118,7 +119,7 @@ function customMessage(
  * @param method - validation method name
  * @return custom message from data attribute if present
  */
-function customDataMessage(element: any, method: string): string | undefined {
+function customDataMessage(element: FormControlElement, method: string): string | undefined {
   const dataSetKey =
     'msg' + method.charAt(0).toUpperCase() + method.substring(1).toLowerCase();
 

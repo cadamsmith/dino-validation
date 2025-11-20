@@ -1,4 +1,4 @@
-import { getLength } from './helpers';
+import { getValueLength } from './helpers';
 import { ValidationMethod } from './types';
 
 /**
@@ -77,9 +77,7 @@ function minLength(
   element: any,
   param: any,
 ): boolean {
-  const length = Array.isArray(value)
-    ? value.length
-    : getLength(value, element);
+  const length = Array.isArray(value) ? value.length : getValueLength(element);
   return blank || length >= param;
 }
 
@@ -97,9 +95,7 @@ function maxLength(
   element: any,
   param: any,
 ): boolean {
-  const length = Array.isArray(value)
-    ? value.length
-    : getLength(value, element);
+  const length = Array.isArray(value) ? value.length : getValueLength(element);
   return blank || length <= param;
 }
 
@@ -117,9 +113,7 @@ function rangeLength(
   element: any,
   param: any,
 ): boolean {
-  const length = Array.isArray(value)
-    ? value.length
-    : getLength(value, element);
+  const length = Array.isArray(value) ? value.length : getValueLength(element);
   return blank || (length >= param[0] && length <= param[1]);
 }
 

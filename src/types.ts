@@ -22,7 +22,7 @@ export interface ValidatorSettings {
 }
 
 export interface ValidationError {
-  element: any;
+  element: FormControlElement;
   message: any;
   method: string;
 }
@@ -45,3 +45,12 @@ export type ValidationMethod = (
   element: any,
   param: any,
 ) => boolean;
+
+export interface FormControlElement extends HTMLElement {
+  form: HTMLFormElement;
+  name: string;
+  value: string;
+  type: string;
+  selectedOptions?: HTMLCollectionOf<HTMLOptionElement>;
+  validity?: ValidityState;
+}
