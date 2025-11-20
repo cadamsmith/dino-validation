@@ -24,11 +24,11 @@ import {
 export class Validator {
   currentForm: HTMLFormElement;
   errorContext!: HTMLElement;
-  submitted: Record<string, any> = {};
-  invalid: Record<string, any> = {};
+  submitted: Record<string, string> = {};
+  invalid: Record<string, string> = {};
   successList: FormControlElement[] = [];
   errorList: ValidationError[] = [];
-  errorMap: Record<string, any> = {};
+  errorMap: Record<string, string> = {};
   toShow: HTMLElement[] = [];
   toHide: HTMLElement[] = [];
   currentElements: FormControlElement[] = [];
@@ -90,7 +90,7 @@ export class Validator {
    * Currently, this only binds function settings to validator instance.
    */
   normalizeSettings(): void {
-    // bind function settings to this validator instance\
+    // bind function settings to this validator instance
     [
       'onfocusin',
       'onfocusout',
@@ -272,7 +272,11 @@ export class Validator {
     this.currentElements = [target];
 
     const result = this.check(target);
-    this.invalid[target.name] = !result;
+    if (result) {
+      delete this.invalid[element.name];
+    } else {
+      this.invalid[target.name] = 'Invalid';
+    }
 
     if (!this.numberOfInvalids()) {
       this.toHide.push(...this.containers);
