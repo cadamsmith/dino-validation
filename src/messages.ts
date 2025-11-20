@@ -87,10 +87,7 @@ export function getMessage(
   const regex = /\$?\{(\d+)}/g;
 
   if (typeof message === 'function') {
-    const params = Array.isArray(rule.parameters)
-      ? rule.parameters
-      : [rule.parameters];
-    message = message.call(this, ...params, element);
+    message = message.call(this, rule.parameters, element);
   } else if (regex.test(message)) {
     message = format(message.replace(regex, '{$1}'), rule.parameters);
   }

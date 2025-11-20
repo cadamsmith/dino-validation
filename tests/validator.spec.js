@@ -1293,7 +1293,34 @@ test('formatAndAdd, auto detect substitution string', async ({ page }) => {
 
 // TODO: idOrName()
 
-// TODO: resetForm()
+test("resetForm()", async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const v = dv.validate('#testForm1');
+    const firstName = document.querySelector('#firstname');
+    const something = document.querySelector('#something');
+
+    v.form();
+    const ret = [
+      v.size(),
+      firstName.classList.contains("error"),
+      something.classList.contains("valid"),
+    ];
+
+    firstName.value = "hiy";
+    v.resetForm();
+    ret.push(
+      v.size(),
+      firstName.classList.contains("error"),
+      something.classList.contains("valid")
+    );
+
+    return ret;
+  });
+
+  expect(result).toEqual([2, true, true, 0, false, false]);
+});
 
 // TODO: message from title
 
@@ -1313,9 +1340,39 @@ test('formatAndAdd, auto detect substitution string', async ({ page }) => {
 
 // TODO: all rules are evaluated
 
-// TODO: messages
+test("messages", async ({ page }) => {
+  await page.goto('');
 
-// TODO: option: ignore
+  const result = await page.evaluate(() => {
+    const messages = dv.messages;
+
+    return [
+      messages.get("maxlength")(0) === "Please enter no more than 0 characters.",
+      messages.get("minlength")(1) === "Please enter at least 1 characters.",
+      messages.get("rangelength")([1,2]) === "Please enter a value between 1 and 2 characters long.",
+      messages.get("max")(1) === "Please enter a value less than or equal to 1.",
+      messages.get("min")(0) === "Please enter a value greater than or equal to 0.",
+      messages.get("range")([1,2]) === "Please enter a value between 1 and 2."
+    ];
+  });
+
+  expect(result).toEqual(Array(result.length).fill(true));
+});
+
+test("option: ignore", async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const v = dv.validate('#testForm1', {
+      ignore: "[name=lastname]"
+    });
+    v.form();
+
+    return v.size();
+  });
+
+  expect(result).toBe(1);
+});
 
 // TODO: option: subformRequired
 

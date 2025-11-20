@@ -137,7 +137,7 @@ export function format(
 ): ((...args: any[]) => string) | string {
   // If no params provided, return a curried function
   if (params === undefined) {
-    return function (...args: any[]) {
+    return function (args: any[]) {
       return formatString(source, args);
     };
   }
