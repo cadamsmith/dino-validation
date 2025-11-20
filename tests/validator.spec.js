@@ -1293,7 +1293,7 @@ test('formatAndAdd, auto detect substitution string', async ({ page }) => {
 
 // TODO: idOrName()
 
-test("resetForm()", async ({ page }) => {
+test('resetForm()', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
@@ -1304,16 +1304,16 @@ test("resetForm()", async ({ page }) => {
     v.form();
     const ret = [
       v.size(),
-      firstName.classList.contains("error"),
-      something.classList.contains("valid"),
+      firstName.classList.contains('error'),
+      something.classList.contains('valid'),
     ];
 
-    firstName.value = "hiy";
+    firstName.value = 'hiy';
     v.resetForm();
     ret.push(
       v.size(),
-      firstName.classList.contains("error"),
-      something.classList.contains("valid")
+      firstName.classList.contains('error'),
+      something.classList.contains('valid'),
     );
 
     return ret;
@@ -1340,31 +1340,35 @@ test("resetForm()", async ({ page }) => {
 
 // TODO: all rules are evaluated
 
-test("messages", async ({ page }) => {
+test('messages', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
     const messages = dv.messages;
 
     return [
-      messages.get("maxlength")(0) === "Please enter no more than 0 characters.",
-      messages.get("minlength")(1) === "Please enter at least 1 characters.",
-      messages.get("rangelength")([1,2]) === "Please enter a value between 1 and 2 characters long.",
-      messages.get("max")(1) === "Please enter a value less than or equal to 1.",
-      messages.get("min")(0) === "Please enter a value greater than or equal to 0.",
-      messages.get("range")([1,2]) === "Please enter a value between 1 and 2."
+      messages.get('maxlength')(0) ===
+        'Please enter no more than 0 characters.',
+      messages.get('minlength')(1) === 'Please enter at least 1 characters.',
+      messages.get('rangelength')([1, 2]) ===
+        'Please enter a value between 1 and 2 characters long.',
+      messages.get('max')(1) ===
+        'Please enter a value less than or equal to 1.',
+      messages.get('min')(0) ===
+        'Please enter a value greater than or equal to 0.',
+      messages.get('range')([1, 2]) === 'Please enter a value between 1 and 2.',
     ];
   });
 
   expect(result).toEqual(Array(result.length).fill(true));
 });
 
-test("option: ignore", async ({ page }) => {
+test('option: ignore', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
     const v = dv.validate('#testForm1', {
-      ignore: "[name=lastname]"
+      ignore: '[name=lastname]',
     });
     v.form();
 
