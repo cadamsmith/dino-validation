@@ -1444,23 +1444,162 @@ test('Specify error messages through data attributes', async ({ page }) => {
   expect(result).toBe('You must enter a value here');
 });
 
-// TODO: Specify error messages through data attributes
+test('Updates pre-existing label if has error class', async ({ page }) => {
+  await page.goto('');
 
-// TODO: Updates pre-existing label if has error class
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#updateLabel');
+    const input = document.querySelector('#updateLabelInput');
+    const label = document.querySelector('#targetLabel');
+    const labelsBefore = form.querySelectorAll('.error:not(input)').length;
 
-// TODO: Min date set by attribute
+    dv.validate(form);
+    input.value = '';
+    dv.valid(input);
+    const labelsAfter = form.querySelectorAll('.error:not(input)').length;
 
-// TODO: Max date set by attribute
+    return [
+      label.textContent === input.getAttribute('data-msg-required'),
+      labelsBefore === labelsAfter,
+    ];
+  });
 
-// TODO: Min and Max date set by attributes greater
+  expect(result).toEqual([true, true]);
+});
 
-// TODO: Min and Max date set by attributes less
+test('Min date set by attribute', async ({ page }) => {
+  await page.goto('');
 
-// TODO: Min date set by attribute valid
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#rangesMinDateInvalid');
+    const name = document.querySelector('#minDateInvalid');
 
-// TODO: Max date set by attribute valid
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
 
-// TODO: Min and max date set by attributes valid
+    const label = document.querySelector(
+      '#rangesMinDateInvalid .error:not(input)',
+    );
+    return label.textContent;
+  });
+
+  expect(result).toBe(
+    'Please enter a value greater than or equal to 2012-12-21.',
+  );
+});
+
+test('Max date set by attribute', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ranges');
+    const name = document.querySelector('#maxDateInvalid');
+
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
+
+    const label = document.querySelector('#ranges .error:not(input)');
+    return label.textContent;
+  });
+
+  expect(result).toBe('Please enter a value less than or equal to 2012-12-21.');
+});
+
+test('Min and max date set by attributes greater', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ranges');
+    const name = document.querySelector('#rangeDateInvalidGreater');
+
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
+
+    const label = document.querySelector('#ranges .error:not(input)');
+    return label.textContent;
+  });
+
+  expect(result).toBe('Please enter a value less than or equal to 2013-01-21.');
+});
+
+test('Min and max date set by attributes less', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ranges');
+    const name = document.querySelector('#rangeDateInvalidLess');
+
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
+
+    const label = document.querySelector('#ranges .error:not(input)');
+    return label.textContent;
+  });
+
+  expect(result).toBe(
+    'Please enter a value greater than or equal to 2012-11-21.',
+  );
+});
+
+test('Min date set by attribute valid', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#rangeMinDateValid');
+    const name = document.querySelector('#minDateValid');
+
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
+
+    const label = document.querySelector(
+      '#rangeMinDateValid .error:not(input)',
+    );
+    return !!label?.textContent;
+  });
+
+  expect(result).toBe(false);
+});
+
+test('Max date set by attribute valid', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ranges');
+    const name = document.querySelector('#maxDateValid');
+
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
+
+    const label = document.querySelector('#ranges .error:not(input)');
+    return !!label?.textContent;
+  });
+
+  expect(result).toBe(false);
+});
+
+test('Min and max date set by attributes valid', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ranges');
+    const name = document.querySelector('#rangeDateValid');
+
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
+
+    const label = document.querySelector('#ranges .error:not(input)');
+    return !!label?.textContent;
+  });
+
+  expect(result).toBe(false);
+});
 
 // TODO: Min and max strings set by attributes greater
 

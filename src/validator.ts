@@ -53,6 +53,7 @@ export class Validator {
     focusCleanup: false,
     rules: {},
     messages: {},
+    escapeHtml: false,
   };
 
   /**
@@ -590,7 +591,11 @@ export class Validator {
       errors.forEach((el) => {
         el.classList.remove(this.settings.validClass);
         el.classList.add(...this.errorClasses);
-        el.innerHTML = message || '';
+        if (this.settings.escapeHtml) {
+          el.innerText = message || '';
+        } else {
+          el.innerHTML = message || '';
+        }
       });
     } else {
       const elementID = idOrName(element);
@@ -598,7 +603,11 @@ export class Validator {
       const newError = document.createElement(this.settings.errorElement);
       newError.setAttribute('id', `${elementID}-error`);
       newError.classList.add(...this.errorClasses);
-      newError.innerHTML = message || '';
+      if (this.settings.escapeHtml) {
+        newError.innerText = message || '';
+      } else {
+        newError.innerHTML = message || '';
+      }
 
       // Maintain reference to the element(s) to be placed into the DOM
       let insert = newError;
@@ -635,7 +644,13 @@ export class Validator {
 
   errorsFor(element: any): any[] {
     const name = escapeCssMeta(idOrName(element));
-    const selector = `label[for='${name}'], label[for='${name}'] *`;
+    const describer = element.getAttribute('aria-describedby');
+
+    let selector = `label[for='${name}'], label[for='${name}'] *`;
+    if (describer) {
+      const escapedDescriber = escapeCssMeta(describer).replace(/\s+/g, ', #');
+      selector += `, #${escapedDescriber}`;
+    }
 
     return this.errors().filter((el) => el.matches(selector));
   }

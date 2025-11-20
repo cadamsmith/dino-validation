@@ -18,6 +18,7 @@ export interface ValidatorSettings {
   focusCleanup: boolean;
   rules: Record<string, ValidationRuleset | string>;
   messages: Record<string, any>;
+  escapeHtml: boolean;
 }
 
 export interface ValidationError {
