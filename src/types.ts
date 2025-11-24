@@ -29,9 +29,16 @@ export interface ValidatorSettings {
     | null;
   focusCleanup: boolean;
   rules: Record<string, ValidationRuleset | string>;
-  messages: Record<string, any>;
+  messages: Record<
+    string,
+    ValidationMessage | Record<string, ValidationMessage>
+  >;
   escapeHtml: boolean;
 }
+
+export type ValidationMessage =
+  | string
+  | ((params: any, element: FormControlElement) => string);
 
 export interface ValidationError {
   element: FormControlElement;

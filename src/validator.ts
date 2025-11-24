@@ -19,6 +19,7 @@ import { FormEventManager } from './eventDelegation';
 import {
   FormControlElement,
   ValidationError,
+  ValidationMessage,
   ValidationRuleset,
   ValidatorSettings,
 } from './types';
@@ -366,12 +367,7 @@ export class Validator {
     element: FormControlElement,
     rule: { method: string; parameters: any },
   ): void {
-    const message = getMessage.call(
-      this,
-      element,
-      rule,
-      this.settings.messages,
-    );
+    const message = this.getMessage(element, rule);
 
     this.errorList.push({ message, element, method: rule.method });
     this.errorMap[element.name] = message;
@@ -693,7 +689,19 @@ export class Validator {
     element: FormControlElement,
     rule: string | { method: string; parameters?: any },
   ) {
-    return getMessage.call(this, element, rule, this.settings.messages);
+    if (typeof rule === 'string') {
+      rule = { method: rule };
+    }
+
+    let customMessage: ValidationMessage | undefined;
+    const msgSettings = this.settings.messages[element.name];
+    if (msgSettings && typeof msgSettings === 'string') {
+      customMessage = msgSettings;
+    } else if (msgSettings && typeof msgSettings === 'object') {
+      customMessage = msgSettings[rule.method];
+    }
+
+    return getMessage.call(this, element, rule, customMessage);
   }
 
   get errorClasses(): string[] {

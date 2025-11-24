@@ -1,12 +1,12 @@
-import { findDefined, format } from './helpers';
+import { format } from './helpers';
 import { Validator } from './validator';
-import { FormControlElement } from './types';
+import { FormControlElement, ValidationMessage } from './types';
 
 /**
  * Default error messages for all validation methods.
  * Messages can be strings or functions that return formatted strings with parameters.
  */
-const messages: Record<string, string | Function> = {
+const messages: Record<string, ValidationMessage> = {
   required: 'This field is required.',
   remote: 'Please fix this field.',
   email: 'Please enter a valid email address.',
@@ -46,7 +46,7 @@ export const store = {
    * @param {string} key - validation method name
    * @return {string|Function} - error message string or function
    */
-  get: function (key: string): string | Function | undefined {
+  get: function (key: string): ValidationMessage | undefined {
     return messages[key];
   },
   /**
@@ -54,7 +54,7 @@ export const store = {
    * @param {string} key - validation method name
    * @param {string|Function} value - error message string or function
    */
-  set: function (key: string, value: string | Function): void {
+  set: function (key: string, value: ValidationMessage): void {
     messages[key] = value;
   },
 };
@@ -64,52 +64,32 @@ export const store = {
  * Checks custom messages, data attributes, element title, and default messages in order.
  * @param element - form element that failed validation
  * @param rule - validation rule (string method name or object with method and parameters)
- * @param settings - validator settings that may contain custom messages
+ * @param customMessage - validator settings that may contain custom messages
  * @return formatted error message
  */
 export function getMessage(
   this: Validator,
   element: FormControlElement,
-  rule: string | { method: string; parameters?: any },
-  settings: Record<string, any>,
-) {
-  if (typeof rule === 'string') {
-    rule = { method: rule };
-  }
-
-  let message = findDefined(
-    customMessage(element.name, rule.method, settings),
+  rule: { method: string; parameters?: any },
+  customMessage?: ValidationMessage,
+): string {
+  let message: ValidationMessage = [
+    customMessage,
     customDataMessage(element, rule.method),
     element.title || undefined,
     store.get(rule.method),
     `<strong>Warning: No message defined for ${element.name}</strong>`,
-  );
+  ].find((x) => x !== undefined) as ValidationMessage;
 
   const regex = /\$?\{(\d+)}/g;
 
   if (typeof message === 'function') {
-    message = message.call(this, rule.parameters, element);
-  } else if (regex.test(message)) {
-    message = format(message.replace(regex, '{$1}'), rule.parameters);
+    return message.call(this, rule.parameters, element);
+  } else if (/\$?\{(\d+)}/g.test(message)) {
+    return format(message.replace(regex, '{$1}'), rule.parameters) as string;
+  } else {
+    return message;
   }
-
-  return message;
-}
-
-/**
- * Gets a custom error message from validator settings.
- * @param name - element name
- * @param method - validation method name
- * @param settings - validator settings that may contain custom messages
- * @return custom message if defined
- */
-function customMessage(
-  name: string,
-  method: string,
-  settings: Record<string, any>,
-) {
-  const m = settings[name];
-  return m && (m.constructor === String ? m : m[method]);
 }
 
 /**
