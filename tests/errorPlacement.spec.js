@@ -155,23 +155,254 @@ test('test existing non-label used as error element', async ({ page }) => {
   expect(result).toEqual([false, true, true, true]);
 });
 
-// TODO: test aria-describedby with input names contains CSS-selector meta-characters
+test('test aria-describedby with input names contains CSS-selector meta-characters', async ({
+  page,
+}) => {
+  await page.goto('');
 
-// TODO: test existing non-error aria-describedby
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#testForm21');
+    const field = document.querySelector(
+      "#testForm21\\!\\#\\$\\%\\&\\'\\(\\)\\*\\+\\,\\.\\/\\:\\;\\<\\=\\>\\?\\@\\[\\\\\\]\\^\\`\\{\\|\\}\\~",
+    );
 
-// TODO: test aria-describedby cleanup with existing non-error aria-describedby
+    const ret = [field.getAttribute('aria-describedby')];
 
-// TODO: test aria-describedby cleanup when field becomes valid
+    dv.validate(form, {
+      errorElement: 'span',
+      errorPlacement: function () {
+        // do something
+      },
+    });
 
-// TODO: test aria-describedby cleanup on group
+    // Validate the element
+    ret.push(dv.valid(field), field.getAttribute('aria-describedby'));
 
-// TODO: test pre-assigned non-error aria-describedby
+    // Re-run validation
+    field.value = 'some';
+    field.dispatchEvent(new Event('keyup', { bubbles: true }));
 
-// TODO: test id/name containing brackets
+    field.value = 'something';
+    field.dispatchEvent(new Event('keyup', { bubbles: true }));
 
-// TODO: test id/name containing $
+    ret.push(field.getAttribute('aria-describedby'));
 
-// TODO: test id/name containing single quotes
+    field.value = 'something something';
+    field.dispatchEvent(new Event('keyup', { bubbles: true }));
+
+    ret.push(field.getAttribute('aria-describedby'));
+
+    return ret;
+  });
+
+  const expectedDescriber = "testForm21!#$%&'()*+,./:;<=>?@[\\]^`{|}~-error";
+
+  expect(result).toEqual([
+    null,
+    false,
+    expectedDescriber,
+    expectedDescriber,
+    expectedDescriber,
+  ]);
+});
+
+test('test existing non-error aria-describedby', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#testForm17');
+    const field = document.querySelector('#testForm17text');
+
+    const ret = [field.getAttribute('aria-describedby')];
+
+    const v = dv.validate(form, { errorElement: 'span' });
+
+    function hasError(element, text) {
+      const errors = v.errorsFor(element);
+      return errors.length === 1 && errors[0].innerText === text;
+    }
+
+    function noErrorsFor(element) {
+      const errors = v.errorsFor(element);
+      return (
+        errors.length === 0 ||
+        (errors.every((e) => !dvTestHelpers.isVisible(e)) &&
+          errors[0].innerText === '')
+      );
+    }
+
+    ret.push(
+      dv.valid(field),
+      field.getAttribute('aria-describedby'),
+      hasError(field, 'required'),
+    );
+
+    field.value = 'foo';
+
+    ret.push(
+      dv.valid(field),
+      noErrorsFor(field),
+      document.querySelector('#testForm17text-description').textContent,
+      document.querySelector('#testForm17text-error').textContent,
+    );
+
+    return ret;
+  });
+
+  expect(result).toEqual([
+    'testForm17text-description',
+    false,
+    'testForm17text-description testForm17text-error',
+    true,
+    true,
+    true,
+    'This is where you enter your data',
+    '',
+  ]);
+});
+
+test('test pre-assigned non-error aria-describedby', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#testForm17');
+    const field = document.querySelector('#testForm17text');
+
+    // Pre-assign error identifier
+    field.setAttribute(
+      'aria-describedby',
+      'testForm17text-description testForm17text-error',
+    );
+    const v = dv.validate(form, { errorElement: 'span' });
+
+    function hasError(element, text) {
+      const errors = v.errorsFor(element);
+      return errors.length === 1 && errors[0].innerText === text;
+    }
+
+    function noErrorsFor(element) {
+      const errors = v.errorsFor(element);
+      return (
+        errors.length === 0 ||
+        (errors.every((e) => !dvTestHelpers.isVisible(e)) &&
+          errors[0].innerText === '')
+      );
+    }
+
+    const ret = [
+      dv.valid(field),
+      field.getAttribute('aria-describedby'),
+      hasError(field, 'required'),
+    ];
+
+    field.value = 'foo';
+    ret.push(
+      dv.valid(field),
+      noErrorsFor(field),
+      document.querySelector('#testForm17text-description').textContent,
+      document.querySelector('#testForm17text-error').textContent,
+    );
+
+    return ret;
+  });
+
+  expect(result).toEqual([
+    false,
+    'testForm17text-description testForm17text-error',
+    true,
+    true,
+    true,
+    'This is where you enter your data',
+    '',
+  ]);
+});
+
+test('test id/name containing brackets', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#testForm18');
+    const field = document.querySelector('#testForm18\\[text\\]');
+
+    const v = dv.validate(form, {
+      errorElement: 'span',
+      messages: {
+        'testForm18[text]': {
+          required: 'required',
+        },
+      },
+    });
+
+    function hasError(element, text) {
+      const errors = v.errorsFor(element);
+      return errors.length === 1 && errors[0].innerText === text;
+    }
+
+    dv.valid(form);
+    dv.valid(field);
+
+    return hasError(field, 'required');
+  });
+
+  expect(result).toBe(true);
+});
+
+test('test id/name containing $', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#testForm19');
+    const field = document.querySelector('#testForm19\\$text');
+
+    const v = dv.validate(form, {
+      errorElement: 'span',
+      messages: {
+        testForm19$text: {
+          required: 'required',
+        },
+      },
+    });
+
+    function hasError(element, text) {
+      const errors = v.errorsFor(element);
+      return errors.length === 1 && errors[0].innerText === text;
+    }
+
+    dv.valid(field);
+
+    return hasError(field, 'required');
+  });
+
+  expect(result).toBe(true);
+});
+
+test('test id/name containing single quotes', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const v = dv.validate('#testForm20');
+    const textElement = document.querySelector(
+      "#testForm20\\[\\'textinput\\'\\]",
+    );
+    const checkboxElement = document.querySelector(
+      "#testForm20\\[\\'checkboxinput\\'\\]",
+    );
+    const radioElement = document.querySelector(
+      "#testForm20\\[\\'radioinput\\'\\]",
+    );
+
+    v.form();
+
+    return [
+      v.numberOfInvalids(),
+      v.invalidElements()[0] === textElement,
+      v.invalidElements()[1] === checkboxElement,
+      v.invalidElements()[2] === radioElement,
+    ];
+  });
+
+  expect(result).toEqual([3, true, true, true]);
+});
 
 // TODO: #1632: Error hidden, but input error class not removed
 

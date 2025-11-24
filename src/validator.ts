@@ -482,8 +482,6 @@ export class Validator {
     }
 
     for (const el of targets) {
-      el.innerText = '';
-
       if (!this.containers.includes(el)) {
         el.innerText = '';
       }
@@ -510,8 +508,34 @@ export class Validator {
 
   showLabel(element: FormControlElement, message?: string): void {
     let errors = this.errorsFor(element);
+    const elementID = idOrName(element);
+    const describedBy = element.getAttribute('aria-describedby');
 
     if (errors.length) {
+      // Non-label error exists but is not currently associated with element via aria-describedby
+      const labelSelector = `label[for='${escapeCssMeta(elementID)}']`;
+      const nonLabelExists = errors
+        .map((e) => e.closest(labelSelector))
+        .every((e) => e === null);
+
+      const noDescriberAssociation = () => {
+        if (describedBy === null) {
+          return true;
+        }
+        const firstErrorId = errors[0]?.getAttribute('id') ?? null;
+        if (firstErrorId === null) {
+          return true;
+        }
+
+        const split = describedBy.split(' ');
+        return split.indexOf(firstErrorId) === -1;
+      };
+
+      if (nonLabelExists && noDescriberAssociation()) {
+        const firstErrorId = errors[0]!.getAttribute('id')!;
+        this.addErrorAriaDescribedBy(element, firstErrorId);
+      }
+
       // Refresh error/success class
       errors.forEach((el) => {
         el.classList.remove(this.settings.validClass);
@@ -523,8 +547,6 @@ export class Validator {
         }
       });
     } else {
-      const elementID = idOrName(element);
-
       const newError = document.createElement(this.settings.errorElement);
       newError.setAttribute('id', `${elementID}-error`);
       newError.classList.add(...this.errorClasses);
@@ -550,12 +572,35 @@ export class Validator {
         element.after(insert);
       }
 
-      newError.setAttribute('for', elementID);
+      const labelSelector = `label[for='${escapeCssMeta(elementID)}']`;
+      const notLabelChild = errors
+        .map((e) => e.parentElement)
+        .every((e) => e !== null && !e.matches(labelSelector));
+
+      if (newError.matches('label')) {
+        newError.setAttribute('for', elementID);
+      } else if (notLabelChild) {
+        this.addErrorAriaDescribedBy(element, newError.getAttribute('id')!);
+      }
 
       errors = [newError];
     }
 
     this.toShow.push(...errors);
+  }
+
+  addErrorAriaDescribedBy(element: FormControlElement, errorId: string) {
+    let describedBy = element.getAttribute('aria-describedby');
+
+    if (!describedBy) {
+      describedBy = errorId;
+    } else if (
+      !describedBy.match(new RegExp(`\\b${escapeCssMeta(errorId)}\\b`))
+    ) {
+      describedBy += ` ${errorId}`;
+    }
+
+    element.setAttribute('aria-describedby', describedBy);
   }
 
   errorsFor(element: FormControlElement): HTMLElement[] {
