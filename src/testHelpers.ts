@@ -4,4 +4,5 @@ export {
   isBlankElement,
   isVisible,
   showElement,
+  getValueLength,
 } from './helpers';

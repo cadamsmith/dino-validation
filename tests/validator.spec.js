@@ -373,7 +373,7 @@ test('addMethod2', async ({ page }) => {
 
     dv.addMethod(
       'complicatedPassword',
-      function (blank, value) {
+      function ({ blank, value }) {
         return blank || (/\D/.test(value) && /\d/.test(value));
       },
       'Your password must contain at least one number and one letter',

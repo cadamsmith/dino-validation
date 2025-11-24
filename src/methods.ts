@@ -1,5 +1,4 @@
-import { getValueLength } from './helpers';
-import { FormControlElement, ValidationMethod } from './types';
+import { ValidationMethod, ValidationMethodInput } from './types';
 
 /**
  * Internal registry of all validation methods.
@@ -59,7 +58,7 @@ export const store = {
  * @param blank - whether the field is blank
  * @return true if field is not blank
  */
-function required(blank: boolean): boolean {
+function required({ blank }: ValidationMethodInput): boolean {
   return !blank;
 }
 
@@ -71,18 +70,8 @@ function required(blank: boolean): boolean {
  * @param param - minimum length required
  * @return true if blank or length meets minimum
  */
-function minLength(
-  blank: boolean,
-  value: string | string[],
-  element: FormControlElement,
-  param: any,
-): boolean {
-  if (blank) {
-    return true;
-  }
-
-  const length = Array.isArray(value) ? value.length : getValueLength(element);
-  return length >= param;
+function minLength({ blank, length, param }: ValidationMethodInput): boolean {
+  return blank || length >= param;
 }
 
 /**
@@ -93,18 +82,8 @@ function minLength(
  * @param param - maximum length allowed
  * @return true if blank or length within maximum
  */
-function maxLength(
-  blank: boolean,
-  value: string | string[],
-  element: FormControlElement,
-  param: any,
-): boolean {
-  if (blank) {
-    return true;
-  }
-
-  const length = Array.isArray(value) ? value.length : getValueLength(element);
-  return length <= param;
+function maxLength({ blank, length, param }: ValidationMethodInput): boolean {
+  return blank || length <= param;
 }
 
 /**
@@ -115,13 +94,7 @@ function maxLength(
  * @param param - array of [min, max] length values
  * @return true if blank or length within range
  */
-function rangeLength(
-  blank: boolean,
-  value: string | string[],
-  element: FormControlElement,
-  param: any,
-): boolean {
-  const length = Array.isArray(value) ? value.length : getValueLength(element);
+function rangeLength({ blank, length, param }: ValidationMethodInput): boolean {
   return blank || (length >= param[0] && length <= param[1]);
 }
 
@@ -133,13 +106,8 @@ function rangeLength(
  * @param param - minimum value required
  * @return true if blank or value meets minimum
  */
-function min(
-  blank: boolean,
-  value: string | string[],
-  _element: FormControlElement,
-  param: any,
-): boolean {
-  return blank || value >= param;
+function min({ blank, value, param }: ValidationMethodInput): boolean {
+  return blank || (value !== null && value >= param);
 }
 
 /**
@@ -150,13 +118,8 @@ function min(
  * @param param - maximum value allowed
  * @return true if blank or value within maximum
  */
-function max(
-  blank: boolean,
-  value: string | string[],
-  _element: FormControlElement,
-  param: any,
-): boolean {
-  return blank || value <= param;
+function max({ blank, value, param }: ValidationMethodInput): boolean {
+  return blank || (value !== null && value <= param);
 }
 
 /**
@@ -167,13 +130,12 @@ function max(
  * @param param - array of [min, max] values
  * @return true if blank or value within range
  */
-function range(
-  blank: boolean,
-  value: string | string[],
-  _element: FormControlElement,
-  param: any,
-): boolean {
-  return blank || (value >= param[0] && value <= param[1]);
+function range({ blank, value, param }: ValidationMethodInput): boolean {
+  if (blank) {
+    return true;
+  }
+
+  return value !== null && value >= param[0] && value <= param[1];
 }
 
 /**
@@ -182,16 +144,15 @@ function range(
  * @param value - field value
  * @return true if blank or valid email format
  */
-function email(blank: boolean, value: string | string[]): boolean {
+function email({ blank, value }: ValidationMethodInput): boolean {
   if (blank) {
     return true;
   }
 
-  const val = Array.isArray(value) ? value[0]! : value;
   const re =
     /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
-  return re.test(val);
+  return value !== null && re.test(value);
 }
 
 /**
@@ -200,16 +161,15 @@ function email(blank: boolean, value: string | string[]): boolean {
  * @param value - field value
  * @return true if blank or valid URL format
  */
-function url(blank: boolean, value: string | string[]): boolean {
+function url({ blank, value }: ValidationMethodInput): boolean {
   if (blank) {
     return true;
   }
 
-  const val = Array.isArray(value) ? value[0]! : value;
   const re =
     /^(?:(?:https?|ftp):)?\/\/(?:(?:[^\]\[?\/<~#`!@$^&*()+=}|:";',>{ ]|%[0-9A-Fa-f]{2})+(?::(?:[^\]\[?\/<~#`!@$^&*()+=}|:";',>{ ]|%[0-9A-Fa-f]{2})*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[\/?#]\S*)?$/i;
 
-  return re.test(val);
+  return value !== null && re.test(value);
 }
 
 /**
@@ -218,13 +178,12 @@ function url(blank: boolean, value: string | string[]): boolean {
  * @param value - field value
  * @return true if blank or valid date string
  */
-function date(blank: boolean, value: string | string[]): boolean {
+function date({ blank, value }: ValidationMethodInput): boolean {
   if (blank) {
     return true;
   }
 
-  const val = Array.isArray(value) ? value[0]! : value;
-  return !/Invalid|NaN/.test(new Date(val).toString());
+  return value !== null && !/Invalid|NaN/.test(new Date(value).toString());
 }
 
 /**
@@ -233,14 +192,13 @@ function date(blank: boolean, value: string | string[]): boolean {
  * @param value - field value
  * @return true if blank or valid ISO date format
  */
-function dateISO(blank: boolean, value: string | string[]): boolean {
+function dateISO({ blank, value }: ValidationMethodInput): boolean {
   if (blank) {
     return true;
   }
 
-  const val = Array.isArray(value) ? value[0]! : value;
   const re = /^\d{4}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])$/;
-  return re.test(val);
+  return value !== null && re.test(value);
 }
 
 /**
@@ -249,14 +207,13 @@ function dateISO(blank: boolean, value: string | string[]): boolean {
  * @param value - field value
  * @return true if blank or valid number format
  */
-function number(blank: boolean, value: string | string[]): boolean {
+function number({ blank, value }: ValidationMethodInput): boolean {
   if (blank) {
     return true;
   }
 
-  const val = Array.isArray(value) ? value[0]! : value;
   const re = /^(?:-?\d+|-?\d{1,3}(?:,\d{3})+)?(?:-?\.\d+)?$/;
-  return re.test(val);
+  return value !== null && re.test(value);
 }
 
 /**
@@ -265,14 +222,13 @@ function number(blank: boolean, value: string | string[]): boolean {
  * @param value - field value
  * @return true if blank or contains only digits
  */
-function digits(blank: boolean, value: string | string[]): boolean {
+function digits({ blank, value }: ValidationMethodInput): boolean {
   if (blank) {
     return true;
   }
 
-  const val = Array.isArray(value) ? value[0]! : value;
   const re = /^\d+$/;
-  return re.test(val);
+  return value !== null && re.test(value);
 }
 
 /**
@@ -283,12 +239,7 @@ function digits(blank: boolean, value: string | string[]): boolean {
  * @param param - CSS selector for the target element to compare against
  * @return true if values match
  */
-function equalTo(
-  _blank: boolean,
-  value: string | string[],
-  _element: FormControlElement,
-  param: any,
-): boolean {
+function equalTo({ value, param }: ValidationMethodInput): boolean {
   const target = document.querySelector(param);
   return value === target.value;
 }
@@ -301,19 +252,16 @@ function equalTo(
  * @param param - regular expression pattern
  * @return true if blank or value matches pattern
  */
-function regex(
-  blank: boolean,
-  value: string | string[],
-  _element: FormControlElement,
-  param: any,
-): boolean {
+function regex({ blank, value, param }: ValidationMethodInput): boolean {
   if (blank) {
     return true;
   }
+  if (value === null) {
+    return false;
+  }
 
-  const val = Array.isArray(value) ? value[0]! : value;
-  const match = new RegExp(param).exec(val);
-  return !!match && match.index === 0 && match[0].length === val.length;
+  const match = new RegExp(param).exec(value);
+  return !!match && match.index === 0 && match[0].length === value.length;
 }
 
 /**
@@ -325,18 +273,15 @@ function regex(
  * @param param - minimum number of non-alphanumeric characters required
  * @return true if blank or value has enough non-alphanumeric characters
  */
-function nonAlphaMin(
-  blank: boolean,
-  value: string | string[],
-  _element: FormControlElement,
-  param: any,
-): boolean {
+function nonAlphaMin({ blank, value, param }: ValidationMethodInput): boolean {
   if (blank || !param) {
     return true;
   }
+  if (value === null) {
+    return false;
+  }
 
-  const val = Array.isArray(value) ? value[0]! : value;
-  const match = val.match(/\W/g);
+  const match = value.match(/\W/g);
   return !!match && match.length >= param;
 }
 
@@ -347,24 +292,27 @@ function nonAlphaMin(
  * @param value - field value
  * @return true if blank or value is a valid credit card number
  */
-function creditCard(blank: boolean, value: string | string[]): boolean {
+function creditCard({ blank, value }: ValidationMethodInput): boolean {
   if (blank) {
     return true;
   }
+  if (value === null) {
+    return false;
+  }
 
-  const val = (Array.isArray(value) ? value[0]! : value).replace(/\D/g, '');
+  const strippedValue = value.replace(/\D/g, '');
 
   let nCheck = 0;
   let bEven = false;
 
   // Basing min and max length on
   // https://dev.ean.com/general-info/valid-card-types/
-  if (val.length < 13 || val.length > 19) {
+  if (strippedValue.length < 13 || strippedValue.length > 19) {
     return false;
   }
 
-  for (let n = val.length - 1; n >= 0; n--) {
-    const cDigit = val.charAt(n);
+  for (let n = strippedValue.length - 1; n >= 0; n--) {
+    const cDigit = strippedValue.charAt(n);
     let nDigit = parseInt(cDigit, 10);
     if (bEven) {
       if ((nDigit *= 2) > 9) {

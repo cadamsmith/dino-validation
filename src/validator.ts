@@ -2,6 +2,7 @@ import {
   elementValue,
   escapeCssMeta,
   findByName,
+  getValueLength,
   hideElement,
   idOrName,
   isBlankElement,
@@ -19,7 +20,6 @@ import {
   FormControlElement,
   ValidationError,
   ValidationRuleset,
-  ValidationRulesetParams,
   ValidatorSettings,
 } from './types';
 
@@ -276,8 +276,13 @@ export class Validator {
     element = this.validationTargetFor(element);
 
     const rules = getRules(element, this.rules);
-    const value = elementValue(element);
-    const isBlank = isBlankElement(element);
+    const elValue = elementValue(element);
+
+    const value = Array.isArray(elValue) ? elValue[0] : elValue;
+    const values = Array.isArray(elValue) ? elValue : [elValue];
+
+    const length = getValueLength(element);
+    const blank = isBlankElement(element);
 
     for (const method in rules) {
       const rule = { method, parameters: rules[method]! };
@@ -289,7 +294,14 @@ export class Validator {
       }
 
       try {
-        const result = methodFunc(isBlank, value, element, rule.parameters);
+        const result = methodFunc({
+          blank,
+          value: value ?? null,
+          values,
+          length,
+          element,
+          param: rule.parameters,
+        });
 
         if (!result) {
           this.formatAndAdd(element, rule);
@@ -352,7 +364,7 @@ export class Validator {
 
   formatAndAdd(
     element: FormControlElement,
-    rule: { method: string; parameters: ValidationRulesetParams },
+    rule: { method: string; parameters: any },
   ): void {
     const message = getMessage.call(
       this,
@@ -679,7 +691,7 @@ export class Validator {
 
   getMessage(
     element: FormControlElement,
-    rule: string | { method: string; parameters?: ValidationRulesetParams },
+    rule: string | { method: string; parameters?: any },
   ) {
     return getMessage.call(this, element, rule, this.settings.messages);
   }

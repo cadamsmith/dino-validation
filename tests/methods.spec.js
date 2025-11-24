@@ -22,7 +22,11 @@ async function runMethodTests(page, methodName, form, testData) {
           value = dvTestHelpers.elementValue(element);
         }
 
-        checks.push(method.call(v, blank, value, element, param) === expected);
+        const length = dvTestHelpers.getValueLength(element);
+
+        checks.push(
+          method.call(v, { blank, value, length, element, param }) === expected,
+        );
       }
 
       return checks;

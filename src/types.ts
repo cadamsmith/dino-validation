@@ -40,25 +40,19 @@ export interface ValidationError {
 }
 
 export interface ValidationRuleset {
-  [key: string]: ValidationRulesetParams;
+  [key: string]: any;
 }
 
-export type ValidationRulesetParams =
-  | ValidationRulesetPrimitive
-  | { param: ValidationRulesetPrimitive };
+export type ValidationMethodInput = {
+  blank: boolean;
+  value: string | null;
+  values: string[];
+  length: number;
+  element: FormControlElement;
+  param: any;
+};
 
-export type ValidationRulesetPrimitive =
-  | boolean
-  | string
-  | number
-  | [number, number];
-
-export type ValidationMethod = (
-  blank: boolean,
-  value: string | string[],
-  element: FormControlElement,
-  param: ValidationRulesetParams,
-) => boolean;
+export type ValidationMethod = (input: ValidationMethodInput) => boolean;
 
 export interface FormControlElement extends HTMLElement {
   form: HTMLFormElement;
