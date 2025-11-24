@@ -114,20 +114,6 @@ export function fileInputValue(element: FormControlElement): string {
 }
 
 /**
- * Returns the first defined (non-undefined) argument from the provided arguments.
- * @param args - arguments to check
- * @return first defined argument or undefined if none found
- */
-export function findDefined(...args: any[]): any {
-  for (const arg of args) {
-    if (arg !== undefined) {
-      return arg;
-    }
-  }
-  return undefined;
-}
-
-/**
  * Formats a string by replacing {0}, {1}, etc. placeholders with provided parameters.
  * @param source - template string with placeholders
  * @param params - parameters to substitute into placeholders
