@@ -1,31 +1,32 @@
-// @ts-check
 import { test, expect } from '@playwright/test';
 
 test('validate on blur', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const errorFirstname = document.querySelector('#errorFirstname');
+    const errorFirstname = document.querySelector(
+      '#errorFirstname',
+    ) as HTMLElement;
     dvTestHelpers.hideElement(errorFirstname);
 
-    const e = document.querySelector('#firstname');
-    const v = dv.validate('#testForm1');
+    const e = document.querySelector('#firstname') as HTMLInputElement;
+    const v = dv.validate('#testForm1')!;
 
-    function checkErrors(expected) {
+    function checkErrors(expected: number) {
       return v.size() === expected;
     }
-    function checkLabels(expected) {
+    function checkLabels(expected: number) {
       return (
         v.errors().filter((el) => dvTestHelpers.isVisible(el)).length ===
         expected
       );
     }
-    function blur(target) {
+    function blur(target: HTMLElement) {
       target.dispatchEvent(new Event('focusout', { bubbles: true }));
       target.dispatchEvent(new Event('blur', { bubbles: true }));
     }
 
-    document.querySelector('#something').value = '';
+    (document.querySelector('#something') as HTMLInputElement).value = '';
     blur(e);
     const ret = [checkErrors(0), checkLabels(0)];
 
@@ -62,14 +63,14 @@ test('validate on keyup', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const e = document.querySelector('#firstname');
-    const v = dv.validate('#testForm1');
+    const e = document.querySelector('#firstname') as HTMLInputElement;
+    const v = dv.validate('#testForm1')!;
 
-    function checkErrors(expected) {
+    function checkErrors(expected: number) {
       return v.size() === expected;
     }
 
-    function keyup(target) {
+    function keyup(target: HTMLElement) {
       target.dispatchEvent(new Event('keyup', { bubbles: true }));
     }
 
@@ -109,10 +110,10 @@ test('validate on not keyup, only blur', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const e = document.querySelector('#firstname');
-    const v = dv.validate('#testForm1', { onkeyup: false });
+    const e = document.querySelector('#firstname') as HTMLInputElement;
+    const v = dv.validate('#testForm1', { onkeyup: false })!;
 
-    function checkErrors(expected) {
+    function checkErrors(expected: number) {
       return v.size() === expected;
     }
 
@@ -136,10 +137,10 @@ test('validate on keyup and blur', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const e = document.querySelector('#firstname');
-    const v = dv.validate('#testForm1');
+    const e = document.querySelector('#firstname') as HTMLInputElement;
+    const v = dv.validate('#testForm1')!;
 
-    function checkErrors(expected) {
+    function checkErrors(expected: number) {
       return v.size() === expected;
     }
 
@@ -163,10 +164,10 @@ test('validate on keyup and blur (2)', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const e = document.querySelector('#firstname');
-    const v = dv.validate('#testForm1');
+    const e = document.querySelector('#firstname') as HTMLInputElement;
+    const v = dv.validate('#testForm1')!;
 
-    function checkErrors(expected) {
+    function checkErrors(expected: number) {
       return v.size() === expected;
     }
 
@@ -193,14 +194,14 @@ test("don't revalidate the field when pressing special characters", async ({
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const e = document.querySelector('#firstname');
-    const v = dv.validate('#testForm1');
+    const e = document.querySelector('#firstname') as HTMLInputElement;
+    const v = dv.validate('#testForm1')!;
 
-    function checkErrors(expected) {
+    function checkErrors(expected: number) {
       return v.size() === expected;
     }
 
-    function triggerKeyup(element, keyCode) {
+    function triggerKeyup(element: HTMLElement, keyCode: number) {
       const event = new KeyboardEvent('keyup', { bubbles: true, keyCode });
       element.dispatchEvent(event);
     }
@@ -223,8 +224,10 @@ test("don't revalidate the field when pressing special characters", async ({
 
     // To make sure there is only one error, that one of #firstname field
     e.value = '';
-    document.querySelector('#lastname').value = 'something';
-    document.querySelector('#something').value = 'something';
+    (document.querySelector('#lastname') as HTMLInputElement).value =
+      'something';
+    (document.querySelector('#something') as HTMLInputElement).value =
+      'something';
 
     // Validate the form
     v.form();

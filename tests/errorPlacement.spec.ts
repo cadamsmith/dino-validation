@@ -1,19 +1,18 @@
-// @ts-check
 import { test, expect } from '@playwright/test';
 
 test('elements() order', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const container = document.querySelector('#orderContainer');
+    const container = document.querySelector('#orderContainer') as HTMLElement;
     const v = dv.validate('#elementsOrder', {
       errorLabelContainer: '#orderContainer',
-    });
+    })!;
 
     const ret = [v.elements().map((el) => el.getAttribute('id'))];
 
     v.form();
-    ret.push([...container.children].map((el) => el.getAttribute('id')));
+    ret.push(Array.from(container.children).map((el) => el.getAttribute('id')));
 
     return ret;
   });
@@ -52,31 +51,31 @@ test('test custom errorElement', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const form = document.querySelector('#userForm');
-    const field = document.querySelector('#username');
+    const form = document.querySelector('#userForm') as HTMLFormElement;
+    const field = document.querySelector('#username') as HTMLInputElement;
 
     const v = dv.validate(form, {
       messages: {
         username: 'missing',
       },
       errorElement: 'label',
-    });
+    })!;
 
-    function hasError(element, text) {
-      const errors = v.errorsFor(element);
-      return errors.length === 1 && errors[0].innerText === text;
+    function hasError(element: HTMLElement, text: string) {
+      const errors = v.errorsFor(element as any);
+      return errors.length === 1 && errors[0]!.innerText === text;
     }
 
-    function noErrorsFor(element) {
-      const errors = v.errorsFor(element);
+    function noErrorsFor(element: HTMLElement) {
+      const errors = v.errorsFor(element as any);
       return (
         errors.length === 0 ||
         (errors.every((e) => !dvTestHelpers.isVisible(e)) &&
-          errors[0].innerText === '')
+          errors[0]!.innerText === '')
       );
     }
 
-    const ret = [dv.valid(field), hasError(field, 'missing')];
+    const ret: boolean[] = [dv.valid(field), hasError(field, 'missing')];
 
     field.value = 'foo';
     ret.push(dv.valid(field), noErrorsFor(field));
@@ -91,22 +90,22 @@ test('test existing label used as error element', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const form = document.querySelector('#testForm14');
-    const field = document.querySelector('#testForm14text');
+    const form = document.querySelector('#testForm14') as HTMLFormElement;
+    const field = document.querySelector('#testForm14text') as HTMLInputElement;
 
-    const v = dv.validate(form, { errorElement: 'label' });
+    const v = dv.validate(form, { errorElement: 'label' })!;
 
-    function hasError(element, text) {
-      const errors = v.errorsFor(element);
-      return errors.length === 1 && errors[0].innerText === text;
+    function hasError(element: HTMLElement, text: string) {
+      const errors = v.errorsFor(element as any);
+      return errors.length === 1 && errors[0]!.innerText === text;
     }
 
-    function noErrorsFor(element) {
-      const errors = v.errorsFor(element);
+    function noErrorsFor(element: HTMLElement) {
+      const errors = v.errorsFor(element as any);
       return (
         errors.length === 0 ||
         (errors.every((e) => !dvTestHelpers.isVisible(e)) &&
-          errors[0].innerText === '')
+          errors[0]!.innerText === '')
       );
     }
 
@@ -125,22 +124,22 @@ test('test existing non-label used as error element', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const form = document.querySelector('#testForm15');
-    const field = document.querySelector('#testForm15text');
+    const form = document.querySelector('#testForm15') as HTMLFormElement;
+    const field = document.querySelector('#testForm15text') as HTMLInputElement;
 
-    const v = dv.validate(form, { errorElement: 'span' });
+    const v = dv.validate(form, { errorElement: 'span' })!;
 
-    function hasError(element, text) {
-      const errors = v.errorsFor(element);
-      return errors.length === 1 && errors[0].innerText === text;
+    function hasError(element: HTMLElement, text: string) {
+      const errors = v.errorsFor(element as any);
+      return errors.length === 1 && errors[0]!.innerText === text;
     }
 
-    function noErrorsFor(element) {
-      const errors = v.errorsFor(element);
+    function noErrorsFor(element: HTMLElement) {
+      const errors = v.errorsFor(element as any);
       return (
         errors.length === 0 ||
         (errors.every((e) => !dvTestHelpers.isVisible(e)) &&
-          errors[0].innerText === '')
+          errors[0]!.innerText === '')
       );
     }
 
@@ -161,12 +160,12 @@ test('test aria-describedby with input names contains CSS-selector meta-characte
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const form = document.querySelector('#testForm21');
+    const form = document.querySelector('#testForm21') as HTMLFormElement;
     const field = document.querySelector(
       "#testForm21\\!\\#\\$\\%\\&\\'\\(\\)\\*\\+\\,\\.\\/\\:\\;\\<\\=\\>\\?\\@\\[\\\\\\]\\^\\`\\{\\|\\}\\~",
-    );
+    ) as HTMLInputElement;
 
-    const ret = [field.getAttribute('aria-describedby')];
+    const ret: any[] = [field.getAttribute('aria-describedby')];
 
     dv.validate(form, {
       errorElement: 'span',
@@ -210,24 +209,24 @@ test('test existing non-error aria-describedby', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const form = document.querySelector('#testForm17');
-    const field = document.querySelector('#testForm17text');
+    const form = document.querySelector('#testForm17') as HTMLFormElement;
+    const field = document.querySelector('#testForm17text') as HTMLInputElement;
 
-    const ret = [field.getAttribute('aria-describedby')];
+    const ret: any[] = [field.getAttribute('aria-describedby')];
 
-    const v = dv.validate(form, { errorElement: 'span' });
+    const v = dv.validate(form, { errorElement: 'span' })!;
 
-    function hasError(element, text) {
-      const errors = v.errorsFor(element);
-      return errors.length === 1 && errors[0].innerText === text;
+    function hasError(element: HTMLElement, text: string) {
+      const errors = v.errorsFor(element as any);
+      return errors.length === 1 && errors[0]!.innerText === text;
     }
 
-    function noErrorsFor(element) {
-      const errors = v.errorsFor(element);
+    function noErrorsFor(element: HTMLElement) {
+      const errors = v.errorsFor(element as any);
       return (
         errors.length === 0 ||
         (errors.every((e) => !dvTestHelpers.isVisible(e)) &&
-          errors[0].innerText === '')
+          errors[0]!.innerText === '')
       );
     }
 
@@ -242,8 +241,10 @@ test('test existing non-error aria-describedby', async ({ page }) => {
     ret.push(
       dv.valid(field),
       noErrorsFor(field),
-      document.querySelector('#testForm17text-description').textContent,
-      document.querySelector('#testForm17text-error').textContent,
+      (document.querySelector('#testForm17text-description') as HTMLElement)
+        .textContent,
+      (document.querySelector('#testForm17text-error') as HTMLElement)
+        .textContent,
     );
 
     return ret;
@@ -265,27 +266,27 @@ test('test pre-assigned non-error aria-describedby', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const form = document.querySelector('#testForm17');
-    const field = document.querySelector('#testForm17text');
+    const form = document.querySelector('#testForm17') as HTMLFormElement;
+    const field = document.querySelector('#testForm17text') as HTMLInputElement;
 
     // Pre-assign error identifier
     field.setAttribute(
       'aria-describedby',
       'testForm17text-description testForm17text-error',
     );
-    const v = dv.validate(form, { errorElement: 'span' });
+    const v = dv.validate(form, { errorElement: 'span' })!;
 
-    function hasError(element, text) {
-      const errors = v.errorsFor(element);
-      return errors.length === 1 && errors[0].innerText === text;
+    function hasError(element: HTMLElement, text: string) {
+      const errors = v.errorsFor(element as any);
+      return errors.length === 1 && errors[0]!.innerText === text;
     }
 
-    function noErrorsFor(element) {
-      const errors = v.errorsFor(element);
+    function noErrorsFor(element: HTMLElement) {
+      const errors = v.errorsFor(element as any);
       return (
         errors.length === 0 ||
         (errors.every((e) => !dvTestHelpers.isVisible(e)) &&
-          errors[0].innerText === '')
+          errors[0]!.innerText === '')
       );
     }
 
@@ -299,8 +300,10 @@ test('test pre-assigned non-error aria-describedby', async ({ page }) => {
     ret.push(
       dv.valid(field),
       noErrorsFor(field),
-      document.querySelector('#testForm17text-description').textContent,
-      document.querySelector('#testForm17text-error').textContent,
+      (document.querySelector('#testForm17text-description') as HTMLElement)
+        .textContent,
+      (document.querySelector('#testForm17text-error') as HTMLElement)
+        .textContent,
     );
 
     return ret;
@@ -321,8 +324,10 @@ test('test id/name containing brackets', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const form = document.querySelector('#testForm18');
-    const field = document.querySelector('#testForm18\\[text\\]');
+    const form = document.querySelector('#testForm18') as HTMLFormElement;
+    const field = document.querySelector(
+      '#testForm18\\[text\\]',
+    ) as HTMLInputElement;
 
     const v = dv.validate(form, {
       errorElement: 'span',
@@ -331,11 +336,11 @@ test('test id/name containing brackets', async ({ page }) => {
           required: 'required',
         },
       },
-    });
+    })!;
 
-    function hasError(element, text) {
-      const errors = v.errorsFor(element);
-      return errors.length === 1 && errors[0].innerText === text;
+    function hasError(element: HTMLElement, text: string) {
+      const errors = v.errorsFor(element as any);
+      return errors.length === 1 && errors[0]!.innerText === text;
     }
 
     dv.valid(form);
@@ -351,8 +356,10 @@ test('test id/name containing $', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const form = document.querySelector('#testForm19');
-    const field = document.querySelector('#testForm19\\$text');
+    const form = document.querySelector('#testForm19') as HTMLFormElement;
+    const field = document.querySelector(
+      '#testForm19\\$text',
+    ) as HTMLInputElement;
 
     const v = dv.validate(form, {
       errorElement: 'span',
@@ -361,11 +368,11 @@ test('test id/name containing $', async ({ page }) => {
           required: 'required',
         },
       },
-    });
+    })!;
 
-    function hasError(element, text) {
-      const errors = v.errorsFor(element);
-      return errors.length === 1 && errors[0].innerText === text;
+    function hasError(element: HTMLElement, text: string) {
+      const errors = v.errorsFor(element as any);
+      return errors.length === 1 && errors[0]!.innerText === text;
     }
 
     dv.valid(field);
@@ -380,16 +387,16 @@ test('test id/name containing single quotes', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const v = dv.validate('#testForm20');
+    const v = dv.validate('#testForm20')!;
     const textElement = document.querySelector(
       "#testForm20\\[\\'textinput\\'\\]",
-    );
+    ) as HTMLElement;
     const checkboxElement = document.querySelector(
       "#testForm20\\[\\'checkboxinput\\'\\]",
-    );
+    ) as HTMLElement;
     const radioElement = document.querySelector(
       "#testForm20\\[\\'radioinput\\'\\]",
-    );
+    ) as HTMLElement;
 
     v.form();
 
@@ -410,8 +417,10 @@ test('test settings.escapeHtml undefined', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const form = document.querySelector('#escapeHtmlForm1');
-    const field = document.querySelector('#escapeHtmlForm1text');
+    const form = document.querySelector('#escapeHtmlForm1') as HTMLFormElement;
+    const field = document.querySelector(
+      '#escapeHtmlForm1text',
+    ) as HTMLInputElement;
 
     dv.validate(form, {
       messages: {
@@ -421,18 +430,20 @@ test('test settings.escapeHtml undefined', async ({ page }) => {
       },
     });
 
-    function noErrorsFor(element) {
-      const errors = dv.validate(element.closest('form')).errorsFor(element);
+    function noErrorsFor(element: HTMLElement) {
+      const errors = dv
+        .validate(element.closest('form')!)!
+        .errorsFor(element as any);
       return (
         errors.length === 0 ||
         (errors.every((e) => !dvTestHelpers.isVisible(e)) &&
-          errors[0].innerText === '')
+          errors[0]!.innerText === '')
       );
     }
 
-    const ret = [dv.valid(field)];
+    const ret: any[] = [dv.valid(field)];
 
-    const label = form.querySelector('label');
+    const label = form.querySelector('label') as HTMLLabelElement;
     ret.push(!!label, label.innerHTML);
 
     label.innerHTML = '';
@@ -459,8 +470,10 @@ test('test settings.escapeHtml true', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const form = document.querySelector('#escapeHtmlForm2');
-    const field = document.querySelector('#escapeHtmlForm2text');
+    const form = document.querySelector('#escapeHtmlForm2') as HTMLFormElement;
+    const field = document.querySelector(
+      '#escapeHtmlForm2text',
+    ) as HTMLInputElement;
 
     dv.validate(form, {
       escapeHtml: true,
@@ -471,18 +484,20 @@ test('test settings.escapeHtml true', async ({ page }) => {
       },
     });
 
-    function noErrorsFor(element) {
-      const errors = dv.validate(element.closest('form')).errorsFor(element);
+    function noErrorsFor(element: HTMLElement) {
+      const errors = dv
+        .validate(element.closest('form')!)!
+        .errorsFor(element as any);
       return (
         errors.length === 0 ||
         (errors.every((e) => !dvTestHelpers.isVisible(e)) &&
-          errors[0].innerText === '')
+          errors[0]!.innerText === '')
       );
     }
 
-    const ret = [dv.valid(field)];
+    const ret: any[] = [dv.valid(field)];
 
-    const label = form.querySelector('label');
+    const label = form.querySelector('label') as HTMLLabelElement;
     ret.push(!!label, label.innerHTML);
 
     label.innerHTML = '';

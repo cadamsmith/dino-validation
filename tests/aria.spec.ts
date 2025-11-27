@@ -1,4 +1,3 @@
-// @ts-check
 import { test, expect } from '@playwright/test';
 
 test('Invalid field adds aria-invalid=true', async ({ page }) => {
@@ -7,8 +6,8 @@ test('Invalid field adds aria-invalid=true', async ({ page }) => {
   const result = await page.evaluate(() => {
     const ariaInvalidFirstName = document.querySelector(
       '#ariaInvalidFirstName',
-    );
-    const form = document.querySelector('#ariaInvalid');
+    ) as HTMLInputElement;
+    const form = document.querySelector('#ariaInvalid') as HTMLFormElement;
 
     dv.validate(form, {
       rules: {
@@ -31,8 +30,8 @@ test('Valid field adds aria-invalid=false', async ({ page }) => {
   const result = await page.evaluate(() => {
     const ariaInvalidFirstName = document.querySelector(
       '#ariaInvalidFirstName',
-    );
-    const form = document.querySelector('#ariaInvalid');
+    ) as HTMLInputElement;
+    const form = document.querySelector('#ariaInvalid') as HTMLFormElement;
 
     dv.validate(form, {
       rules: {
@@ -58,14 +57,14 @@ test('resetForm(): removes all aria-invalid attributes', async ({ page }) => {
   const result = await page.evaluate(() => {
     const ariaInvalidFirstName = document.querySelector(
       '#ariaInvalidFirstName',
-    );
-    const form = document.querySelector('#ariaInvalid');
+    ) as HTMLInputElement;
+    const form = document.querySelector('#ariaInvalid') as HTMLFormElement;
 
     const v = dv.validate(form, {
       rules: {
         ariaInvalidFirstName: 'required',
       },
-    });
+    })!;
 
     ariaInvalidFirstName.value = 'not empty';
     dv.valid(ariaInvalidFirstName);

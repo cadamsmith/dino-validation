@@ -1,11 +1,10 @@
-// @ts-check
 import { test, expect } from '@playwright/test';
 
 test('rules() - internal - input', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const element = document.querySelector('#firstname');
+    const element = document.querySelector('#firstname') as HTMLElement;
     dv.validate('#testForm1');
 
     return dv.rules(element);
@@ -18,7 +17,7 @@ test('rules(), ignore method:false', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const element = document.querySelector('#firstnamec');
+    const element = document.querySelector('#firstnamec') as HTMLElement;
     dv.validate('#testForm1clean', {
       rules: {
         firstnamec: { required: false, minlength: 2 },
@@ -35,7 +34,7 @@ test('rules() HTML5 required (no value)', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const element = document.querySelector('#testForm11text1');
+    const element = document.querySelector('#testForm11text1') as HTMLElement;
     dv.validate('#testForm11');
     return dv.rules(element);
   });
@@ -47,7 +46,7 @@ test('rules() - internal - select', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const element = document.querySelector('#meal');
+    const element = document.querySelector('#meal') as HTMLElement;
     dv.validate('#testForm3');
 
     return dv.rules(element);
@@ -60,7 +59,7 @@ test('rules() - external', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const element = document.querySelector('#text1');
+    const element = document.querySelector('#text1') as HTMLElement;
 
     dv.validate('#form', {
       rules: {
@@ -88,7 +87,7 @@ test('rules() - external - complete form', async ({ page }) => {
       rules: {
         action: { verifyTest: true },
       },
-    });
+    })!;
     v.form();
 
     return executed;
@@ -101,7 +100,7 @@ test('rules() - internal - input (2)', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const element = document.querySelector('#form8input');
+    const element = document.querySelector('#form8input') as HTMLElement;
     dv.validate('#testForm8');
 
     return dv.rules(element);

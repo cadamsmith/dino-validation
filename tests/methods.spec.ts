@@ -1,31 +1,64 @@
-// @ts-check
 import { test, expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
-async function runMethodTests(page, methodName, form, testData) {
+interface TestData {
+  expected: boolean;
+  blank?: boolean;
+  value?: string;
+  element?: string;
+  param?: unknown;
+}
+
+async function runMethodTests(
+  page: Page,
+  methodName: string,
+  form: string,
+  testData: TestData[],
+): Promise<boolean[]> {
   return await page.evaluate(
     ({ methodName, form, testData }) => {
-      const v = dv.validate(form);
-      const method = dv.methods.get(methodName);
+      const v = dv.validate(form)!;
+      const method = dv.methods.get(methodName)!;
 
-      const checks = [];
+      const checks: boolean[] = [];
 
       for (const entry of testData) {
         const { expected, param } = entry;
-        let { blank, value, element } = entry;
+        let blank: boolean;
+        let value: string;
+        let values: string[];
+        let el: HTMLElement;
 
-        if (!element) {
-          element = document.querySelector('#firstname');
-          element.value = value;
+        if (!entry.element) {
+          el = document.querySelector('#firstname') as HTMLInputElement;
+          (el as HTMLInputElement).value = entry.value!;
+          blank = entry.blank!;
+          value = entry.value!;
+          values = [entry.value!];
         } else {
-          element = document.querySelector(element);
-          blank = dvTestHelpers.isBlankElement(element);
-          value = dvTestHelpers.elementValue(element);
+          el = document.querySelector(entry.element) as HTMLElement;
+          blank = dvTestHelpers.isBlankElement(el as any);
+          const rawValue = dvTestHelpers.elementValue(el as any);
+          if (Array.isArray(rawValue)) {
+            value = rawValue.join(',');
+            values = rawValue;
+          } else {
+            value = rawValue;
+            values = [rawValue];
+          }
         }
 
-        const length = dvTestHelpers.getValueLength(element);
+        const length = dvTestHelpers.getValueLength(el as any);
 
         checks.push(
-          method.call(v, { blank, value, length, element, param }) === expected,
+          method.call(v, {
+            blank,
+            value,
+            values,
+            length,
+            element: el as any,
+            param,
+          }) === expected,
         );
       }
 
@@ -39,7 +72,7 @@ test('default messages', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    const checks = [];
+    const checks: boolean[] = [];
     dv.methods.keys().forEach((key) => {
       checks.push(!!dv.messages.get(key));
     });
