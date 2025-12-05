@@ -1,5 +1,4 @@
 import typescript from '@rollup/plugin-typescript';
-import dts from 'rollup-plugin-dts';
 
 const jsBuilds = [
   // DV Core: UMD
