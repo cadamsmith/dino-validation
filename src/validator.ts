@@ -231,6 +231,17 @@ export class Validator {
       (el) => !el.matches(notSelector) && !this.shouldIgnore(el),
     ) as FormControlElement[];
 
+    const formId = this.currentForm.id;
+    if (formId) {
+      const escapedId = escapeCssMeta(formId);
+
+      const outsideElements = (Array.from(document.querySelectorAll(selector)) as HTMLElement[])
+        .filter(el => el.matches(`[form="${escapedId}"]`) && !el.matches(notSelector)
+        && !this.shouldIgnore(el)) as FormControlElement[];
+
+      elements.push(...outsideElements);
+    }
+
     return elements.filter((el) => {
       const form = el.form;
       if (form !== this.currentForm) {
@@ -277,13 +288,13 @@ export class Validator {
     element = this.validationTargetFor(element);
 
     const rules = getRules(element, this.rules);
-    const elValue = elementValue(element);
+    const elValue = elementValue(element, this.currentForm);
 
     const value = Array.isArray(elValue) ? elValue[0] : elValue;
     const values = Array.isArray(elValue) ? elValue : [elValue];
 
-    const length = getValueLength(element);
-    const blank = isBlankElement(element);
+    const length = getValueLength(element, this.currentForm);
+    const blank = isBlankElement(element, this.currentForm);
 
     for (const method in rules) {
       const rule = { method, parameters: rules[method]! };
@@ -386,7 +397,7 @@ export class Validator {
   ): void {
     let targets = [element];
     if (element.type === 'radio') {
-      targets = findByName(element.form, element.name);
+      targets = findByName(this.currentForm, element.name);
     }
 
     targets.forEach((el) => {
@@ -402,7 +413,7 @@ export class Validator {
   ): void {
     let targets = [element];
     if (element.type === 'radio') {
-      targets = findByName(element.form, element.name);
+      targets = findByName(this.currentForm, element.name);
     }
 
     targets.forEach((el) => {
@@ -428,7 +439,7 @@ export class Validator {
     if (isCheckableElement(element)) {
       return;
     }
-    if (!(element.name in this.submitted) && isBlankElement(element)) {
+    if (!(element.name in this.submitted) && isBlankElement(element, this.currentForm)) {
       return;
     }
 
@@ -437,7 +448,7 @@ export class Validator {
 
   onKeyUp(element: FormControlElement, event: Event): void {
     const keyboardEvent = event as KeyboardEvent;
-    if (keyboardEvent.which === 9 && elementValue(element) === '') {
+    if (keyboardEvent.which === 9 && elementValue(element, this.currentForm) === '') {
       return;
     }
 
@@ -648,7 +659,7 @@ export class Validator {
     if (this.settings.unhighlight) {
       for (const element of this.elements()) {
         this.unhighlight(element, this.errorClasses, []);
-        findByName(element.form, element.name).forEach((el) =>
+        findByName(this.currentForm, element.name).forEach((el) =>
           el.classList.remove(...this.validClasses),
         );
       }
@@ -663,7 +674,7 @@ export class Validator {
   validationTargetFor(element: FormControlElement): FormControlElement {
     let targets = [element];
     if (isCheckableElement(element)) {
-      targets = findByName(element.form, element.name);
+      targets = findByName(this.currentForm, element.name);
     }
 
     return targets.filter((t) => !this.shouldIgnore(t))[0]!;

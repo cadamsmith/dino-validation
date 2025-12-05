@@ -35,7 +35,17 @@ export function findByName(
   form: HTMLFormElement,
   name: string,
 ): FormControlElement[] {
-  return Array.from(form.querySelectorAll(`[name='${escapeCssMeta(name)}']`));
+  const selector = `[name='${escapeCssMeta(name)}']`;
+
+  const elements = Array.from(form.querySelectorAll(selector));
+
+  if (form.id) {
+    const outsideElements = Array.from(document.querySelectorAll(selector))
+      .filter(el => el.matches(`[form="${escapeCssMeta(form.id)}"]`));
+    elements.push(...outsideElements);
+  }
+
+  return elements as FormControlElement[];
 }
 
 /**
@@ -63,12 +73,13 @@ export function escapeCssMeta(text: string): string {
 
 /**
  * Gets the value of a form element, handling special cases for different input types.
- * @param element - form element to get value from
+ * @param element - form control element to get value of
+ * @param form - current html form being validated
  * @return element value or array of values for checkboxes/radios
  */
-export function elementValue(element: FormControlElement): string | string[] {
+export function elementValue(element: FormControlElement, form: HTMLFormElement): string | string[] {
   if (element.type === 'radio' || element.type === 'checkbox') {
-    const checked = findByName(element.form, element.name).filter((el) =>
+    const checked = findByName(form, element.name).filter((el) =>
       el.matches(':checked'),
     );
     return checked.map((el) => el.value);
@@ -168,17 +179,18 @@ export function idOrName(element: FormControlElement): string {
 
 /**
  * Gets the length of a form element's value, handling special cases for selects and checkables.
- * @param element - form element
+ * @param element - form control element
+ * @param form - html form element
  * @return length of the element's value
  */
-export function getValueLength(element: FormControlElement): number {
+export function getValueLength(element: FormControlElement, form: HTMLFormElement): number {
   const nodeName = element.nodeName.toLowerCase();
-  const value = elementValue(element);
+  const value = elementValue(element, form);
 
   if (nodeName === 'select') {
     return element.querySelectorAll('option:checked').length;
   } else if (nodeName === 'input' && isCheckableElement(element)) {
-    return findByName(element.form, element.name).filter((el) =>
+    return findByName(form, element.name).filter((el) =>
       el.matches(':checked'),
     ).length;
   }
@@ -188,11 +200,12 @@ export function getValueLength(element: FormControlElement): number {
 
 /**
  * Returns true if the element has no value or is considered blank.
- * @param element - form element to check
+ * @param element - form control element to check
+ * @param form - current form element
  * @return true if element is blank, false otherwise
  */
-export function isBlankElement(element: FormControlElement): boolean {
-  const value = elementValue(element);
+export function isBlankElement(element: FormControlElement, form: HTMLFormElement): boolean {
+  const value = elementValue(element, form);
 
   if (element.nodeName.toLowerCase() === 'select' && element.selectedOptions) {
     const selected = Array.from(element.selectedOptions).map((o) => o.value);
@@ -201,7 +214,7 @@ export function isBlankElement(element: FormControlElement): boolean {
   }
 
   if (isCheckableElement(element)) {
-    return getValueLength(element) === 0;
+    return getValueLength(element, form) === 0;
   }
 
   return value === undefined || value === null || value.length === 0;

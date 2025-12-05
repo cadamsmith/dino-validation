@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { FormControlElement } from '../src/types';
 
 test('constructor', async ({ page }) => {
@@ -340,9 +340,31 @@ test('Ignore elements that have form attribute set to other forms', async ({
   expect(result).toBe(true);
 });
 
-// TODO: validate elements outside form with form attribute
+test('Validate elements outside form with form attribute', async ({ page }) => {
+  await page.goto('');
 
-// TODO: validate checkboxes outside form with form attribute
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#testForm29')!;
+    const v = dv.validate(form)!;
+
+    return [v.elements().length, v.form(), v.numberOfInvalids()];
+  });
+
+  expect(result).toEqual([2, false, 2]);
+});
+
+test('Validate checkboxes outside form with form attribute', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#testForm30')!;
+    const v = dv.validate(form)!;
+
+    return [v.elements().length, v.form(), v.numberOfInvalids()];
+  });
+
+  expect(result).toEqual([2, false, 2]);
+});
 
 test('addMethod', async ({ page }) => {
   await page.goto('');
