@@ -353,7 +353,9 @@ test('Validate elements outside form with form attribute', async ({ page }) => {
   expect(result).toEqual([2, false, 2]);
 });
 
-test('Validate checkboxes outside form with form attribute', async ({ page }) => {
+test('Validate checkboxes outside form with form attribute', async ({
+  page,
+}) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {

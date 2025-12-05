@@ -40,8 +40,9 @@ export function findByName(
   const elements = Array.from(form.querySelectorAll(selector));
 
   if (form.id) {
-    const outsideElements = Array.from(document.querySelectorAll(selector))
-      .filter(el => el.matches(`[form="${escapeCssMeta(form.id)}"]`));
+    const outsideElements = Array.from(
+      document.querySelectorAll(selector),
+    ).filter((el) => el.matches(`[form="${escapeCssMeta(form.id)}"]`));
     elements.push(...outsideElements);
   }
 
@@ -77,7 +78,10 @@ export function escapeCssMeta(text: string): string {
  * @param form - current html form being validated
  * @return element value or array of values for checkboxes/radios
  */
-export function elementValue(element: FormControlElement, form: HTMLFormElement): string | string[] {
+export function elementValue(
+  element: FormControlElement,
+  form: HTMLFormElement,
+): string | string[] {
   if (element.type === 'radio' || element.type === 'checkbox') {
     const checked = findByName(form, element.name).filter((el) =>
       el.matches(':checked'),
@@ -183,16 +187,18 @@ export function idOrName(element: FormControlElement): string {
  * @param form - html form element
  * @return length of the element's value
  */
-export function getValueLength(element: FormControlElement, form: HTMLFormElement): number {
+export function getValueLength(
+  element: FormControlElement,
+  form: HTMLFormElement,
+): number {
   const nodeName = element.nodeName.toLowerCase();
   const value = elementValue(element, form);
 
   if (nodeName === 'select') {
     return element.querySelectorAll('option:checked').length;
   } else if (nodeName === 'input' && isCheckableElement(element)) {
-    return findByName(form, element.name).filter((el) =>
-      el.matches(':checked'),
-    ).length;
+    return findByName(form, element.name).filter((el) => el.matches(':checked'))
+      .length;
   }
 
   return value.length;
@@ -204,7 +210,10 @@ export function getValueLength(element: FormControlElement, form: HTMLFormElemen
  * @param form - current form element
  * @return true if element is blank, false otherwise
  */
-export function isBlankElement(element: FormControlElement, form: HTMLFormElement): boolean {
+export function isBlankElement(
+  element: FormControlElement,
+  form: HTMLFormElement,
+): boolean {
   const value = elementValue(element, form);
 
   if (element.nodeName.toLowerCase() === 'select' && element.selectedOptions) {

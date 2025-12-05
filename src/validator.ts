@@ -235,9 +235,14 @@ export class Validator {
     if (formId) {
       const escapedId = escapeCssMeta(formId);
 
-      const outsideElements = (Array.from(document.querySelectorAll(selector)) as HTMLElement[])
-        .filter(el => el.matches(`[form="${escapedId}"]`) && !el.matches(notSelector)
-        && !this.shouldIgnore(el)) as FormControlElement[];
+      const outsideElements = (
+        Array.from(document.querySelectorAll(selector)) as HTMLElement[]
+      ).filter(
+        (el) =>
+          el.matches(`[form="${escapedId}"]`) &&
+          !el.matches(notSelector) &&
+          !this.shouldIgnore(el),
+      ) as FormControlElement[];
 
       elements.push(...outsideElements);
     }
@@ -439,7 +444,10 @@ export class Validator {
     if (isCheckableElement(element)) {
       return;
     }
-    if (!(element.name in this.submitted) && isBlankElement(element, this.currentForm)) {
+    if (
+      !(element.name in this.submitted) &&
+      isBlankElement(element, this.currentForm)
+    ) {
       return;
     }
 
@@ -448,7 +456,10 @@ export class Validator {
 
   onKeyUp(element: FormControlElement, event: Event): void {
     const keyboardEvent = event as KeyboardEvent;
-    if (keyboardEvent.which === 9 && elementValue(element, this.currentForm) === '') {
+    if (
+      keyboardEvent.which === 9 &&
+      elementValue(element, this.currentForm) === ''
+    ) {
       return;
     }
 
