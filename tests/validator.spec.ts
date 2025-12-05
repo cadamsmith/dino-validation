@@ -557,7 +557,36 @@ test('form(): with equalTo', async ({ page }) => {
   expect(result).toEqual([false, true]);
 });
 
-// TODO: form(): with equalTo and onfocusout=false
+test('form(): with equalTo and onfocusout=false', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#testForm5') as HTMLFormElement;
+    let showErrorsCount = 0;
+    const v = dv.validate(form, {
+      onfocusout: false,
+      showErrors: function () {
+        showErrorsCount++;
+        this.defaultShowErrors();
+      },
+    })!;
+
+    const x1 = document.querySelector('#x1') as FormControlElement;
+    const x2 = document.querySelector('#x2') as FormControlElement;
+
+    x1.value = 'hi';
+    x2.value = 'hi';
+    const ret: any[] = [v.form()];
+
+    x2.value = 'not equal';
+
+    ret.push(v.form(), showErrorsCount);
+
+    return ret;
+  });
+
+  expect(result).toEqual([true, false, 2]);
+});
 
 test('check(): simple', async ({ page }) => {
   await page.goto('');
@@ -617,19 +646,18 @@ test('hide(): input', async ({ page }) => {
     const errorLabel = document.querySelector('#errorFirstname') as HTMLElement;
     const element = document.querySelector('#firstname') as FormControlElement;
 
-    // TODO: needs to adjust with how the validator shows/hides error labels
     element.value = 'bla';
     const v = dv.validate('#testForm1')!;
-    errorLabel.style.display = 'block';
+    dvTestHelpers.showElement(errorLabel);
 
     return [
-      errorLabel.style.display,
+      dvTestHelpers.isVisible(errorLabel),
       v.element(element),
-      errorLabel.style.display,
+      dvTestHelpers.isVisible(errorLabel),
     ];
   });
 
-  expect(result).toEqual(['block', true, 'none']);
+  expect(result).toEqual([true, true, false]);
 });
 
 test('hide(): radio', async ({ page }) => {
@@ -641,17 +669,17 @@ test('hide(): radio', async ({ page }) => {
 
     element.checked = true;
     const v = dv.validate('#testForm2', { errorClass: 'xerror' })!;
-    errorLabel.style.display = 'block';
+    dvTestHelpers.showElement(errorLabel);
 
-    const ret = [errorLabel.style.display];
+    const ret = [dvTestHelpers.isVisible(errorLabel)];
 
     v.element(element as FormControlElement);
-    ret.push(errorLabel.style.display);
+    ret.push(dvTestHelpers.isVisible(errorLabel));
 
     return ret;
   });
 
-  expect(result).toEqual(['block', 'none']);
+  expect(result).toEqual([true, false]);
 });
 
 test('hide(): errorWrapper', async ({ page }) => {
@@ -834,7 +862,37 @@ test('validation triggered on radio/checkbox when using mouseclick', async ({
   expect(result).toBe(2);
 });
 
-// TODO: showErrors()
+test('showErrors()', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const errorLabel = document.querySelector('#errorFirstname') as HTMLElement;
+    dvTestHelpers.hideElement(errorLabel);
+    const v = dv.validate('#testForm1')!;
+
+    const lastNameHasError = () => {
+      const next = document.querySelector('#lastname')?.nextElementSibling;
+      if (!next) {
+        return false;
+      }
+
+      return (
+        next.matches('.error:not(input)') &&
+        dvTestHelpers.isVisible(next as HTMLElement)
+      );
+    };
+
+    const ret = [dvTestHelpers.isVisible(errorLabel), lastNameHasError()];
+
+    v.showErrors({ firstname: 'required', lastname: 'bla' });
+
+    ret.push(dvTestHelpers.isVisible(errorLabel), lastNameHasError());
+
+    return ret;
+  });
+
+  expect(result).toEqual([false, false, true, true]);
+});
 
 test('showErrors(), allow empty string and null as default message', async ({
   page,
@@ -1349,17 +1407,230 @@ test('formatAndAdd, auto detect substitution string', async ({ page }) => {
   expect(result).toBe('at least 5, up to 10');
 });
 
-// TODO: elementValue() finds radio/checkboxes only within the current form
+test('elementValue() finds radios/checkboxes only within the current form', async ({
+  page,
+}) => {
+  await page.goto('');
 
-// TODO: elementValue() returns the file input's name without the prefix 'C:\\fakepath\\'
+  const result = await page.evaluate(() => {
+    const v = dv.validate('#userForm')!;
+    const foreignRadio = document.querySelector(
+      '#radio2',
+    ) as FormControlElement;
 
-// TODO: Required rule should not take precedence over number & digits rules
+    return dvTestHelpers.isBlankElement(foreignRadio, v.currentForm);
+  });
 
-// TODO: validating multiple checkboxes with 'required'
+  expect(result).toBe(true);
+});
 
-// TODO: dynamic form
+test("elementValue() returns the file input's name without the prefix 'C:\\fakepath\\'", async ({
+  page,
+}) => {
+  await page.goto('');
 
-// TODO: idOrName()
+  const result = await page.evaluate(() => {
+    const dummyForm = document.querySelector('#userForm') as HTMLFormElement;
+
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.id = 'testFile';
+    document.body.appendChild(fileInput);
+
+    // Simulate the browser's fakepath behavior
+    Object.defineProperty(fileInput, 'value', {
+      get: () => 'C:\\fakepath\\test-file.txt',
+      configurable: true,
+    });
+
+    return dvTestHelpers.elementValue(
+      fileInput as FormControlElement,
+      dummyForm,
+    );
+  });
+
+  expect(result).toBe('test-file.txt');
+});
+
+test('Required rule should not take precedence over number & digits rules', async ({
+  page,
+}) => {
+  await page.goto('');
+
+  const [numberResult, digitsResult, expectedNumber, expectedDigits] =
+    await page.evaluate(() => {
+      const form = document.querySelector('#form') as HTMLFormElement;
+
+      // Test number rule
+      const input1 = document.createElement('input');
+      input1.type = 'text';
+      input1.name = 'testInput1';
+      input1.value = 'abc'; // Invalid for number
+      form.appendChild(input1);
+
+      const v1 = dv.validate(form, {
+        rules: {
+          testInput1: {
+            required: true,
+            number: true,
+          },
+        },
+      })!;
+
+      v1.form();
+      const numberMessage = v1.errorList[0]?.message;
+      form.removeChild(input1);
+      v1.destroy();
+
+      // Test digits rule
+      const input2 = document.createElement('input');
+      input2.type = 'text';
+      input2.name = 'testInput2';
+      input2.value = '12.34'; // Invalid for digits (contains decimal)
+      form.appendChild(input2);
+
+      const v2 = dv.validate(form, {
+        rules: {
+          testInput2: {
+            required: true,
+            digits: true,
+          },
+        },
+      })!;
+
+      v2.form();
+      const digitsMessage = v2.errorList[0]?.message;
+      form.removeChild(input2);
+
+      return [
+        numberMessage,
+        digitsMessage,
+        dv.messages.get('number'),
+        dv.messages.get('digits'),
+      ];
+    });
+
+  // Should get number validation error, not required error
+  expect(numberResult).toBe(expectedNumber);
+
+  // Should get digits validation error, not required error
+  expect(digitsResult).toBe(expectedDigits);
+});
+
+test("validating multiple checkboxes with 'required'", async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const checkboxes = Array.from(
+      document.querySelectorAll('#form input[name=check3]'),
+    ) as HTMLInputElement[];
+
+    checkboxes.forEach((c) => (c.checked = false));
+
+    const ret = [checkboxes.length];
+
+    const v = dv.validate('#form', {
+      rules: {
+        check3: 'required',
+      },
+    })!;
+    v.form();
+
+    ret.push(v.size());
+
+    checkboxes[checkboxes.length - 1]!.checked = true;
+    v.form();
+    ret.push(v.size());
+
+    return ret;
+  });
+
+  expect(result).toEqual([5, 1, 0]);
+});
+
+test('dynamic form', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    let counter = 0;
+    const form = document.querySelector('#testForm2') as HTMLFormElement;
+
+    function add(): void {
+      const newInput = document.createElement('input');
+      newInput.setAttribute('data-rule-required', 'true');
+      newInput.setAttribute('name', `list${counter++}`);
+
+      form.appendChild(newInput);
+    }
+
+    const v = dv.validate(form)!;
+
+    function checkErrors(expected: number) {
+      return v.size() === expected;
+    }
+
+    v.form();
+    const ret = [checkErrors(1)];
+
+    add();
+    v.form();
+    ret.push(checkErrors(2));
+
+    add();
+    v.form();
+    ret.push(checkErrors(3));
+
+    document.querySelector('#testForm2 input[name=list1]')!.remove();
+    v.form();
+    ret.push(checkErrors(2));
+
+    add();
+    v.form();
+    ret.push(checkErrors(3));
+
+    Array.from(
+      document.querySelectorAll('#testForm2 input[name^=list]'),
+    ).forEach((i) => i.remove());
+    v.form();
+    ret.push(checkErrors(1));
+
+    const agb = document.querySelector('#agb') as HTMLInputElement;
+
+    agb.disabled = true;
+    v.form();
+    ret.push(checkErrors(0));
+
+    agb.disabled = false;
+    v.form();
+    ret.push(checkErrors(1));
+
+    return ret;
+  });
+
+  expect(result).toEqual(new Array(result.length).fill(true));
+});
+
+test('idOrName()', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form8Input = document.querySelector(
+      '#form8input',
+    ) as FormControlElement;
+    const form6Check1 = document.querySelector(
+      '#form6check1',
+    ) as FormControlElement;
+    const agb = document.querySelector('#agb') as FormControlElement;
+
+    return [
+      dvTestHelpers.idOrName(form8Input),
+      dvTestHelpers.idOrName(form6Check1),
+      dvTestHelpers.idOrName(agb),
+    ];
+  });
+
+  expect(result).toEqual(['form8input', 'check', 'agree']);
+});
 
 test('resetForm()', async ({ page }) => {
   await page.goto('');

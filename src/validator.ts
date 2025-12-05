@@ -63,6 +63,7 @@ export class Validator {
     rules: {},
     messages: {},
     escapeHtml: false,
+    showErrors: null,
   };
 
   /**
@@ -348,7 +349,28 @@ export class Validator {
     );
   }
 
-  showErrors(): void {
+  showErrors(errors?: Record<string, string>) {
+    if (errors) {
+      // Add items to error list and map
+      this.errorMap = { ...this.errorMap, ...errors };
+      this.errorList = Object.entries(this.errorMap).map(([name, message]) => ({
+        message,
+        method: message,
+        element: findByName(this.currentForm, name)[0]!,
+      }));
+
+      // Remove items from success list
+      this.successList = this.successList.filter((e) => !(e.name in errors));
+    }
+
+    if (this.settings.showErrors) {
+      return this.settings.showErrors.call(this, this.errorMap, this.errorList);
+    }
+
+    return this.defaultShowErrors();
+  }
+
+  defaultShowErrors(): void {
     for (const error of this.errorList) {
       if (typeof this.settings.highlight !== 'boolean') {
         this.settings.highlight(

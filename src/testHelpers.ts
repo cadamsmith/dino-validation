@@ -5,4 +5,5 @@ export {
   isVisible,
   showElement,
   getValueLength,
+  idOrName,
 } from './helpers';

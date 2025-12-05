@@ -1,3 +1,5 @@
+import { Validator } from './validator';
+
 export interface ValidatorSettings {
   ignore: string;
   errorClass: string;
@@ -34,6 +36,13 @@ export interface ValidatorSettings {
     ValidationMessage | Record<string, ValidationMessage>
   >;
   escapeHtml: boolean;
+  showErrors:
+    | ((
+        this: Validator,
+        errorMap: Record<string, string>,
+        errorList: ValidationError[],
+      ) => void)
+    | null;
 }
 
 export type ValidationMessage =
