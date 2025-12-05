@@ -8,4 +8,5 @@ dist
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
-/tests/js/
+/tests/lib/dv-test-lib.umd.js
+/tests/lib/dv-test-lib.umd.js.map

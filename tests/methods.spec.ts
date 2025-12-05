@@ -37,8 +37,8 @@ async function runMethodTests(
           values = [entry.value!];
         } else {
           el = document.querySelector(entry.element) as HTMLElement;
-          blank = dvTestHelpers.isBlankElement(el as any, v.currentForm);
-          const rawValue = dvTestHelpers.elementValue(el as any, v.currentForm);
+          blank = dv_testLib.isBlankElement(el as any, v.currentForm);
+          const rawValue = dv_testLib.elementValue(el as any, v.currentForm);
           if (Array.isArray(rawValue)) {
             value = rawValue.join(',');
             values = rawValue;
@@ -48,7 +48,7 @@ async function runMethodTests(
           }
         }
 
-        const length = dvTestHelpers.getValueLength(el as any, v.currentForm);
+        const length = dv_testLib.getValueLength(el as any, v.currentForm);
 
         checks.push(
           method.call(v, {

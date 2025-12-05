@@ -1,9 +1,9 @@
 import type dvExport from '../dist/types/index';
-import type * as testHelpers from '../dist/types/testHelpers';
+import type testLib from './lib/index';
 
 declare global {
   const dv: typeof dvExport;
-  const dvTestHelpers: typeof testHelpers;
+  const dv_testLib: typeof testLib;
 }
 
 export {};

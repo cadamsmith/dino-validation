@@ -7,7 +7,7 @@ test('validate on blur', async ({ page }) => {
     const errorFirstname = document.querySelector(
       '#errorFirstname',
     ) as HTMLElement;
-    dvTestHelpers.hideElement(errorFirstname);
+    dv_testLib.hideElement(errorFirstname);
 
     const e = document.querySelector('#firstname') as HTMLInputElement;
     const v = dv.validate('#testForm1')!;
@@ -17,8 +17,7 @@ test('validate on blur', async ({ page }) => {
     }
     function checkLabels(expected: number) {
       return (
-        v.errors().filter((el) => dvTestHelpers.isVisible(el)).length ===
-        expected
+        v.errors().filter((el) => dv_testLib.isVisible(el)).length === expected
       );
     }
     function blur(target: HTMLElement) {

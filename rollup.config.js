@@ -1,4 +1,5 @@
 import typescript from '@rollup/plugin-typescript';
+import dts from 'rollup-plugin-dts';
 
 const jsBuilds = [
   // DV Core: UMD
@@ -71,17 +72,20 @@ const jsBuilds = [
   },
   // Test Helpers: JS UMD (not dist)
   {
-    input: './src/testHelpers.ts',
+    input: './tests/lib/index.ts',
     output: {
-      dir: 'tests/js',
-      entryFileNames: 'dv-test-helpers.umd.js',
+      dir: 'tests/lib',
+      entryFileNames: 'dv-test-lib.umd.js',
       format: 'umd',
-      name: 'dvTestHelpers',
+      name: 'dv_testLib',
       sourcemap: true,
     },
     plugins: [
       typescript({
-        compilerOptions: { outDir: 'tests/js', declaration: false },
+        compilerOptions: {
+          outDir: 'tests/lib',
+          declaration: false,
+        },
       }),
     ],
   },

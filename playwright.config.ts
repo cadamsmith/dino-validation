@@ -20,7 +20,7 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
   },
   use: {
-    baseURL: 'http://localhost:8080/tests/index.html',
+    baseURL: 'http://localhost:8080/tests/lib/index.html',
   },
   projects: [
     // Desktop browsers

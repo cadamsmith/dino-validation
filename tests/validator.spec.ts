@@ -648,12 +648,12 @@ test('hide(): input', async ({ page }) => {
 
     element.value = 'bla';
     const v = dv.validate('#testForm1')!;
-    dvTestHelpers.showElement(errorLabel);
+    dv_testLib.showElement(errorLabel);
 
     return [
-      dvTestHelpers.isVisible(errorLabel),
+      dv_testLib.isVisible(errorLabel),
       v.element(element),
-      dvTestHelpers.isVisible(errorLabel),
+      dv_testLib.isVisible(errorLabel),
     ];
   });
 
@@ -669,12 +669,12 @@ test('hide(): radio', async ({ page }) => {
 
     element.checked = true;
     const v = dv.validate('#testForm2', { errorClass: 'xerror' })!;
-    dvTestHelpers.showElement(errorLabel);
+    dv_testLib.showElement(errorLabel);
 
-    const ret = [dvTestHelpers.isVisible(errorLabel)];
+    const ret = [dv_testLib.isVisible(errorLabel)];
 
     v.element(element as FormControlElement);
-    ret.push(dvTestHelpers.isVisible(errorLabel));
+    ret.push(dv_testLib.isVisible(errorLabel));
 
     return ret;
   });
@@ -867,7 +867,7 @@ test('showErrors()', async ({ page }) => {
 
   const result = await page.evaluate(() => {
     const errorLabel = document.querySelector('#errorFirstname') as HTMLElement;
-    dvTestHelpers.hideElement(errorLabel);
+    dv_testLib.hideElement(errorLabel);
     const v = dv.validate('#testForm1')!;
 
     const lastNameHasError = () => {
@@ -878,15 +878,15 @@ test('showErrors()', async ({ page }) => {
 
       return (
         next.matches('.error:not(input)') &&
-        dvTestHelpers.isVisible(next as HTMLElement)
+        dv_testLib.isVisible(next as HTMLElement)
       );
     };
 
-    const ret = [dvTestHelpers.isVisible(errorLabel), lastNameHasError()];
+    const ret = [dv_testLib.isVisible(errorLabel), lastNameHasError()];
 
     v.showErrors({ firstname: 'required', lastname: 'bla' });
 
-    ret.push(dvTestHelpers.isVisible(errorLabel), lastNameHasError());
+    ret.push(dv_testLib.isVisible(errorLabel), lastNameHasError());
 
     return ret;
   });
@@ -1418,7 +1418,7 @@ test('elementValue() finds radios/checkboxes only within the current form', asyn
       '#radio2',
     ) as FormControlElement;
 
-    return dvTestHelpers.isBlankElement(foreignRadio, v.currentForm);
+    return dv_testLib.isBlankElement(foreignRadio, v.currentForm);
   });
 
   expect(result).toBe(true);
@@ -1443,10 +1443,7 @@ test("elementValue() returns the file input's name without the prefix 'C:\\fakep
       configurable: true,
     });
 
-    return dvTestHelpers.elementValue(
-      fileInput as FormControlElement,
-      dummyForm,
-    );
+    return dv_testLib.elementValue(fileInput as FormControlElement, dummyForm);
   });
 
   expect(result).toBe('test-file.txt');
@@ -1623,9 +1620,9 @@ test('idOrName()', async ({ page }) => {
     const agb = document.querySelector('#agb') as FormControlElement;
 
     return [
-      dvTestHelpers.idOrName(form8Input),
-      dvTestHelpers.idOrName(form6Check1),
-      dvTestHelpers.idOrName(agb),
+      dv_testLib.idOrName(form8Input),
+      dv_testLib.idOrName(form6Check1),
+      dv_testLib.idOrName(agb),
     ];
   });
 
@@ -1740,7 +1737,7 @@ test('ignore hidden elements', async ({ page }) => {
     const username = document.querySelector(
       '#userForm [name=username]',
     ) as FormControlElement;
-    dvTestHelpers.hideElement(username);
+    dv_testLib.hideElement(username);
     ret.push(v.form());
 
     return ret;
@@ -1763,10 +1760,10 @@ test('ignore hidden elements at start', async ({ page }) => {
     ) as FormControlElement;
 
     form.reset();
-    dvTestHelpers.hideElement(username);
+    dv_testLib.hideElement(username);
     const ret = [v.form()];
 
-    dvTestHelpers.showElement(username);
+    dv_testLib.showElement(username);
     ret.push(v.form());
 
     return ret;

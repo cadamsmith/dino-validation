@@ -70,7 +70,7 @@ test('test custom errorElement', async ({ page }) => {
       const errors = v.errorsFor(element as any);
       return (
         errors.length === 0 ||
-        (errors.every((e) => !dvTestHelpers.isVisible(e)) &&
+        (errors.every((e) => !dv_testLib.isVisible(e)) &&
           errors[0]!.innerText === '')
       );
     }
@@ -104,7 +104,7 @@ test('test existing label used as error element', async ({ page }) => {
       const errors = v.errorsFor(element as any);
       return (
         errors.length === 0 ||
-        (errors.every((e) => !dvTestHelpers.isVisible(e)) &&
+        (errors.every((e) => !dv_testLib.isVisible(e)) &&
           errors[0]!.innerText === '')
       );
     }
@@ -138,7 +138,7 @@ test('test existing non-label used as error element', async ({ page }) => {
       const errors = v.errorsFor(element as any);
       return (
         errors.length === 0 ||
-        (errors.every((e) => !dvTestHelpers.isVisible(e)) &&
+        (errors.every((e) => !dv_testLib.isVisible(e)) &&
           errors[0]!.innerText === '')
       );
     }
@@ -225,7 +225,7 @@ test('test existing non-error aria-describedby', async ({ page }) => {
       const errors = v.errorsFor(element as any);
       return (
         errors.length === 0 ||
-        (errors.every((e) => !dvTestHelpers.isVisible(e)) &&
+        (errors.every((e) => !dv_testLib.isVisible(e)) &&
           errors[0]!.innerText === '')
       );
     }
@@ -285,7 +285,7 @@ test('test pre-assigned non-error aria-describedby', async ({ page }) => {
       const errors = v.errorsFor(element as any);
       return (
         errors.length === 0 ||
-        (errors.every((e) => !dvTestHelpers.isVisible(e)) &&
+        (errors.every((e) => !dv_testLib.isVisible(e)) &&
           errors[0]!.innerText === '')
       );
     }
@@ -436,7 +436,7 @@ test('test settings.escapeHtml undefined', async ({ page }) => {
         .errorsFor(element as any);
       return (
         errors.length === 0 ||
-        (errors.every((e) => !dvTestHelpers.isVisible(e)) &&
+        (errors.every((e) => !dv_testLib.isVisible(e)) &&
           errors[0]!.innerText === '')
       );
     }
@@ -490,7 +490,7 @@ test('test settings.escapeHtml true', async ({ page }) => {
         .errorsFor(element as any);
       return (
         errors.length === 0 ||
-        (errors.every((e) => !dvTestHelpers.isVisible(e)) &&
+        (errors.every((e) => !dv_testLib.isVisible(e)) &&
           errors[0]!.innerText === '')
       );
     }

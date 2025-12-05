@@ -6,4 +6,4 @@ export {
   showElement,
   getValueLength,
   idOrName,
-} from './helpers';
+} from '../../src/helpers';
