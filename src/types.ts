@@ -44,6 +44,10 @@ export interface ValidatorSettings {
       ) => void)
     | null;
   ignoreTitle: boolean;
+  success:
+    | null
+    | string
+    | ((labels: HTMLElement[], element: FormControlElement) => void);
 }
 
 export type ValidationMessage =

@@ -65,6 +65,7 @@ export class Validator {
     escapeHtml: false,
     showErrors: null,
     ignoreTitle: false,
+    success: null,
   };
 
   /**
@@ -387,6 +388,12 @@ export class Validator {
       this.toShow = this.toShow.concat(this.containers);
     }
 
+    if (this.settings.success) {
+      for (const element of this.successList) {
+        this.showLabel(element);
+      }
+    }
+
     if (typeof this.settings.unhighlight !== 'boolean') {
       for (const element of this.validElements()) {
         this.settings.unhighlight(
@@ -637,6 +644,17 @@ export class Validator {
       }
 
       errors = [newError];
+    }
+
+    if (!message && this.settings.success) {
+      errors.forEach((e) => (e.innerText = ''));
+
+      const successSetting = this.settings.success;
+      if (typeof successSetting === 'string') {
+        errors.forEach((e) => e.classList.add(successSetting));
+      } else {
+        successSetting(errors, element);
+      }
     }
 
     this.toShow.push(...errors);

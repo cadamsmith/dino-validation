@@ -1686,21 +1686,280 @@ test('ignoreTitle', async ({ page }) => {
   expect(result).toBe(true);
 });
 
-// TODO: success option
+test('success option', async ({ page }) => {
+  await page.goto('');
 
-// TODO: success option2
+  const result = await page.evaluate(() => {
+    const firstName = document.querySelector(
+      '#firstname',
+    ) as FormControlElement;
+    const ret: any[] = [firstName.value];
 
-// TODO: success option3
+    const v = dv.validate('#testForm1', {
+      success: 'valid',
+    })!;
+    const label = document.querySelector(
+      '#testForm1 .error:not(input)',
+    ) as HTMLElement;
 
-// TODO: successList
+    ret.push(
+      label.classList.contains('error'),
+      label.classList.contains('valid'),
+    );
 
-// TODO: success isn't called for optional elements with no other rules
+    v.form();
+    ret.push(
+      label.classList.contains('error'),
+      label.classList.contains('valid'),
+    );
 
-// TODO: success is called for optional elements with other rules
+    firstName.value = 'hi';
+    v.form();
+    ret.push(
+      label.classList.contains('error'),
+      label.classList.contains('valid'),
+    );
 
-// TODO: success callback with element
+    return ret;
+  });
 
-// TODO: all rules are evaluated
+  expect(result).toEqual(['', true, false, true, false, true, true]);
+});
+
+test('success option2', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const firstName = document.querySelector(
+      '#firstname',
+    ) as FormControlElement;
+    const ret: any[] = [firstName.value];
+
+    const v = dv.validate('#testForm1', {
+      success: 'valid',
+    })!;
+    const label = document.querySelector(
+      '#testForm1 .error:not(input)',
+    ) as HTMLElement;
+
+    ret.push(
+      label.classList.contains('error'),
+      label.classList.contains('valid'),
+    );
+
+    firstName.value = 'hi';
+    v.form();
+    ret.push(
+      label.classList.contains('error'),
+      label.classList.contains('valid'),
+    );
+
+    return ret;
+  });
+
+  expect(result).toEqual(['', true, false, true, true]);
+});
+
+test('success option3', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const firstName = document.querySelector(
+      '#firstname',
+    ) as FormControlElement;
+    const ret: any[] = [firstName.value];
+    document.querySelector('#errorFirstname')!.remove();
+
+    const v = dv.validate('#testForm1', {
+      success: 'valid',
+    })!;
+
+    ret.push(document.querySelector('#testForm1 .error:not(input)'));
+
+    firstName.value = 'hi';
+    v.form();
+    const labels = Array.from(
+      document.querySelectorAll('#testForm1 .error:not(input)'),
+    );
+
+    ret.push(
+      labels.length,
+      labels[0]!.classList.contains('valid'),
+      labels[1]!.classList.contains('valid'),
+    );
+
+    return ret;
+  });
+
+  expect(result).toEqual(['', null, 3, true, false]);
+});
+
+test('successList', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const v = dv.validate('#form', {
+      success: 'xyz',
+    })!;
+    v.form();
+
+    return v.successList.length;
+  });
+
+  expect(result).toBe(0);
+});
+
+test("success isn't called for optional elements with no other rules", async ({
+  page,
+}) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const firstName = document.querySelector(
+      '#firstname',
+    ) as FormControlElement;
+    firstName.removeAttribute('data-rule-required');
+    firstName.removeAttribute('data-rule-minlength');
+    const ret: any[] = [firstName.value];
+
+    document.querySelector('#something')!.remove();
+    document.querySelector('#lastname')!.remove();
+    document.querySelector('#errorFirstname')!.remove();
+
+    let successCalled = false;
+    const v = dv.validate('#form', {
+      success: function () {
+        successCalled = true;
+      },
+      rules: {
+        firstname: { required: false },
+      },
+    })!;
+
+    ret.push(document.querySelector('#testForm1 .error:not(input)'));
+
+    v.form();
+    ret.push(document.querySelector('#testForm1 .error:not(input)'));
+
+    dv.valid(firstName);
+    ret.push(
+      document.querySelector('#testForm1 .error:not(input)'),
+      successCalled,
+    );
+
+    return ret;
+  });
+
+  expect(result).toEqual(['', null, null, null, false]);
+});
+
+test('success is called for optional elements with other rules', async ({
+  page,
+}) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    dv.addMethod(
+      'custom1',
+      function () {
+        return true;
+      },
+      '',
+    );
+
+    let successCalled = false;
+    dv.validate('#testForm1clean', {
+      success: function () {
+        successCalled = true;
+      },
+      rules: {
+        firstnamec: {
+          required: false,
+          custom1: true,
+        },
+      },
+    });
+
+    dv.valid('#firstnamec');
+
+    return successCalled;
+  });
+
+  expect(result).toBe(true);
+});
+
+test('success callback with element', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const username = document.querySelector('#username') as FormControlElement;
+
+    let correctLabel = false;
+    const v = dv.validate('#userForm', {
+      success: function (_labels, element) {
+        correctLabel = element === username;
+      },
+    })!;
+
+    username.value = 'hi';
+    v.form();
+
+    return correctLabel;
+  });
+
+  expect(result).toBe(true);
+});
+
+test('all rules are evaluated', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const firstName = document.querySelector(
+      '#firstname',
+    ) as FormControlElement;
+    firstName.removeAttribute('data-rule-required');
+    firstName.removeAttribute('data-rule-minlength');
+
+    const ret: any[] = [firstName.value];
+
+    document.querySelector('#lastname')!.remove();
+    document.querySelector('#errorFirstname')!.remove();
+
+    let timesCalled = 0;
+    dv.addMethod(
+      'custom1',
+      function () {
+        timesCalled++;
+        return true;
+      },
+      '',
+    );
+
+    const v = dv.validate('#testForm1', {
+      rules: {
+        firstname: {
+          email: true,
+          custom1: true,
+        },
+      },
+    })!;
+
+    ret.push(document.querySelector('#testForm1 .error:not(input)'));
+
+    v.form();
+    ret.push(document.querySelector('#testForm1 .error:not(input)'));
+
+    dv.valid(firstName);
+    ret.push(
+      document.querySelector('#testForm1 .error:not(input)'),
+      timesCalled,
+    );
+
+    return ret;
+  });
+
+  expect(result).toEqual(['', null, null, null, 2]);
+});
 
 test('messages', async ({ page }) => {
   await page.goto('');
@@ -1744,7 +2003,37 @@ test('option: ignore', async ({ page }) => {
   expect(result).toBe(1);
 });
 
-// TODO: option: subformRequired
+test('option: subformRequired', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const billToCo = document.querySelector('#bill_to_co') as HTMLInputElement;
+
+    dv.addMethod(
+      'billingRequired',
+      function ({ blank, element }) {
+        if (billToCo && billToCo.checked) {
+          return !!element.closest('#subform');
+        }
+        return !blank;
+      },
+      '',
+    );
+
+    const v = dv.validate('#subformRequired')!;
+    v.form();
+
+    const ret = [v.size()];
+
+    billToCo.checked = false;
+    v.form();
+    ret.push(v.size());
+
+    return ret;
+  });
+
+  expect(result).toEqual([1, 2]);
+});
 
 test('ignore hidden elements', async ({ page }) => {
   await page.goto('');
