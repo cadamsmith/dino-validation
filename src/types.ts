@@ -43,6 +43,7 @@ export interface ValidatorSettings {
         errorList: ValidationError[],
       ) => void)
     | null;
+  ignoreTitle: boolean;
 }
 
 export type ValidationMessage =

@@ -64,6 +64,7 @@ export class Validator {
     messages: {},
     escapeHtml: false,
     showErrors: null,
+    ignoreTitle: false,
   };
 
   /**
@@ -745,7 +746,13 @@ export class Validator {
       customMessage = msgSettings[rule.method];
     }
 
-    return getMessage.call(this, element, rule, customMessage);
+    return getMessage.call(
+      this,
+      element,
+      rule,
+      this.settings.ignoreTitle,
+      customMessage,
+    );
   }
 
   get errorClasses(): string[] {

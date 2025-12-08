@@ -71,12 +71,13 @@ export function getMessage(
   this: Validator,
   element: FormControlElement,
   rule: { method: string; parameters?: any },
+  ignoreTitle: boolean,
   customMessage?: ValidationMessage,
 ): string {
   let message: ValidationMessage = [
     customMessage,
     customDataMessage(element, rule.method),
-    element.title || undefined,
+    (!ignoreTitle && element.title) || undefined,
     store.get(rule.method),
     `<strong>Warning: No message defined for ${element.name}</strong>`,
   ].find((x) => x !== undefined) as ValidationMessage;

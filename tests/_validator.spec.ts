@@ -1660,7 +1660,31 @@ test('resetForm()', async ({ page }) => {
   expect(result).toEqual([2, true, true, 0, false, false]);
 });
 
-// TODO: message from title
+test('message from title', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const v = dv.validate('#withTitle')!;
+    v.form();
+    return v.errorList[0]!.message;
+  });
+
+  expect(result).toBe('fromtitle');
+});
+
+test('ignoreTitle', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const v = dv.validate('#withTitle', {
+      ignoreTitle: true,
+    })!;
+    v.form();
+    return v.errorList[0]!.message === dv.messages.get('required')!;
+  });
+
+  expect(result).toBe(true);
+});
 
 // TODO: success option
 
