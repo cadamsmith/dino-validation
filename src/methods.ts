@@ -1,10 +1,10 @@
 import { ValidationMethod, ValidationMethodInput } from './types';
+import { ObjectStore } from './objectStore';
 
 /**
- * Internal registry of all validation methods.
- * Each method receives (blank, value, element, param) and returns true if valid.
+ * Public API for accessing and managing validation methods.
  */
-const methods: Record<string, ValidationMethod> = {
+export const store = new ObjectStore<ValidationMethod>({
   required,
   minlength: minLength,
   maxlength: maxLength,
@@ -22,40 +22,10 @@ const methods: Record<string, ValidationMethod> = {
   regex,
   nonalphamin: nonAlphaMin,
   creditcard: creditCard,
-};
-
-/**
- * Public API for accessing and managing validation methods.
- */
-export const store = {
-  /**
-   * Returns all registered validation method names.
-   * @return {string[]} - array of method names
-   */
-  keys: function (): string[] {
-    return Object.keys(methods);
-  },
-  /**
-   * Gets a validation method by name.
-   * @param {string} key - method name
-   * @return {Function} - validation method function
-   */
-  get: function (key: string): ValidationMethod | undefined {
-    return methods[key];
-  },
-  /**
-   * Adds or replaces a validation method.
-   * @param {string} key - method name
-   * @param {Function} value - validation method function
-   */
-  set: function (key: string, value: ValidationMethod): void {
-    methods[key] = value;
-  },
-};
+});
 
 /**
  * Validates that the field has a value (is not blank).
- * @param blank - whether the field is blank
  * @return true if field is not blank
  */
 function required({ blank }: ValidationMethodInput): boolean {
@@ -64,10 +34,6 @@ function required({ blank }: ValidationMethodInput): boolean {
 
 /**
  * Validates that the field value has at least the minimum length.
- * @param blank - whether the field is blank
- * @param value - field value
- * @param element - form element
- * @param param - minimum length required
  * @return true if blank or length meets minimum
  */
 function minLength({ blank, length, param }: ValidationMethodInput): boolean {
@@ -76,10 +42,6 @@ function minLength({ blank, length, param }: ValidationMethodInput): boolean {
 
 /**
  * Validates that the field value does not exceed the maximum length.
- * @param blank - whether the field is blank
- * @param value - field value
- * @param element - form element
- * @param param - maximum length allowed
  * @return true if blank or length within maximum
  */
 function maxLength({ blank, length, param }: ValidationMethodInput): boolean {
@@ -88,10 +50,6 @@ function maxLength({ blank, length, param }: ValidationMethodInput): boolean {
 
 /**
  * Validates that the field value length is within a specified range.
- * @param blank - whether the field is blank
- * @param value - field value
- * @param element - form element
- * @param param - array of [min, max] length values
  * @return true if blank or length within range
  */
 function rangeLength({ blank, length, param }: ValidationMethodInput): boolean {
@@ -100,10 +58,6 @@ function rangeLength({ blank, length, param }: ValidationMethodInput): boolean {
 
 /**
  * Validates that the field value is greater than or equal to a minimum value.
- * @param blank - whether the field is blank
- * @param value - field value
- * @param _element - form element
- * @param param - minimum value required
  * @return true if blank or value meets minimum
  */
 function min({ blank, value, param }: ValidationMethodInput): boolean {
@@ -112,10 +66,6 @@ function min({ blank, value, param }: ValidationMethodInput): boolean {
 
 /**
  * Validates that the field value is less than or equal to a maximum value.
- * @param blank - whether the field is blank
- * @param value - field value
- * @param _element - form element
- * @param param - maximum value allowed
  * @return true if blank or value within maximum
  */
 function max({ blank, value, param }: ValidationMethodInput): boolean {
@@ -124,10 +74,6 @@ function max({ blank, value, param }: ValidationMethodInput): boolean {
 
 /**
  * Validates that the field value is within a specified numeric range.
- * @param blank - whether the field is blank
- * @param value - field value
- * @param _element - form element
- * @param param - array of [min, max] values
  * @return true if blank or value within range
  */
 function range({ blank, value, param }: ValidationMethodInput): boolean {
@@ -233,10 +179,6 @@ function digits({ blank, value }: ValidationMethodInput): boolean {
 
 /**
  * Validates that the field value equals the value of another field (e.g., password confirmation).
- * @param _blank - whether the field is blank
- * @param value - field value
- * @param _element - form element
- * @param param - CSS selector for the target element to compare against
  * @return true if values match
  */
 function equalTo({ value, param }: ValidationMethodInput): boolean {
@@ -246,10 +188,6 @@ function equalTo({ value, param }: ValidationMethodInput): boolean {
 
 /**
  * Validates that the field value matches a regular expression.
- * @param blank - whether the field is blank
- * @param value - field value
- * @param _element - form element
- * @param param - regular expression pattern
  * @return true if blank or value matches pattern
  */
 function regex({ blank, value, param }: ValidationMethodInput): boolean {
@@ -267,10 +205,6 @@ function regex({ blank, value, param }: ValidationMethodInput): boolean {
 /**
  * Validates that the field value contains at least a minimum number of non-alphanumeric characters.
  * Used for password strength validation.
- * @param blank - whether the field is blank
- * @param value - field value
- * @param _element - form element
- * @param param - minimum number of non-alphanumeric characters required
  * @return true if blank or value has enough non-alphanumeric characters
  */
 function nonAlphaMin({ blank, value, param }: ValidationMethodInput): boolean {
@@ -288,8 +222,6 @@ function nonAlphaMin({ blank, value, param }: ValidationMethodInput): boolean {
 /**
  * Validates that the field value matches a credit card number.
  * based on https://en.wikipedia.org/wiki/Luhn_algorithm
- * @param blank - whether the field is blank
- * @param value - field value
  * @return true if blank or value is a valid credit card number
  */
 function creditCard({ blank, value }: ValidationMethodInput): boolean {

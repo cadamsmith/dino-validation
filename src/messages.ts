@@ -1,12 +1,12 @@
 import { format } from './helpers';
 import { Validator } from './validator';
 import { FormControlElement, ValidationMessage } from './types';
+import { ObjectStore } from './objectStore';
 
 /**
- * Default error messages for all validation methods.
- * Messages can be strings or functions that return formatted strings with parameters.
+ * Public API for accessing and managing error messages.
  */
-const messages: Record<string, ValidationMessage> = {
+export const store = new ObjectStore<ValidationMessage>({
   required: 'This field is required.',
   remote: 'Please fix this field.',
   email: 'Please enter a valid email address.',
@@ -28,36 +28,7 @@ const messages: Record<string, ValidationMessage> = {
   regex: format('Please enter a value that matches the pattern {0}.'),
   nonalphamin: format('Please enter at least {0} non-alphabetic characters.'),
   creditcard: 'Please enter a valid credit card number.',
-};
-
-/**
- * Public API for accessing and managing error messages.
- */
-export const store = {
-  /**
-   * Returns all registered message keys.
-   * @return {string[]} - array of message keys
-   */
-  keys: function (): string[] {
-    return Object.keys(messages);
-  },
-  /**
-   * Gets an error message by validation method name.
-   * @param {string} key - validation method name
-   * @return {string|Function} - error message string or function
-   */
-  get: function (key: string): ValidationMessage | undefined {
-    return messages[key];
-  },
-  /**
-   * Adds or replaces an error message for a validation method.
-   * @param {string} key - validation method name
-   * @param {string|Function} value - error message string or function
-   */
-  set: function (key: string, value: ValidationMessage): void {
-    messages[key] = value;
-  },
-};
+});
 
 /**
  * Gets the appropriate error message for a validation rule failure.
