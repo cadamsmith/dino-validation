@@ -44,3 +44,22 @@ test('read messages from metadata', async ({ page }) => {
 
   expect(result).toEqual(['required', 'email', 'generic', 'email']);
 });
+
+test('read messages from metadata, with meta option specified, but no metadata in there', async ({
+  page,
+}) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#testForm1clean') as HTMLElement;
+    dv.validate(form, {
+      rules: {
+        firstnamec: 'required',
+      },
+    });
+
+    return dv.valid(form);
+  });
+
+  expect(result).toBe(false);
+});

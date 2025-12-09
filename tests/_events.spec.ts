@@ -247,3 +247,28 @@ test("don't revalidate the field when pressing special characters", async ({
 
   expect(result).toEqual(Array(result.length).fill(true));
 });
+
+test('Validation triggered on radio and checkbox via click', async ({
+  page,
+}) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#radiocheckbox') as HTMLFormElement;
+    dv.validate(form);
+
+    const ret: any[] = [dv.valid(form)];
+
+    const rc01 = document.querySelector('#radiocheckbox-0-1') as HTMLElement;
+    const rc11 = document.querySelector('#radiocheckbox-1-1') as HTMLElement;
+
+    rc01.click();
+    rc11.click();
+
+    ret.push(form.querySelector('input.error'));
+
+    return ret;
+  });
+
+  expect(result).toEqual([false, null]);
+});

@@ -411,8 +411,6 @@ test('test id/name containing single quotes', async ({ page }) => {
   expect(result).toEqual([3, true, true, true]);
 });
 
-// TODO: #1632: Error hidden, but input error class not removed
-
 test('test settings.escapeHtml undefined', async ({ page }) => {
   await page.goto('');
 

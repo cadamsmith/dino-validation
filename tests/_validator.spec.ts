@@ -2286,38 +2286,323 @@ test('Min and max date set by attributes valid', async ({ page }) => {
   expect(result).toBe(false);
 });
 
-// TODO: Min and max strings set by attributes greater
+test('Min and max strings set by attributes greater', async ({ page }) => {
+  await page.goto('');
 
-// TODO: Min and max strings set by attributes less
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ranges') as HTMLFormElement;
+    const name = document.querySelector(
+      '#rangeTextInvalidGreater',
+    ) as FormControlElement;
 
-// TODO: Min, Max strings set by attributes valid
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
 
-// TODO: Min, Max set by data-rule valid
+    const label = document.querySelector('#ranges .error:not(input)');
+    return label?.textContent;
+  });
+
+  expect(result).toBe('Please enter a value less than or equal to 200.');
+});
+
+test('Min and max strings set by attributes less', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ranges') as HTMLFormElement;
+    const name = document.querySelector(
+      '#rangeTextInvalidLess',
+    ) as FormControlElement;
+
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
+
+    const label = document.querySelector(
+      '#ranges .error:not(input)',
+    ) as HTMLElement;
+    return label?.innerText;
+  });
+
+  expect(result).toBe('Please enter a value greater than or equal to 200.');
+});
+
+test('Min and max strings set by attributes valid', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ranges') as HTMLFormElement;
+    const name = document.querySelector(
+      '#rangeTextValid',
+    ) as FormControlElement;
+
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
+
+    const label = document.querySelector(
+      '#ranges .error:not(input)',
+    ) as HTMLElement;
+    return !!label?.innerText;
+  });
+
+  expect(result).toBe(false);
+});
+
+test('Min, Max set by data-rule valid', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ranges') as HTMLFormElement;
+    const name = document.querySelector(
+      '#rangeTextDataRuleValid',
+    ) as FormControlElement;
+
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
+
+    const label = document.querySelector(
+      '#ranges .error:not(input)',
+    ) as HTMLElement;
+    return !!label?.innerText;
+  });
+
+  expect(result).toBe(false);
+});
 
 // TODO: Calling blur on ignored element
 
-// TODO: Min and max type absent set by attributes greater
+test('Min and Max type absent set by attributes greater', async ({ page }) => {
+  await page.goto('');
 
-// TODO: Min and max type absent set by attributes less
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ranges') as HTMLFormElement;
+    const name = document.querySelector(
+      '#rangeAbsentInvalidGreater',
+    ) as FormControlElement;
 
-// TODO: Min and max type absent set by attributes valid
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
 
-// TODO: Min and max range absent set by attributes valid
+    const label = document.querySelector('#ranges .error:not(input)');
+    return label?.textContent;
+  });
 
-// TODO: Min and max number absent set by attributes valid
+  expect(result).toBe('Please enter a value less than or equal to 200.');
+});
 
-// TODO: Min and max number absent set by attributes greater
+test('Min and Max type absent set by attributes less', async ({ page }) => {
+  await page.goto('');
 
-// TODO: Min and max number absent set by attributes less
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ranges') as HTMLFormElement;
+    const name = document.querySelector(
+      '#rangeAbsentInvalidLess',
+    ) as FormControlElement;
 
-// TODO: Rules allowed to have a value of zero invalid
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
 
-// TODO: Rules allowed to have a value of zero valid equal
+    const label = document.querySelector('#ranges .error:not(input)');
+    return label?.textContent;
+  });
 
-// TODO: Rules allowed to have a value of zero valid greater
+  expect(result).toBe('Please enter a value greater than or equal to 200.');
+});
 
-// TODO: Validation triggered on radio and checkbox via click
+test('Min and Max type absent set by attributes valid', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ranges') as HTMLFormElement;
+    const name = document.querySelector(
+      '#rangeAbsentValid',
+    ) as FormControlElement;
+
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
+
+    const label = document.querySelector('#ranges .error:not(input)');
+    return !!label?.textContent;
+  });
+
+  expect(result).toBe(false);
+});
+
+test('Min and Max range set by attributes valid', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ranges') as HTMLFormElement;
+    const name = document.querySelector(
+      '#rangeRangeValid',
+    ) as FormControlElement;
+
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
+
+    const label = document.querySelector('#ranges .error:not(input)');
+    return !!label?.textContent;
+  });
+
+  expect(result).toBe(false);
+});
+
+test('Min and Max number set by attributes valid', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ranges') as HTMLFormElement;
+    const name = document.querySelector(
+      '#rangeNumberValid',
+    ) as FormControlElement;
+
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
+
+    const label = document.querySelector('#ranges .error:not(input)');
+    return !!label?.textContent;
+  });
+
+  expect(result).toBe(false);
+});
+
+test('Min and Max number set by attributes greater', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ranges') as HTMLFormElement;
+    const name = document.querySelector(
+      '#rangeNumberInvalidGreater',
+    ) as FormControlElement;
+
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
+
+    const label = document.querySelector('#ranges .error:not(input)');
+    return label?.textContent;
+  });
+
+  expect(result).toBe('Please enter a value less than or equal to 200.');
+});
+
+test('Min and Max number set by attributes less', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ranges') as HTMLFormElement;
+    const name = document.querySelector(
+      '#rangeNumberInvalidLess',
+    ) as FormControlElement;
+
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
+
+    const label = document.querySelector('#ranges .error:not(input)');
+    return label?.textContent;
+  });
+
+  expect(result).toBe('Please enter a value greater than or equal to 50.');
+});
+
+test('Rules allowed to have a value of zero invalid', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ranges') as HTMLFormElement;
+    const name = document.querySelector(
+      '#rangeMinZeroInvalidLess',
+    ) as FormControlElement;
+
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
+
+    const label = document.querySelector('#ranges .error:not(input)');
+    return label?.textContent;
+  });
+
+  expect(result).toBe('Please enter a value greater than or equal to 0.');
+});
+
+test('Rules allowed to have a value of zero valid equal', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ranges') as HTMLFormElement;
+    const name = document.querySelector(
+      '#rangeMinZeroValidEqual',
+    ) as FormControlElement;
+
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
+
+    const label = document.querySelector('#ranges .error:not(input)');
+    return !!label?.textContent;
+  });
+
+  expect(result).toBe(false);
+});
+
+test('Rules allowed to have a value of zero valid greater', async ({
+  page,
+}) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ranges') as HTMLFormElement;
+    const name = document.querySelector(
+      '#rangeMinZeroValidGreater',
+    ) as FormControlElement;
+
+    dv.validate(form);
+    form.reset();
+    dv.valid(name);
+
+    const label = document.querySelector('#ranges .error:not(input)');
+    return !!label?.textContent;
+  });
+
+  expect(result).toBe(false);
+});
 
 // TODO: destroy()
 
-// TODO: #1618: Errorlist containing more errors than it should
+test.only('#1618: Errorlist containing more errors than it should', async ({
+  page,
+}) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const v = dv.validate('#testForm24', {
+      rules: {
+        val1: 'required',
+        val2: 'required',
+        val3: 'required',
+      },
+    })!;
+
+    const inputs = Array.from(
+      document.querySelectorAll('#val1, #val2, #val3'),
+    ) as HTMLElement[];
+    dv.valid(inputs);
+    const ret = [v.errorList.length];
+
+    dv.valid(inputs);
+    ret.push(v.errorList.length);
+
+    return ret;
+  });
+
+  expect(result).toEqual([2, 2]);
+});
