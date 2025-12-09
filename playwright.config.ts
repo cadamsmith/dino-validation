@@ -14,7 +14,7 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
   webServer: {
-    command: 'http-server -c-1 -p 8080 . > /dev/null 2>&1',
+    command: 'npx http-server -c-1 -p 8080 . > /dev/null 2>&1',
     port: 8080,
     timeout: 120 * 1000,
     reuseExistingServer: !process.env.CI,
