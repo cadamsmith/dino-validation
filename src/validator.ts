@@ -15,7 +15,7 @@ import { getRules, normalizeRule } from './rules';
 import { getMessage } from './messages';
 import { validatorStore } from './validatorStore';
 import { store as methodStore } from './methods';
-import { FormEventManager } from './eventDelegation';
+import { FormEventManager } from './eventManager';
 import {
   FormControlElement,
   ValidationError,
