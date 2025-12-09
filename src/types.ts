@@ -48,6 +48,9 @@ export interface ValidatorSettings {
     | null
     | string
     | ((labels: HTMLElement[], element: FormControlElement) => void);
+  onsubmit: boolean;
+  debug: boolean;
+  invalidHandler: null | ((event: CustomEvent<ValidationError[]>) => void);
 }
 
 export type ValidationMessage =

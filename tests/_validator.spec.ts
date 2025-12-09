@@ -1407,6 +1407,35 @@ test('formatAndAdd, auto detect substitution string', async ({ page }) => {
   expect(result).toBe('at least 5, up to 10');
 });
 
+test('option invalidHandler', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#testForm1clean') as HTMLFormElement;
+    const element = document.querySelector('#usernamec') as FormControlElement;
+
+    return new Promise((resolve) => {
+      dv.validate(form, {
+        debug: true,
+        invalidHandler: () => {
+          resolve(true);
+        },
+        rules: {
+          username: {
+            required: true,
+            minlength: 5,
+          },
+        },
+      });
+
+      element.value = 'asdf';
+      form.dispatchEvent(new Event('submit', { cancelable: true }));
+    });
+  });
+
+  expect(result).toBe(true);
+});
+
 test('elementValue() finds radios/checkboxes only within the current form', async ({
   page,
 }) => {
@@ -2372,7 +2401,26 @@ test('Min, Max set by data-rule valid', async ({ page }) => {
   expect(result).toBe(false);
 });
 
-// TODO: Calling blur on ignored element
+test('calling blur on ignored element', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ignoredElements') as HTMLFormElement;
+    const ss1 = document.getElementById('ss1');
+
+    dv.validate(form, {
+      ignore: '.ignore',
+      invalidHandler: function () {
+        ss1?.blur();
+      },
+    });
+
+    form.dispatchEvent(new Event('submit', { cancelable: true }));
+    return dv.valid(form);
+  });
+
+  expect(result).toBe(false);
+});
 
 test('Min and Max type absent set by attributes greater', async ({ page }) => {
   await page.goto('');
@@ -2578,7 +2626,7 @@ test('Rules allowed to have a value of zero valid greater', async ({
 
 // TODO: destroy()
 
-test.only('#1618: Errorlist containing more errors than it should', async ({
+test('#1618: Errorlist containing more errors than it should', async ({
   page,
 }) => {
   await page.goto('');

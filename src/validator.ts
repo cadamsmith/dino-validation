@@ -37,12 +37,13 @@ export class Validator {
   currentElements: FormControlElement[] = [];
   labelContainer: HTMLElement | null = null;
   containers: HTMLElement[] = [];
+  lastActive: FormControlElement | null = null;
 
   /** normalized rules */
   rules: Record<string, ValidationRuleset> = {};
 
   /** event delegation manager */
-  private eventDelegator!: FormEventManager;
+  private eventManager!: FormEventManager;
 
   settings: ValidatorSettings = {
     ignore: ':hidden',
@@ -66,6 +67,9 @@ export class Validator {
     showErrors: null,
     ignoreTitle: false,
     success: null,
+    onsubmit: true,
+    debug: false,
+    invalidHandler: null,
   };
 
   /**
@@ -126,12 +130,14 @@ export class Validator {
       this.rules[key] = normalizeRule(value);
     });
 
-    this.eventDelegator = new FormEventManager(
+    this.eventManager = new FormEventManager(
       this.currentForm,
       this.settings,
+      () => this.form(),
+      () => this.focusInvalid(),
       (element) => this.shouldIgnore(element),
     );
-    this.eventDelegator.attachEventHandlers();
+    this.eventManager.attachEventHandlers();
   }
 
   /**
@@ -159,6 +165,9 @@ export class Validator {
 
     this.submitted = { ...this.submitted, ...this.errorMap };
     this.invalid = { ...this.errorMap };
+    if (!this.valid()) {
+      this.eventManager.triggerInvalidForm(this.errorList);
+    }
     this.showErrors();
     return this.valid();
   }
@@ -458,6 +467,8 @@ export class Validator {
   }
 
   onFocusIn(element: FormControlElement): void {
+    this.lastActive = element;
+
     if (this.settings.focusCleanup) {
       if (typeof this.settings.unhighlight !== 'boolean') {
         this.settings.unhighlight(
@@ -694,7 +705,7 @@ export class Validator {
   destroy(): void {
     this.resetForm();
     validatorStore.delete(this.currentForm);
-    this.eventDelegator.detachEventHandlers();
+    this.eventManager.detachEventHandlers();
   }
 
   resetForm(): void {
@@ -771,6 +782,36 @@ export class Validator {
       this.settings.ignoreTitle,
       customMessage,
     );
+  }
+
+  focusInvalid(): void {
+    const lastActive = this.findLastActive();
+    const firstErrorElement = this.errorList.length
+      ? this.errorList[0]!.element
+      : null;
+
+    const el = lastActive || firstErrorElement;
+    if (!el || !isVisible(el)) {
+      return;
+    }
+
+    // Focus the element
+    el.focus();
+
+    // Manually dispatch "focusin"
+    const focusInEvent = new Event('focusin', { bubbles: true });
+    el.dispatchEvent(focusInEvent);
+  }
+
+  findLastActive() {
+    const lastActive = this.lastActive;
+    if (!lastActive) return;
+
+    const matches = this.errorList.filter(
+      (n) => n.element.name === lastActive.name,
+    );
+
+    return matches.length === 1 ? lastActive : undefined;
   }
 
   get errorClasses(): string[] {

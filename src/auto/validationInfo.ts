@@ -23,8 +23,8 @@ export function validationInfo(form: any) {
     errorPlacement: function (error: any, element: any) {
       onError.call(form, error, element);
     },
-    invalidHandler: function (event: any, validator: any) {
-      onErrors.call(form, event, validator);
+    invalidHandler: function (event: any) {
+      onErrors.call(form, event);
     },
     success: function (error: any) {
       onSuccess.call(form, error);

@@ -33,16 +33,17 @@ export function onError(this: any, error: any, inputElement: any) {
  * Handles display of validation summary with all errors.
  * @this {HTMLFormElement}
  */
-export function onErrors(this: any, _event: any, validator: any) {
+export function onErrors(this: any, event: any) {
   const container = this.querySelector('[data-valmsg-summary=true]');
   const list = container.querySelector('ul');
+  const errorList = event.detail.errorList;
 
-  if (list && validator.errorList.length) {
+  if (list && errorList.length) {
     list.innerHTML = '';
     container.classList.add('validation-summary-errors');
     container.classList.remove('validation-summary-valid');
 
-    validator.errorList.forEach((err: any) => {
+    errorList.forEach((err: any) => {
       const message = document.createElement('li');
       message.innerHTML = err.message;
       list.appendChild(message);

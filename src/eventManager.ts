@@ -1,4 +1,8 @@
-import { FormControlElement, ValidatorSettings } from './types';
+import {
+  FormControlElement,
+  ValidationError,
+  ValidatorSettings,
+} from './types';
 
 /**
  * CSS selectors for different types of form elements that should receive validation events
@@ -58,6 +62,8 @@ export class FormEventManager {
   constructor(
     private form: HTMLFormElement,
     private settings: ValidatorSettings,
+    private validateCallback: () => boolean,
+    private focusInvalidCallback: () => void,
     private shouldIgnoreElement: (element: HTMLElement) => boolean,
   ) {}
 
@@ -86,6 +92,47 @@ export class FormEventManager {
     this.form.addEventListener('focusout', this.boundEventHandlers.onFocusOut);
     this.form.addEventListener('keyup', this.boundEventHandlers.onKeyUp);
     this.form.addEventListener('click', this.boundEventHandlers.onClick);
+
+    if (this.settings.onsubmit) {
+      this.form.addEventListener('submit', (e: SubmitEvent) =>
+        this.handleSubmitForm(e),
+      );
+    }
+
+    const invalidHandler = this.settings.invalidHandler;
+    if (invalidHandler) {
+      this.form.addEventListener('invalid-form', (e) => {
+        if (!this.isCustomEvent(e)) {
+          return;
+        }
+        invalidHandler(e);
+      });
+    }
+  }
+
+  triggerInvalidForm(errorList: ValidationError[]) {
+    const event = new CustomEvent('invalid-form', {
+      detail: errorList,
+      cancelable: true,
+    });
+    this.form.dispatchEvent(event);
+  }
+
+  private isCustomEvent(event: Event): event is CustomEvent {
+    return 'detail' in event;
+  }
+
+  private handleSubmitForm(e: SubmitEvent) {
+    if (this.settings.debug) {
+      e.preventDefault();
+    }
+
+    const isValid = this.validateCallback();
+    if (!isValid) {
+      this.focusInvalidCallback();
+      e.preventDefault();
+      e.stopPropagation();
+    }
   }
 
   /**
