@@ -16,4 +16,12 @@ export class ObjectStore<T> {
   set(key: string, value: T): void {
     this._store[key] = value;
   }
+
+  replace(data: Record<string, T>): void {
+    Object.entries(data).forEach(([key, value]) => {
+      if (key in this._store) {
+        this._store[key] = value;
+      }
+    });
+  }
 }

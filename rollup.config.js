@@ -35,38 +35,22 @@ const jsBuilds = [
       }),
     ],
   },
-  // DV Auto: UMD
+  // DV Localization: UMD
   {
-    input: './src/auto/index.ts',
+    input: './src/localization/messages_fr.ts',
     output: {
       dir: 'dist',
-      entryFileNames: 'dv-auto.umd.js',
+      entryFileNames: 'localization/messages_fr.umd.js',
       format: 'umd',
       name: 'dv',
       sourcemap: true,
+      globals: {
+        '..': 'dv',
+      },
     },
+    external: ['..'],
     plugins: [
       typescript({ compilerOptions: { outDir: 'dist', declaration: false } }),
-    ],
-  },
-  // DV Auto: ESM
-  {
-    input: './src/auto/index.ts',
-    output: {
-      dir: 'dist',
-      entryFileNames: 'dv-auto.esm.js',
-      format: 'esm',
-      sourcemap: true,
-    },
-    plugins: [
-      typescript({
-        compilerOptions: {
-          outDir: 'dist',
-          declaration: true,
-          declarationDir: 'dist/types/auto',
-          declarationMap: true,
-        },
-      }),
     ],
   },
   // Test Helpers: JS UMD (not dist)

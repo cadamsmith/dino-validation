@@ -19,7 +19,6 @@ import { FormEventManager } from './eventManager';
 import {
   FormControlElement,
   ValidationError,
-  ValidationMessage,
   ValidationRuleset,
   ValidatorSettings,
 } from './types';
@@ -307,7 +306,7 @@ export class Validator {
     const rules = getRules(element, this.rules);
     const elValue = elementValue(element, this.currentForm);
 
-    const value = Array.isArray(elValue) ? elValue[0] : elValue;
+    const value = (Array.isArray(elValue) ? elValue[0] : elValue) ?? '';
     const values = Array.isArray(elValue) ? elValue : [elValue];
 
     const length = getValueLength(element, this.currentForm);
@@ -325,7 +324,7 @@ export class Validator {
       try {
         const result = methodFunc({
           blank,
-          value: value ?? null,
+          value: value,
           values,
           length,
           element,
@@ -767,7 +766,7 @@ export class Validator {
       rule = { method: rule };
     }
 
-    let customMessage: ValidationMessage | undefined;
+    let customMessage: string | undefined;
     const msgSettings = this.settings.messages[element.name];
     if (msgSettings && typeof msgSettings === 'string') {
       customMessage = msgSettings;

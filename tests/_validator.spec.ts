@@ -1354,32 +1354,6 @@ test('formatAndAdd', async ({ page }) => {
   ]);
 });
 
-test('formatAndAdd2', async ({ page }) => {
-  await page.goto('');
-
-  const result = await page.evaluate(() => {
-    const form = document.querySelector('#form');
-    const v = dv.validate(form)!;
-    const fakeElement = { form, name: 'bar' } as FormControlElement;
-
-    let scoped: Record<string, any> = {};
-
-    dv.messages.set('test1', function (param, element) {
-      // @ts-ignore
-      scoped.this = this;
-      scoped.param = param;
-
-      return `element ${element.name} is not valid`;
-    });
-
-    v.formatAndAdd(fakeElement, { method: 'test1', parameters: 0 });
-
-    return [v.errorList[0]!.message, scoped.this === v, scoped.param];
-  });
-
-  expect(result).toEqual(['element bar is not valid', true, 0]);
-});
-
 test('formatAndAdd, auto detect substitution string', async ({ page }) => {
   await page.goto('');
 
@@ -1988,33 +1962,6 @@ test('all rules are evaluated', async ({ page }) => {
   });
 
   expect(result).toEqual(['', null, null, null, 2]);
-});
-
-test('messages', async ({ page }) => {
-  await page.goto('');
-
-  const result = await page.evaluate(() => {
-    const messages = dv.messages;
-
-    const maxLength = messages.get('maxlength') as (params: any) => string;
-    const minLength = messages.get('minlength') as (params: any) => string;
-    const rangeLength = messages.get('rangelength') as (params: any) => string;
-    const max = messages.get('max') as (params: any) => string;
-    const min = messages.get('min') as (params: any) => string;
-    const range = messages.get('range') as (params: any) => string;
-
-    return [
-      maxLength(0) === 'Please enter no more than 0 characters.',
-      minLength(1) === 'Please enter at least 1 characters.',
-      rangeLength([1, 2]) ===
-        'Please enter a value between 1 and 2 characters long.',
-      max(1) === 'Please enter a value less than or equal to 1.',
-      min(0) === 'Please enter a value greater than or equal to 0.',
-      range([1, 2]) === 'Please enter a value between 1 and 2.',
-    ];
-  });
-
-  expect(result).toEqual(Array(result.length).fill(true));
 });
 
 test('option: ignore', async ({ page }) => {

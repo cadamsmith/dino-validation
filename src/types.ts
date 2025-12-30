@@ -31,10 +31,7 @@ export interface ValidatorSettings {
     | null;
   focusCleanup: boolean;
   rules: Record<string, ValidationRuleset | string>;
-  messages: Record<
-    string,
-    ValidationMessage | Record<string, ValidationMessage>
-  >;
+  messages: Record<string, string | Record<string, string>>;
   escapeHtml: boolean;
   showErrors:
     | ((
@@ -69,7 +66,7 @@ export interface ValidationRuleset {
 
 export type ValidationMethodInput = {
   blank: boolean;
-  value: string | null;
+  value: string;
   values: string[];
   length: number;
   element: FormControlElement;
@@ -85,4 +82,5 @@ export interface FormControlElement extends HTMLElement {
   type: string;
   selectedOptions?: HTMLCollectionOf<HTMLOptionElement>;
   validity?: ValidityState;
+  files?: FileList;
 }
