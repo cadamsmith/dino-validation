@@ -38,6 +38,7 @@
     "@rollup/plugin-typescript": "^12.3.0",
     "@types/node": "^24.10.0",
     "http-server": "^14.1.1",
+    "husky": "^9.1.7",
     "prettier": "^3.6.2",
     "rollup": "^4.53.2",
     "tslib": "^2.8.1",
@@ -53,6 +54,7 @@
     "format": "prettier --write .",
     "check-format": "prettier --check .",
     "type-check": "tsc --noEmit",
-    "type-check-tests": "tsc --noEmit -p tests/tsconfig.json"
+    "type-check-tests": "tsc --noEmit -p tests/tsconfig.json",
+    "prepare": "husky"
   }
 }
