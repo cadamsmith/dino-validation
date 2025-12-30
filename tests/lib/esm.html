@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dino Validation: ESM Test Suite</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "dino-validation": "../../dist/dv.esm.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <form id="form">
+      <input type="text" name="field" />
+    </form>
+    <script type="module">
+      import * as dv from 'dino-validation';
+      window.dv = dv;
+    </script>
+  </body>
+</html>
