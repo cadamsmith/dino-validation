@@ -1,4 +1,15 @@
 import typescript from '@rollup/plugin-typescript';
+import { copyFileSync, mkdirSync } from 'fs';
+
+function copyToDocs() {
+  return {
+    writeBundle() {
+      const docsJsDir = 'docs/static/js';
+      mkdirSync(docsJsDir, { recursive: true });
+      copyFileSync('dist/dv.umd.js', `${docsJsDir}/dv.umd.js`);
+    },
+  };
+}
 
 const jsBuilds = [
   // DV Core: UMD
@@ -13,6 +24,7 @@ const jsBuilds = [
     },
     plugins: [
       typescript({ compilerOptions: { outDir: 'dist', declaration: false } }),
+      copyToDocs(),
     ],
   },
   // DV Core: ESM

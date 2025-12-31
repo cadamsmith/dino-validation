@@ -1,0 +1,103 @@
+.playgroundContainer {
+  margin: 2rem 0;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-border-radius);
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+.header {
+  padding: 1rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--ifm-color-emphasis-900);
+}
+
+.header p {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.editorContainer {
+  background: var(--ifm-background-surface-color);
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem 0;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.tab {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-bottom: none;
+  border-radius: var(--ifm-border-radius) var(--ifm-border-radius) 0 0;
+  background: transparent;
+  color: var(--ifm-color-emphasis-700);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.tab:hover {
+  background: var(--ifm-hover-overlay);
+}
+
+.tab.active {
+  background: var(--ifm-color-emphasis-200);
+  border-color: var(--ifm-color-emphasis-400);
+  color: var(--ifm-color-emphasis-900);
+}
+
+.editorPane {
+  padding: 1rem;
+}
+
+.previewPane {
+  padding: 1rem;
+  background: var(--ifm-background-color);
+  min-height: 200px;
+}
+
+.previewPane h3 {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+/* Preview form styles */
+.previewPane form {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.previewPane input {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-border-radius);
+}
+
+.previewPane button {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  background: var(--ifm-color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--ifm-border-radius);
+  cursor: pointer;
+}
+
+.previewPane button:hover {
+  background: var(--ifm-color-primary-darker);
+}
