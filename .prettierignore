@@ -1,0 +1,8 @@
+**/.git
+**/node_modules
+dist
+playwright-report
+test-results
+tests/lib/dv-test-lib.umd.js
+docs/static
+docs/.docusaurus
