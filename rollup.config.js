@@ -24,7 +24,7 @@ const jsBuilds = [
     },
     plugins: [
       typescript({ compilerOptions: { outDir: 'dist', declaration: false } }),
-      copyToDocs(),
+      //copyToDocs(),
     ],
   },
   // DV Core: ESM
