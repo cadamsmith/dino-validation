@@ -1,6 +1,6 @@
 import dv from '..';
 
-dv.messages.replace({
+dv.localize({
   required: 'Ce champ est obligatoire.',
   email: 'Veuillez fournir une adresse électronique valide.',
   url: 'Veuillez fournir une adresse URL valide.',
