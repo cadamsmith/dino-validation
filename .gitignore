@@ -1,6 +1,7 @@
 node_modules
 .idea
 dist
+scripts
 
 # Playwright
 /test-results/

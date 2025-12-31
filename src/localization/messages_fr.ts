@@ -17,5 +17,7 @@ dv.localize({
   max: 'Veuillez fournir une valeur inférieure ou égale à {0}.',
   min: 'Veuillez fournir une valeur supérieure ou égale à {0}.',
 
+  regex: 'Veuillez saisir une valeur correspondant au format {0}.',
+  nonalphamin: 'Veuillez saisir au moins {0} caractères non alphabétiques.',
   creditcard: 'Veuillez fournir un numéro de carte de crédit valide.',
 });

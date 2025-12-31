@@ -10,7 +10,7 @@ This library is a partial port of the [jQuery Validation Plugin](https://github.
 
 ## Features
 
-- **14 built-in validation methods** - email, URL, number, date, minlength, and more
+- **17 built-in validation methods** - email, URL, number, date, minlength, and more
 - **Declarative or programmatic API** - Define rules in HTML attributes or JavaScript
 - **Zero dependencies** - Pure vanilla JavaScript, no jQuery required
 - **Modern ES6+** - ESM and UMD builds for all environments
@@ -1824,7 +1824,7 @@ dino-validation includes pre-built localization files.
 
 ```javascript
 import dv from 'dino-validation';
-import 'dino-validation/dist/localization/messages_fr.js';
+import 'dino-validation/dist/localization/messages_fr.esm.js';
 
 // French messages are now loaded
 dv.validate('#myForm', { ... });
@@ -1835,25 +1835,25 @@ dv.validate('#myForm', { ... });
 Use `dv.localize()` to translate error messages yourself.
 
 ```javascript
-// French localization
+// Custom messages (use any language or wording you want)
 dv.localize({
-  required: 'Ce champ est obligatoire.',
-  email: 'Veuillez entrer une adresse email valide.',
-  url: 'Veuillez entrer une URL valide.',
-  date: 'Veuillez entrer une date valide.',
-  dateISO: 'Veuillez entrer une date valide (ISO).',
-  number: 'Veuillez entrer un nombre valide.',
-  digits: 'Veuillez entrer uniquement des chiffres.',
-  equalTo: 'Veuillez entrer la même valeur à nouveau.',
-  maxlength: 'Veuillez entrer au maximum {0} caractères.',
-  minlength: 'Veuillez entrer au moins {0} caractères.',
-  rangelength: 'Veuillez entrer une valeur entre {0} et {1} caractères.',
-  range: 'Veuillez entrer une valeur entre {0} et {1}.',
-  max: 'Veuillez entrer une valeur inférieure ou égale à {0}.',
-  min: 'Veuillez entrer une valeur supérieure ou égale à {0}.',
-  creditcard: 'Veuillez entrer un numéro de carte de crédit valide.',
-  regex: 'Veuillez entrer une valeur qui correspond au modèle {0}.',
-  nonalphamin: 'Veuillez entrer au moins {0} caractères non-alphabétiques.',
+  required: 'Beep boop! This field cannot be empty.',
+  email: "Beep! That doesn't look like a valid email address.",
+  url: 'Boop! Please enter a valid URL.',
+  date: 'Beep boop! Invalid date detected.',
+  dateISO: 'Boop! Date must be in ISO format (YYYY-MM-DD).',
+  number: 'Beep! Numbers only, please.',
+  digits: 'Boop boop! Only digits allowed (0-9).',
+  equalTo: 'Beep! These values must match.',
+  maxlength: 'Boop! Maximum {0} characters allowed.',
+  minlength: 'Beep! Minimum {0} characters required.',
+  rangelength: 'Beep boop! Must be between {0} and {1} characters.',
+  range: 'Boop! Value must be between {0} and {1}.',
+  max: 'Beep! Value must be {0} or less.',
+  min: 'Boop! Value must be {0} or more.',
+  creditcard: 'Beep boop! Invalid credit card number.',
+  regex: 'Boop! Must match pattern: {0}.',
+  nonalphamin: 'Beep! At least {0} special characters required.',
 });
 ```
 

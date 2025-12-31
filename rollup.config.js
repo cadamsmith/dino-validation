@@ -1,4 +1,70 @@
 import typescript from '@rollup/plugin-typescript';
+import { readdirSync } from 'fs';
+
+// Function to get all localization files dynamically
+function getLocalizationFiles() {
+  const localizationDir = './src/localization';
+  try {
+    const files = readdirSync(localizationDir);
+    return files
+      .filter((file) => file.endsWith('.ts') && file.startsWith('messages_'))
+      .map((file) => file.replace('.ts', ''));
+  } catch (error) {
+    console.warn('No localization files found:', error);
+    return [];
+  }
+}
+
+// Generate build configurations for all localization files
+function generateLocalizationBuilds() {
+  const localizationFiles = getLocalizationFiles();
+  const builds = [];
+
+  localizationFiles.forEach((fileName) => {
+    // UMD Build
+    builds.push({
+      input: `./src/localization/${fileName}.ts`,
+      output: {
+        dir: 'dist',
+        entryFileNames: `localization/${fileName}.umd.js`,
+        format: 'umd',
+        name: 'dv',
+        sourcemap: true,
+        globals: {
+          '..': 'dv',
+        },
+      },
+      external: ['..'],
+      plugins: [
+        typescript({ compilerOptions: { outDir: 'dist', declaration: false } }),
+      ],
+    });
+
+    // ESM Build
+    builds.push({
+      input: `./src/localization/${fileName}.ts`,
+      output: {
+        dir: 'dist',
+        entryFileNames: `localization/${fileName}.esm.js`,
+        format: 'esm',
+        sourcemap: true,
+      },
+      external: ['..'],
+      plugins: [
+        typescript({
+          compilerOptions: {
+            outDir: 'dist',
+            declaration: true,
+            declarationDir: 'dist/types',
+            declarationMap: true,
+          },
+        }),
+      ],
+    });
+  });
+
+  return builds;
+}
 
 const jsBuilds = [
   // DV Core: UMD
@@ -35,24 +101,8 @@ const jsBuilds = [
       }),
     ],
   },
-  // DV Localization: UMD
-  {
-    input: './src/localization/messages_fr.ts',
-    output: {
-      dir: 'dist',
-      entryFileNames: 'localization/messages_fr.umd.js',
-      format: 'umd',
-      name: 'dv',
-      sourcemap: true,
-      globals: {
-        '..': 'dv',
-      },
-    },
-    external: ['..'],
-    plugins: [
-      typescript({ compilerOptions: { outDir: 'dist', declaration: false } }),
-    ],
-  },
+  // Dynamically generated localization builds
+  ...generateLocalizationBuilds(),
   // Test Helpers: JS UMD (not dist)
   {
     input: './tests/lib/index.ts',
