@@ -1,5 +1,6 @@
 import typescript from '@rollup/plugin-typescript';
 import { readdirSync } from 'fs';
+import terser from '@rollup/plugin-terser';
 
 // Function to get all localization files dynamically
 function getLocalizationFiles() {
@@ -37,6 +38,26 @@ function generateLocalizationBuilds() {
       external: ['..'],
       plugins: [
         typescript({ compilerOptions: { outDir: 'dist', declaration: false } }),
+      ],
+    });
+
+    // UMD Build (minified)
+    builds.push({
+      input: `./src/localization/${fileName}.ts`,
+      output: {
+        dir: 'dist',
+        entryFileNames: `localization/${fileName}.umd.min.js`,
+        format: 'umd',
+        name: 'dv',
+        sourcemap: true,
+        globals: {
+          '..': 'dv',
+        },
+      },
+      external: ['..'],
+      plugins: [
+        typescript({ compilerOptions: { outDir: 'dist', declaration: false } }),
+        terser(),
       ],
     });
 
@@ -79,6 +100,21 @@ const jsBuilds = [
     },
     plugins: [
       typescript({ compilerOptions: { outDir: 'dist', declaration: false } }),
+    ],
+  },
+  // DV Core: UMD Minified
+  {
+    input: './src/index.ts',
+    output: {
+      dir: 'dist',
+      entryFileNames: 'dv.umd.min.js',
+      format: 'umd',
+      name: 'dv',
+      sourcemap: true,
+    },
+    plugins: [
+      typescript({ compilerOptions: { outDir: 'dist', declaration: false } }),
+      terser(),
     ],
   },
   // DV Core: ESM
