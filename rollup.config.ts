@@ -19,8 +19,71 @@ function getLocalizationFiles(locale: string) {
   }
 }
 
+function coreBuilds(): RollupOptions[] {
+  return [
+    // DV Core: UMD
+    {
+      input: './src/index.ts',
+      output: {
+        dir: 'dist',
+        entryFileNames: 'dv.umd.js',
+        format: 'umd',
+        name: 'dv',
+        sourcemap: true,
+        exports: 'named',
+      },
+      plugins: [
+        typescript({
+          tsconfig: './tsconfig.build.json',
+          compilerOptions: { outDir: 'dist', declaration: false },
+        }),
+      ],
+    },
+    // DV Core: UMD Minified
+    {
+      input: './src/index.ts',
+      output: {
+        dir: 'dist',
+        entryFileNames: 'dv.umd.min.js',
+        format: 'umd',
+        name: 'dv',
+        sourcemap: true,
+        exports: 'named',
+      },
+      plugins: [
+        typescript({
+          tsconfig: './tsconfig.build.json',
+          compilerOptions: { outDir: 'dist', declaration: false },
+        }),
+        terser(),
+      ],
+    },
+    // DV Core: ESM
+    {
+      input: './src/index.ts',
+      output: {
+        dir: 'dist',
+        entryFileNames: 'dv.esm.js',
+        format: 'esm',
+        sourcemap: true,
+      },
+      plugins: [
+        typescript({
+          tsconfig: './tsconfig.build.json',
+          compilerOptions: {
+            outDir: 'dist',
+            declaration: true,
+            declarationDir: 'dist/types',
+            declarationMap: true,
+          },
+        }),
+      ],
+    },
+  ];
+}
+
 // Generate build configurations for all localization files
-function generateLocalizationBuilds(locale = '') {
+function localizationBuilds(locale = ''): RollupOptions[] {
   const localizationFiles = getLocalizationFiles(locale);
   const builds: RollupOptions[] = [];
 
@@ -99,68 +162,9 @@ function generateLocalizationBuilds(locale = '') {
   return builds;
 }
 
-// core builds always included
-const builds: RollupOptions[] = [
-  // DV Core: UMD
-  {
-    input: './src/index.ts',
-    output: {
-      dir: 'dist',
-      entryFileNames: 'dv.umd.js',
-      format: 'umd',
-      name: 'dv',
-      sourcemap: true,
-      exports: 'named',
-    },
-    plugins: [
-      typescript({
-        tsconfig: './tsconfig.build.json',
-        compilerOptions: { outDir: 'dist', declaration: false },
-      }),
-    ],
-  },
-  // DV Core: UMD Minified
-  {
-    input: './src/index.ts',
-    output: {
-      dir: 'dist',
-      entryFileNames: 'dv.umd.min.js',
-      format: 'umd',
-      name: 'dv',
-      sourcemap: true,
-      exports: 'named',
-    },
-    plugins: [
-      typescript({
-        tsconfig: './tsconfig.build.json',
-        compilerOptions: { outDir: 'dist', declaration: false },
-      }),
-      terser(),
-    ],
-  },
-  // DV Core: ESM
-  {
-    input: './src/index.ts',
-    output: {
-      dir: 'dist',
-      entryFileNames: 'dv.esm.js',
-      format: 'esm',
-      sourcemap: true,
-    },
-    plugins: [
-      typescript({
-        tsconfig: './tsconfig.build.json',
-        compilerOptions: {
-          outDir: 'dist',
-          declaration: true,
-          declarationDir: 'dist/types',
-          declarationMap: true,
-        },
-      }),
-    ],
-  },
+function testLibBuild(): RollupOptions {
   // Test Helpers: JS UMD (not dist)
-  {
+  return {
     input: './tests/lib/index.ts',
     output: {
       dir: 'tests/lib',
@@ -178,23 +182,27 @@ const builds: RollupOptions[] = [
         },
       }),
     ],
-  },
-];
+  };
+}
 
-switch (process.env.BUILD_MODE) {
+const builds: RollupOptions[] = [];
+
+const buildMode = process.env.NODE_ENV?.trim()?.toLowerCase() ?? '';
+
+switch (buildMode) {
+  case '':
   case 'ci': {
     console.log('DV: RUNNING CI BUILD');
-    builds.push(...generateLocalizationBuilds('fr'));
+    builds.push(...coreBuilds(), ...localizationBuilds('fr'), testLibBuild());
     break;
   }
   case 'full': {
     console.log('DV: RUNNING FULL BUILD');
-    builds.push(...generateLocalizationBuilds());
+    builds.push(...coreBuilds(), ...localizationBuilds(), testLibBuild());
     break;
   }
   default: {
-    console.log('DV: RUNNING FULL BUILD');
-    builds.push(...generateLocalizationBuilds());
+    console.error('DV: UNKNOWN BUILD MODE, failed to execute build');
     break;
   }
 }
