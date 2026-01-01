@@ -1,6 +1,7 @@
 import typescript from '@rollup/plugin-typescript';
 import { readdirSync } from 'fs';
 import terser from '@rollup/plugin-terser';
+import { RollupOptions } from 'rollup';
 
 // Function to get all localization files dynamically
 function getLocalizationFiles() {
@@ -19,7 +20,7 @@ function getLocalizationFiles() {
 // Generate build configurations for all localization files
 function generateLocalizationBuilds() {
   const localizationFiles = getLocalizationFiles();
-  const builds = [];
+  const builds: RollupOptions[] = [];
 
   localizationFiles.forEach((fileName) => {
     // UMD Build
@@ -89,7 +90,7 @@ function generateLocalizationBuilds() {
 
 const skipLocalizations = process.env.SKIP_LOCALIZATIONS === 'true';
 
-const jsBuilds = [
+const config: RollupOptions[] = [
   // DV Core: UMD
   {
     input: './src/index.ts',
@@ -162,4 +163,4 @@ const jsBuilds = [
   },
 ];
 
-export default [...jsBuilds];
+export default [...config];

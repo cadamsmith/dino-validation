@@ -47,7 +47,7 @@
   },
   "scripts": {
     "ci": "npm run build && npm run check-format && npm run test",
-    "build": "npm run type-check && rollup -c",
+    "build": "npm run type-check && rollup -c --configPlugin typescript",
     "build:core": "SKIP_LOCALIZATIONS=true npm run build",
     "test": "npm run type-check-tests && npx playwright test",
     "test:firefox": "npm run type-check-tests && npx playwright test --project=firefox",
