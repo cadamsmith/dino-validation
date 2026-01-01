@@ -32,6 +32,7 @@ function generateLocalizationBuilds() {
         format: 'umd',
         name: 'dv',
         sourcemap: true,
+        exports: 'named',
         globals: {
           '..': 'dv',
         },
@@ -51,6 +52,7 @@ function generateLocalizationBuilds() {
         format: 'umd',
         name: 'dv',
         sourcemap: true,
+        exports: 'named',
         globals: {
           '..': 'dv',
         },
@@ -100,6 +102,7 @@ const config: RollupOptions[] = [
       format: 'umd',
       name: 'dv',
       sourcemap: true,
+      exports: 'named',
     },
     plugins: [
       typescript({ compilerOptions: { outDir: 'dist', declaration: false } }),
@@ -114,6 +117,7 @@ const config: RollupOptions[] = [
       format: 'umd',
       name: 'dv',
       sourcemap: true,
+      exports: 'named',
     },
     plugins: [
       typescript({ compilerOptions: { outDir: 'dist', declaration: false } }),
@@ -151,6 +155,7 @@ const config: RollupOptions[] = [
       format: 'umd',
       name: 'dv_testLib',
       sourcemap: true,
+      exports: 'named',
     },
     plugins: [
       typescript({
