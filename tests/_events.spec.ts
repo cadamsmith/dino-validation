@@ -272,3 +272,144 @@ test('Validation triggered on radio and checkbox via click', async ({
 
   expect(result).toEqual([false, null]);
 });
+
+test('validation triggered on radio.checkbox when using keyboard', async ({
+  page,
+}) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    let triggeredEvents = 0;
+
+    dv.validate('#form', {
+      onfocusin: function () {
+        triggeredEvents++;
+      },
+      onfocusout: function () {
+        triggeredEvents++;
+      },
+      onkeyup: function () {
+        triggeredEvents++;
+      },
+    });
+
+    const events = [
+      new Event('focusin', { bubbles: true }),
+      new Event('focusout', { bubbles: true }),
+      new Event('keyup', { bubbles: true }),
+    ];
+
+    let input = document.querySelector('#form [type="radio"]') as HTMLElement;
+    for (const event of events) {
+      input.dispatchEvent(event);
+    }
+
+    input = document.querySelector(
+      "#form [type='checkbox']",
+    ) as HTMLInputElement;
+    for (const event of events) {
+      input.dispatchEvent(event);
+    }
+
+    return new Promise((resolve) => {
+      setTimeout(function () {
+        resolve(triggeredEvents);
+      });
+    });
+  });
+
+  expect(result).toBe(6);
+});
+
+test('validation triggered on button', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    let triggeredEvents = 0;
+
+    dv.validate('#form', {
+      onfocusin: function () {
+        triggeredEvents++;
+      },
+      onfocusout: function () {
+        triggeredEvents++;
+      },
+      onkeyup: function () {
+        triggeredEvents++;
+      },
+    });
+
+    const events = [
+      new Event('focusin', { bubbles: true }),
+      new Event('focusout', { bubbles: true }),
+      new Event('keyup', { bubbles: true }),
+    ];
+
+    const inputs = Array.from(
+      document.querySelectorAll('#formButton1, #formButton2'),
+    );
+    for (const event of events) {
+      inputs.forEach((i) => i.dispatchEvent(event));
+    }
+
+    return new Promise((resolve) => {
+      setTimeout(function () {
+        resolve(triggeredEvents);
+      });
+    });
+  });
+
+  expect(result).toBe(6);
+});
+
+test('validation triggered on radio/checkbox when using mouseclick', async ({
+  page,
+}) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    let triggeredEvents = 0;
+    dv.validate('#form', {
+      onclick: function () {
+        triggeredEvents++;
+      },
+    });
+
+    const event = new Event('click', { bubbles: true });
+
+    let input = document.querySelector("#form [type='radio']")!;
+    input.dispatchEvent(event);
+
+    input = document.querySelector("#form [type='checkbox']")!;
+    input.dispatchEvent(event);
+
+    return new Promise((resolve) => {
+      setTimeout(function () {
+        resolve(triggeredEvents);
+      });
+    });
+  });
+
+  expect(result).toBe(2);
+});
+
+test('calling blur on ignored element', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#ignoredElements') as HTMLFormElement;
+    const ss1 = document.getElementById('ss1');
+
+    dv.validate(form, {
+      ignore: '.ignore',
+      invalidHandler: function () {
+        ss1?.blur();
+      },
+    });
+
+    form.dispatchEvent(new Event('submit', { cancelable: true }));
+    return dv.valid(form);
+  });
+
+  expect(result).toBe(false);
+});
