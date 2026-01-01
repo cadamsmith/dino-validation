@@ -12,14 +12,14 @@ export interface ValidatorSettings {
   onfocusout: boolean | ((element: FormControlElement, event: Event) => void);
   onkeyup: boolean | ((element: FormControlElement, event: Event) => void);
   highlight:
-    | boolean
+    | false
     | ((
         element: FormControlElement,
         errorClasses: string[],
         validClasses: string[],
       ) => void);
   unhighlight:
-    | boolean
+    | false
     | ((
         element: FormControlElement,
         errorClasses: string[],
