@@ -400,3 +400,180 @@ test('creditcard', async ({ page }) => {
 
   results.forEach((r) => expect(r).toBe(true));
 });
+
+test('regex - basic pattern matching', async ({ page }) => {
+  await page.goto('');
+
+  const results = await runMethodTests(page, 'regex', '#form', [
+    {
+      blank: false,
+      value: 'ABC123',
+      param: '^[A-Z]{3}\\d{3}$',
+      expected: true,
+    },
+    {
+      blank: false,
+      value: '555-1234',
+      param: '^\\d{3}-\\d{4}$',
+      expected: true,
+    },
+    { blank: false, value: 'test', param: '^test$', expected: true },
+
+    {
+      blank: false,
+      value: 'ABC123XYZ',
+      param: '^[A-Z]{3}\\d{3}$',
+      expected: false,
+    },
+    {
+      blank: false,
+      value: 'abc123',
+      param: '^[A-Z]{3}\\d{3}$',
+      expected: false,
+    },
+    {
+      blank: false,
+      value: 'AB123',
+      param: '^[A-Z]{3}\\d{3}$',
+      expected: false,
+    },
+
+    { blank: true, value: '', param: '^[A-Z]+$', expected: true },
+  ]);
+
+  results.forEach((r) => expect(r).toBe(true));
+});
+
+test('regex - complex real-world patterns', async ({ page }) => {
+  await page.goto('');
+
+  const results = await runMethodTests(page, 'regex', '#form', [
+    {
+      blank: false,
+      value: '(555) 123-4567',
+      param: '^\\(\\d{3}\\) \\d{3}-\\d{4}$',
+      expected: true,
+    },
+    { blank: false, value: '12345', param: '^\\d{5}$', expected: true },
+    {
+      blank: false,
+      value: '12345-6789',
+      param: '^\\d{5}(-\\d{4})?$',
+      expected: true,
+    },
+    {
+      blank: false,
+      value: 'user@example.com',
+      param: '^[^@]+@[^@]+\\.[^@]+$',
+      expected: true,
+    },
+
+    {
+      blank: false,
+      value: '(555)123-4567',
+      param: '^\\(\\d{3}\\) \\d{3}-\\d{4}$',
+      expected: false,
+    },
+    { blank: false, value: '1234', param: '^\\d{5}$', expected: false },
+    {
+      blank: false,
+      value: 'userexample.com',
+      param: '^[^@]+@[^@]+\\.[^@]+$',
+      expected: false,
+    },
+  ]);
+
+  results.forEach((r) => expect(r).toBe(true));
+});
+
+test('regex - special characters and edge cases', async ({ page }) => {
+  await page.goto('');
+
+  const results = await runMethodTests(page, 'regex', '#form', [
+    {
+      blank: false,
+      value: 'test.com',
+      param: '^[a-z]+\\.[a-z]+$',
+      expected: true,
+    },
+    {
+      blank: false,
+      value: 'test[123]',
+      param: '^[a-z]+\\[\\d+\\]$',
+      expected: true,
+    },
+    { blank: false, value: 'a1b2c3', param: '^[a-z\\d]+$', expected: true },
+
+    {
+      blank: false,
+      value: 'test@com',
+      param: '^[a-z]+\\.[a-z]+$',
+      expected: false,
+    },
+    {
+      blank: false,
+      value: 'test(123)',
+      param: '^[a-z]+\\[\\d+\\]$',
+      expected: false,
+    },
+  ]);
+
+  results.forEach((r) => expect(r).toBe(true));
+});
+
+test('nonalphamin - password strength validation', async ({ page }) => {
+  await page.goto('');
+
+  const results = await runMethodTests(page, 'nonalphamin', '#form', [
+    { blank: false, value: 'Pass@123', param: 1, expected: true },
+    { blank: false, value: 'P@ss#word!', param: 3, expected: true },
+    { blank: false, value: 'test!', param: 1, expected: true },
+    { blank: false, value: '!!!###', param: 5, expected: true },
+    { blank: false, value: '!!!###$$$', param: 6, expected: true },
+
+    { blank: false, value: 'Password', param: 1, expected: false },
+    { blank: false, value: 'Pass@123', param: 3, expected: false },
+    { blank: false, value: 'NoSpecialChars', param: 1, expected: false },
+    { blank: false, value: 'test!', param: 2, expected: false },
+
+    { blank: true, value: '', param: 1, expected: true },
+  ]);
+
+  results.forEach((r) => expect(r).toBe(true));
+});
+
+test('nonalphamin - various special character types', async ({ page }) => {
+  await page.goto('');
+
+  const results = await runMethodTests(page, 'nonalphamin', '#form', [
+    { blank: false, value: 'test@', param: 1, expected: true },
+    { blank: false, value: 'test@#', param: 2, expected: true },
+    { blank: false, value: 'test$%^', param: 3, expected: true },
+    { blank: false, value: 'test&*()', param: 4, expected: true },
+    { blank: false, value: 'test test', param: 1, expected: true },
+    { blank: false, value: 'a b c d', param: 3, expected: true },
+
+    { blank: false, value: 'test', param: 1, expected: false },
+    { blank: false, value: 'test@', param: 2, expected: false },
+  ]);
+
+  results.forEach((r) => expect(r).toBe(true));
+});
+
+test('nonalphamin - edge cases', async ({ page }) => {
+  await page.goto('');
+
+  const results = await runMethodTests(page, 'nonalphamin', '#form', [
+    { blank: false, value: 'NoSpecialChars', param: 0, expected: true },
+    { blank: false, value: 'test-test.test', param: 2, expected: true },
+    { blank: false, value: 'hello.world', param: 1, expected: true },
+    { blank: false, value: 'test,test;test', param: 2, expected: true },
+    { blank: false, value: 'under_score', param: 0, expected: true },
+
+    { blank: false, value: 'hello.world', param: 2, expected: false },
+    { blank: false, value: 'test-test', param: 2, expected: false },
+    { blank: false, value: 'under_score', param: 1, expected: false },
+  ]);
+
+  results.forEach((r) => expect(r).toBe(true));
+});
