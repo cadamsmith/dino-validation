@@ -4,12 +4,14 @@ import terser from '@rollup/plugin-terser';
 import { RollupOptions } from 'rollup';
 
 // Function to get all localization files dynamically
-function getLocalizationFiles() {
+function getLocalizationFiles(locale: string) {
   const localizationDir = './src/localization';
   try {
     const files = readdirSync(localizationDir);
     return files
-      .filter((file) => file.endsWith('.ts') && file.startsWith('messages_'))
+      .filter(
+        (file) => file.endsWith(`${locale}.ts`) && file.startsWith('messages_'),
+      )
       .map((file) => file.replace('.ts', ''));
   } catch (error) {
     console.warn('No localization files found:', error);
@@ -18,8 +20,8 @@ function getLocalizationFiles() {
 }
 
 // Generate build configurations for all localization files
-function generateLocalizationBuilds() {
-  const localizationFiles = getLocalizationFiles();
+function generateLocalizationBuilds(locale = '') {
+  const localizationFiles = getLocalizationFiles(locale);
   const builds: RollupOptions[] = [];
 
   localizationFiles.forEach((fileName) => {
@@ -97,9 +99,8 @@ function generateLocalizationBuilds() {
   return builds;
 }
 
-const skipLocalizations = process.env.SKIP_LOCALIZATIONS === 'true';
-
-const config: RollupOptions[] = [
+// core builds always included
+const builds: RollupOptions[] = [
   // DV Core: UMD
   {
     input: './src/index.ts',
@@ -158,8 +159,6 @@ const config: RollupOptions[] = [
       }),
     ],
   },
-  // Dynamically generated localization builds
-  ...(skipLocalizations ? [] : generateLocalizationBuilds()),
   // Test Helpers: JS UMD (not dist)
   {
     input: './tests/lib/index.ts',
@@ -182,4 +181,22 @@ const config: RollupOptions[] = [
   },
 ];
 
-export default [...config];
+switch (process.env.BUILD_MODE) {
+  case 'ci': {
+    console.log('DV: RUNNING CI BUILD');
+    builds.push(...generateLocalizationBuilds('fr'));
+    break;
+  }
+  case 'full': {
+    console.log('DV: RUNNING FULL BUILD');
+    builds.push(...generateLocalizationBuilds());
+    break;
+  }
+  default: {
+    console.log('DV: RUNNING FULL BUILD');
+    builds.push(...generateLocalizationBuilds());
+    break;
+  }
+}
+
+export default [...builds];

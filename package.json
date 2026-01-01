@@ -46,9 +46,10 @@
     "typescript": "^5.9.3"
   },
   "scripts": {
-    "ci": "npm run build && npm run check-format && npm run test",
+    "ci": "npm run build:ci && npm run check-format && npm run test",
     "build": "npm run type-check && rollup -c --configPlugin typescript",
-    "build:core": "SKIP_LOCALIZATIONS=true npm run build",
+    "build:ci": "BUILD_MODE=ci npm run build",
+    "build:full": "BUILD_MODE=full npm run build",
     "test": "npm run type-check-tests && npx playwright test",
     "test:firefox": "npm run type-check-tests && npx playwright test --project=firefox",
     "test:chrome": "npm run type-check-tests && npx playwright test --project=chrome",
