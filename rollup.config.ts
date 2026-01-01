@@ -39,7 +39,10 @@ function generateLocalizationBuilds() {
       },
       external: ['..'],
       plugins: [
-        typescript({ compilerOptions: { outDir: 'dist', declaration: false } }),
+        typescript({
+          tsconfig: './tsconfig.build.json',
+          compilerOptions: { outDir: 'dist', declaration: false },
+        }),
       ],
     });
 
@@ -59,7 +62,10 @@ function generateLocalizationBuilds() {
       },
       external: ['..'],
       plugins: [
-        typescript({ compilerOptions: { outDir: 'dist', declaration: false } }),
+        typescript({
+          tsconfig: './tsconfig.build.json',
+          compilerOptions: { outDir: 'dist', declaration: false },
+        }),
         terser(),
       ],
     });
@@ -76,6 +82,7 @@ function generateLocalizationBuilds() {
       external: ['..'],
       plugins: [
         typescript({
+          tsconfig: './tsconfig.build.json',
           compilerOptions: {
             outDir: 'dist',
             declaration: true,
@@ -105,7 +112,10 @@ const config: RollupOptions[] = [
       exports: 'named',
     },
     plugins: [
-      typescript({ compilerOptions: { outDir: 'dist', declaration: false } }),
+      typescript({
+        tsconfig: './tsconfig.build.json',
+        compilerOptions: { outDir: 'dist', declaration: false },
+      }),
     ],
   },
   // DV Core: UMD Minified
@@ -120,7 +130,10 @@ const config: RollupOptions[] = [
       exports: 'named',
     },
     plugins: [
-      typescript({ compilerOptions: { outDir: 'dist', declaration: false } }),
+      typescript({
+        tsconfig: './tsconfig.build.json',
+        compilerOptions: { outDir: 'dist', declaration: false },
+      }),
       terser(),
     ],
   },
@@ -135,6 +148,7 @@ const config: RollupOptions[] = [
     },
     plugins: [
       typescript({
+        tsconfig: './tsconfig.build.json',
         compilerOptions: {
           outDir: 'dist',
           declaration: true,
