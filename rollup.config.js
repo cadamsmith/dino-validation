@@ -87,6 +87,8 @@ function generateLocalizationBuilds() {
   return builds;
 }
 
+const skipLocalizations = process.env.SKIP_LOCALIZATIONS === 'true';
+
 const jsBuilds = [
   // DV Core: UMD
   {
@@ -138,7 +140,7 @@ const jsBuilds = [
     ],
   },
   // Dynamically generated localization builds
-  ...generateLocalizationBuilds(),
+  ...(skipLocalizations ? [] : generateLocalizationBuilds()),
   // Test Helpers: JS UMD (not dist)
   {
     input: './tests/lib/index.ts',
