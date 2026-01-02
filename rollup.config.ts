@@ -1,5 +1,6 @@
 import typescript from '@rollup/plugin-typescript';
 import { readdirSync, readFileSync } from 'fs';
+import { resolve } from 'path';
 import terser from '@rollup/plugin-terser';
 import { RollupOptions } from 'rollup';
 
@@ -120,9 +121,10 @@ function localizationBuilds(locale = ''): RollupOptions[] {
         exports: 'named',
         globals: {
           '..': 'dv',
+          [resolve('./src')]: 'dv',
         },
       },
-      external: ['..'],
+      external: ['..', resolve('./src')],
       plugins: [
         typescript({
           tsconfig: './tsconfig.build.json',
@@ -144,9 +146,10 @@ function localizationBuilds(locale = ''): RollupOptions[] {
         exports: 'named',
         globals: {
           '..': 'dv',
+          [resolve('./src')]: 'dv',
         },
       },
-      external: ['..'],
+      external: ['..', resolve('./src')],
       plugins: [
         typescript({
           tsconfig: './tsconfig.build.json',
