@@ -1,7 +1,23 @@
 import typescript from '@rollup/plugin-typescript';
-import { readdirSync } from 'fs';
+import { readdirSync, readFileSync } from 'fs';
 import terser from '@rollup/plugin-terser';
 import { RollupOptions } from 'rollup';
+
+// Read package.json for version
+const pkg = JSON.parse(readFileSync('./package.json', 'utf-8'));
+
+// Copyright banner for dist files (preserved in minified builds with /*! syntax)
+const banner = `/*!
+ * dino-validation v${pkg.version}
+ * ${pkg.homepage}
+ *
+ * Copyright (c) Jörn Zaefferer (jQuery Validation)
+ * Copyright (c) ${new Date().getFullYear()} Adam Smith (dino-validation - vanilla JS port)
+ *
+ * Released under the MIT License
+ * ${pkg.homepage}/blob/main/LICENSE
+ */
+`;
 
 // Function to get all localization files dynamically
 function getLocalizationFiles(locale: string) {
@@ -29,6 +45,7 @@ function coreBuilds(): RollupOptions[] {
         entryFileNames: 'dv.umd.js',
         format: 'umd',
         name: 'dv',
+        banner,
         sourcemap: true,
         exports: 'named',
       },
@@ -47,6 +64,7 @@ function coreBuilds(): RollupOptions[] {
         entryFileNames: 'dv.umd.min.js',
         format: 'umd',
         name: 'dv',
+        banner,
         sourcemap: true,
         exports: 'named',
       },
@@ -65,6 +83,7 @@ function coreBuilds(): RollupOptions[] {
         dir: 'dist',
         entryFileNames: 'dv.esm.js',
         format: 'esm',
+        banner,
         sourcemap: true,
       },
       plugins: [
@@ -96,6 +115,7 @@ function localizationBuilds(locale = ''): RollupOptions[] {
         entryFileNames: `localization/${fileName}.umd.js`,
         format: 'umd',
         name: 'dv',
+        banner,
         sourcemap: true,
         exports: 'named',
         globals: {
@@ -119,6 +139,7 @@ function localizationBuilds(locale = ''): RollupOptions[] {
         entryFileNames: `localization/${fileName}.umd.min.js`,
         format: 'umd',
         name: 'dv',
+        banner,
         sourcemap: true,
         exports: 'named',
         globals: {
@@ -142,6 +163,7 @@ function localizationBuilds(locale = ''): RollupOptions[] {
         dir: 'dist',
         entryFileNames: `localization/${fileName}.esm.js`,
         format: 'esm',
+        banner,
         sourcemap: true,
       },
       external: ['..'],
