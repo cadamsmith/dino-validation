@@ -215,9 +215,10 @@ const builds: RollupOptions[] = [];
 const buildMode = process.env.NODE_ENV?.trim()?.toLowerCase() ?? '';
 
 switch (buildMode) {
-  case '':
+  case '': // npm run build - same as npm run build:ci
   case 'ci': {
     console.log('DV: RUNNING CI BUILD');
+    // we exclude all localization builds not necessary to run the tests
     builds.push(...coreBuilds(), ...localizationBuilds('fr'), testLibBuild());
     break;
   }
