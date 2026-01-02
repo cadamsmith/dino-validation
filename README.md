@@ -58,6 +58,7 @@ This library is a partial port of the [jQuery Validation Plugin](https://github.
   - [Using Localization Builds](#using-localization-builds)
   - [Custom Localization](#custom-localization)
 - [Coming Soon](#coming-soon)
+- [Contributing](#contributing)
 - [Local Development](#local-development)
 - [License](#license)
 
@@ -1853,32 +1854,22 @@ dv.localize({
 });
 ```
 
-You can also provide partial messages - only the ones you specify will be replaced:
-
-```javascript
-// Just change a few messages
-dv.localize({
-  required: 'This field is mandatory',
-  email: 'Invalid email format',
-});
-```
-
 ## Coming Soon
 
 The following features are planned for future releases:
 
 - **Additional validation methods** - Port community-contributed validation methods from jQuery Validation's `additional-methods.js` dist file
+- **Normalizer support** - Ability to transform/normalize field values before validation (e.g., trim whitespace, convert to lowercase)
 - **Documentation site** - Dedicated documentation website with interactive examples and improved navigation
 - **Unobtrusive validation support** - Support for `data-val-*` attributes to enable seamless integration with server-side frameworks (ASP.NET MVC, etc.) where validation rules defined in server-side model annotations are automatically applied client-side
 
-## Local Development
+## Contributing
 
-```bash
-npm install          # Install dependencies
-npm run build        # Build dist files with rollup
-npm test             # Run Playwright test suite
-npm run format       # Format code with Prettier
-```
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:
+
+- Setting up your development environment
+- Making changes and running tests
+- Conventions & Pull request process
 
 ## License
 
