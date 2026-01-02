@@ -42,7 +42,7 @@ function coreBuilds(): RollupOptions[] {
       input: './src/index.ts',
       output: {
         dir: 'dist',
-        entryFileNames: 'dv.umd.js',
+        entryFileNames: 'dv.js',
         format: 'umd',
         name: 'dv',
         banner,
@@ -61,7 +61,7 @@ function coreBuilds(): RollupOptions[] {
       input: './src/index.ts',
       output: {
         dir: 'dist',
-        entryFileNames: 'dv.umd.min.js',
+        entryFileNames: 'dv.min.js',
         format: 'umd',
         name: 'dv',
         banner,
@@ -112,7 +112,7 @@ function localizationBuilds(locale = ''): RollupOptions[] {
       input: `./src/localization/${fileName}.ts`,
       output: {
         dir: 'dist',
-        entryFileNames: `localization/${fileName}.umd.js`,
+        entryFileNames: `localization/${fileName}.js`,
         format: 'umd',
         name: 'dv',
         banner,
@@ -136,7 +136,7 @@ function localizationBuilds(locale = ''): RollupOptions[] {
       input: `./src/localization/${fileName}.ts`,
       output: {
         dir: 'dist',
-        entryFileNames: `localization/${fileName}.umd.min.js`,
+        entryFileNames: `localization/${fileName}.min.js`,
         format: 'umd',
         name: 'dv',
         banner,
@@ -190,7 +190,7 @@ function testLibBuild(): RollupOptions {
     input: './tests/lib/index.ts',
     output: {
       dir: 'tests/lib',
-      entryFileNames: 'dv-test-lib.umd.js',
+      entryFileNames: 'dv-test-lib.js',
       format: 'umd',
       name: 'dv_testLib',
       sourcemap: true,

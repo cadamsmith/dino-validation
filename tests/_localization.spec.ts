@@ -5,7 +5,7 @@ test('French localization - basic message replacement', async ({ page }) => {
 
   // Load French localization after main script
   await page.addScriptTag({
-    path: './dist/localization/messages_fr.umd.js',
+    path: './dist/localization/messages_fr.js',
   });
 
   const result = await page.evaluate(() => {

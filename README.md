@@ -74,10 +74,10 @@ npm install dino-validation
 
 Choose the right build for your environment:
 
-| Format  | Use Case                                 | Import                                                                                           |
-| ------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| **ESM** | Modern build tools (Vite, webpack, etc.) | `import dv from 'dino-validation'`                                                               |
-| **UMD** | Browsers, legacy builds, CDN             | `<script src="dist/dv.umd.js"></script>`<br/>OR<br/>`<script src="dist/dv.umd.min.js"></script>` |
+| Format  | Use Case                                 | Import                                                                                   |
+| ------- | ---------------------------------------- | ---------------------------------------------------------------------------------------- |
+| **ESM** | Modern build tools (Vite, webpack, etc.) | `import dv from 'dino-validation'`                                                       |
+| **UMD** | Browsers, legacy builds, CDN             | `<script src="dist/dv.js"></script>`<br/>OR<br/>`<script src="dist/dv.min.js"></script>` |
 
 **ESM Example:**
 
@@ -94,7 +94,7 @@ const validator = dv.validate('#myForm', {
 **UMD Example:**
 
 ```html
-<script src="node_modules/dino-validation/dist/dv.umd.min.js"></script>
+<script src="node_modules/dino-validation/dist/dv.min.js"></script>
 <script>
   dv.validate('#myForm', {
     rules: {
@@ -1810,8 +1810,8 @@ dino-validation includes pre-built localization files.
 **French (UMD):**
 
 ```html
-<script src="dist/dv.umd.min.js"></script>
-<script src="dist/localization/messages_fr.umd.min.js"></script>
+<script src="dist/dv.min.js"></script>
+<script src="dist/localization/messages_fr.min.js"></script>
 
 <script>
   // French messages are now loaded
@@ -2011,7 +2011,7 @@ A complete user registration form with validation, custom styling, and error han
       </fieldset>
     </form>
 
-    <script src="dist/dv.umd.js"></script>
+    <script src="dist/dv.js"></script>
     <script>
       dv.validate('#registrationForm', {
         rules: {
@@ -2180,7 +2180,7 @@ A product review form with async validation and loading states.
       <div id="submitStatus"></div>
     </form>
 
-    <script src="dist/dv.umd.js"></script>
+    <script src="dist/dv.js"></script>
     <script>
       // Custom async validator to prevent duplicate reviews (simulated)
       dv.addMethod(

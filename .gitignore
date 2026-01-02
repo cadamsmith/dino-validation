@@ -1,7 +1,7 @@
 node_modules
 .idea
+.claude
 dist
-scripts
 
 # Playwright
 /test-results/
@@ -9,5 +9,5 @@ scripts
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
-/tests/lib/dv-test-lib.umd.js
-/tests/lib/dv-test-lib.umd.js.map
+/tests/lib/dv-test-lib.js
+/tests/lib/dv-test-lib.js.map
