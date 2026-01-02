@@ -1,0 +1,25 @@
+version: 2
+updates:
+  # npm dependencies
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '06:00'
+      timezone: 'America/New_York'
+    # Group all npm updates into a single PR
+    groups:
+      npm-dependencies:
+        patterns:
+          - '*'
+    # Limit open PRs to avoid spam
+    open-pull-requests-limit: 5
+    # Add labels to PRs
+    labels:
+      - 'dependencies'
+      - 'npm'
+    # Commit message prefix
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
