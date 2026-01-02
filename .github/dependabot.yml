@@ -18,7 +18,6 @@ updates:
     # Add labels to PRs
     labels:
       - 'dependencies'
-      - 'npm'
     # Commit message prefix
     commit-message:
       prefix: 'chore'
