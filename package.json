@@ -52,6 +52,7 @@
     "check-format": "prettier --check .",
     "type-check": "tsc --noEmit",
     "type-check-tests": "tsc --noEmit -p tests/tsconfig.json",
+    "size": "npm pack --dry-run",
     "prepare": "husky"
   }
 }
