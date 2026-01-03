@@ -212,22 +212,30 @@ function testLibBuild(): RollupOptions {
 
 const builds: RollupOptions[] = [];
 
-const buildMode = process.env.NODE_ENV?.trim()?.toLowerCase() ?? '';
+const buildMode = process.env.BUILD_MODE?.trim()?.toLowerCase() ?? '';
 
 switch (buildMode) {
   case '': // npm run build - same as npm run build:ci
   case 'ci': {
+    // CI BUILD: we build the minimum necessary to run the tests
     console.log('DV: RUNNING CI BUILD');
-    // we exclude all localization builds not necessary to run the tests
     builds.push(...coreBuilds(), ...localizationBuilds('fr'), testLibBuild());
     break;
   }
+  case 'release': {
+    // RELEASE BUILD: build everything except the test lib
+    console.log('DV: RUNNING RELEASE BUILD');
+    builds.push(...coreBuilds(), ...localizationBuilds());
+    break;
+  }
   case 'full': {
+    // FULL BUILD: all builds included
     console.log('DV: RUNNING FULL BUILD');
     builds.push(...coreBuilds(), ...localizationBuilds(), testLibBuild());
     break;
   }
   default: {
+    // UNKNOWN BUILD MODE
     console.error('DV: UNKNOWN BUILD MODE, failed to execute build');
     break;
   }

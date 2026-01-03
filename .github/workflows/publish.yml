@@ -28,7 +28,7 @@ jobs:
         run: npm run ci
 
       - name: Build package
-        run: npm run build:full
+        run: npm run build:release
 
       - name: Publish to npm
         run: npm publish --provenance --access public
