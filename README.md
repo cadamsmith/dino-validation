@@ -62,7 +62,6 @@ This library is a partial port of the [jQuery Validation Plugin](https://github.
   - [Custom Localization](#custom-localization)
 - [Coming Soon](#coming-soon)
 - [Contributing](#contributing)
-- [Local Development](#local-development)
 - [License](#license)
 
 ## Installation
