@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { FormControlElement } from '../src/types';
 
 test('elements() order', async ({ page }) => {
   await page.goto('');
@@ -41,11 +42,180 @@ test('elements() order', async ({ page }) => {
 
 // TODO: errorcontainer, show/hide only on submit
 
-// TODO: test label used as error container
+test('test label used as error container', async ({ page }) => {
+  await page.goto('');
 
-// TODO: test error placed adjacent to descriptive label
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#testForm16') as HTMLFormElement;
+    const field = document.querySelector(
+      '#testForm16text',
+    ) as FormControlElement;
 
-// TODO: test descriptive label used alongside error label
+    const v = dv.validate(form, {
+      errorPlacement: (error, element) => {
+        const id = element.getAttribute('id');
+        document.querySelector(`label[for="${id}"]`)!.appendChild(error);
+      },
+      errorElement: 'span',
+    })!;
+
+    function hasError(element: HTMLElement, text: string) {
+      const errors = v.errorsFor(element as any);
+      return errors.length === 1 && errors[0]!.innerText === text;
+    }
+
+    function noErrorsFor(element: HTMLElement) {
+      const errors = v.errorsFor(element as any);
+      return (
+        errors.length === 0 ||
+        (errors.every((e) => !dv_testLib.isVisible(e)) &&
+          errors[0]!.innerText === '')
+      );
+    }
+
+    const ret = [
+      dv.valid(field),
+      field.nextElementSibling?.matches('label'),
+      field.nextElementSibling?.childNodes[0]?.textContent,
+      hasError(field, 'missing'),
+      !!field.getAttribute('aria-describedby'),
+    ];
+
+    field.value = 'foo';
+    ret.push(
+      dv.valid(field),
+      field.nextElementSibling?.matches('label'),
+      field.nextElementSibling?.childNodes[0]?.textContent,
+      !!field.getAttribute('aria-describedby'),
+      noErrorsFor(field),
+    );
+
+    return ret;
+  });
+
+  expect(result).toEqual([
+    false,
+    true,
+    'Field Label',
+    true,
+    false,
+    true,
+    true,
+    'Field Label',
+    false,
+    true,
+  ]);
+});
+
+test('test error placed adjacent to descriptive label', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#testForm16') as HTMLFormElement;
+    const field = document.querySelector(
+      '#testForm16text',
+    ) as FormControlElement;
+
+    const v = dv.validate(form, { errorElement: 'span' })!;
+
+    function hasError(element: HTMLElement, text: string) {
+      const errors = v.errorsFor(element as any);
+      return errors.length === 1 && errors[0]!.innerText === text;
+    }
+
+    function noErrorsFor(element: HTMLElement) {
+      const errors = v.errorsFor(element as any);
+      return (
+        errors.length === 0 ||
+        (errors.every((e) => !dv_testLib.isVisible(e)) &&
+          errors[0]!.innerText === '')
+      );
+    }
+
+    const ret = [
+      dv.valid(field),
+      !!form.querySelector('label'),
+      form.querySelector('label')?.textContent,
+      hasError(field, 'missing'),
+    ];
+
+    field.value = 'foo';
+    ret.push(
+      dv.valid(field),
+      !!form.querySelector('label'),
+      form.querySelector('label')?.textContent,
+      noErrorsFor(field),
+    );
+
+    return ret;
+  });
+
+  expect(result).toEqual([
+    false,
+    true,
+    'Field Label',
+    true,
+    true,
+    true,
+    'Field Label',
+    true,
+  ]);
+});
+
+test('test descriptive label used alongside error label', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector('#testForm16') as HTMLFormElement;
+    const field = document.querySelector(
+      '#testForm16text',
+    ) as FormControlElement;
+
+    const v = dv.validate(form, { errorElement: 'label' })!;
+
+    function hasError(element: HTMLElement, text: string) {
+      const errors = v.errorsFor(element as any);
+      return errors.length === 1 && errors[0]!.innerText === text;
+    }
+
+    function noErrorsFor(element: HTMLElement) {
+      const errors = v.errorsFor(element as any);
+      return (
+        errors.length === 0 ||
+        (errors.every((e) => !dv_testLib.isVisible(e)) &&
+          errors[0]!.innerText === '')
+      );
+    }
+
+    const ret = [
+      dv.valid(field),
+      !!form.querySelector('label.title'),
+      form.querySelector('label.title')?.textContent,
+      hasError(field, 'missing'),
+    ];
+
+    field.value = 'foo';
+    ret.push(
+      dv.valid(field),
+      !!form.querySelector('label.title'),
+      form.querySelector('label.title')?.textContent,
+      noErrorsFor(field),
+    );
+
+    return ret;
+  });
+
+  expect(result).toEqual([
+    false,
+    true,
+    'Field Label',
+    true,
+    true,
+    true,
+    'Field Label',
+    true,
+  ]);
+});
 
 test('test custom errorElement', async ({ page }) => {
   await page.goto('');

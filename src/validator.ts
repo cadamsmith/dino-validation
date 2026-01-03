@@ -507,14 +507,18 @@ export class Validator {
         element.after(insert);
       }
 
-      const labelSelector = `label[for='${escapeCssMeta(elementID)}']`;
-      const notLabelChild = errors
-        .map((e) => e.parentElement)
-        .every((e) => e !== null && !e.matches(labelSelector));
-
+      // Link error back to the element
       if (newError.matches('label')) {
+        // If the error is a label, then associate using 'for'
         newError.setAttribute('for', elementID);
-      } else if (notLabelChild) {
+      }
+      // If the element is not a child of an associated label, then it's necessary
+      // to explicitly apply aria-describedby
+      else if (
+        !newError.parentElement?.matches(
+          `label[for='${escapeCssMeta(elementID)}']`,
+        )
+      ) {
         this.addErrorAriaDescribedBy(element, newError.getAttribute('id')!);
       }
 
