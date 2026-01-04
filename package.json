@@ -1,6 +1,6 @@
 {
   "name": "dino-validation",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Easy clientside form validation in vanilla JS",
   "homepage": "https://github.com/cadamsmith/dino-validation",
   "bugs": {
