@@ -7,8 +7,6 @@
 
 A vanilla JavaScript form validation library - no jQuery required.
 
-> ⚠️ **Work in Progress** - This library is currently under active development and not yet ready for production use.
-
 This library is a partial port of the [jQuery Validation Plugin](https://github.com/jquery-validation/jquery-validation) by Jörn Zaefferer.
 
 ## Features
