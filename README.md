@@ -1,5 +1,8 @@
 # 🦖 dino-validation
 
+[![npm version](https://img.shields.io/npm/v/dino-validation.svg)](https://www.npmjs.com/package/dino-validation)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/dino-validation)](https://bundlephobia.com/package/dino-validation)
+
 [![CI](https://github.com/cadamsmith/dino-validation/actions/workflows/ci.yml/badge.svg)](https://github.com/cadamsmith/dino-validation/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
