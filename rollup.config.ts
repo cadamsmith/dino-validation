@@ -26,9 +26,7 @@ function getLocalizationFiles(locale: string) {
   try {
     const files = readdirSync(localizationDir);
     return files
-      .filter(
-        (file) => file.endsWith(`${locale}.ts`) && file.startsWith('messages_'),
-      )
+      .filter((file) => file.endsWith(`${locale}.ts`))
       .map((file) => file.replace('.ts', ''));
   } catch (error) {
     console.warn('No localization files found:', error);

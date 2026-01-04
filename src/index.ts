@@ -173,28 +173,16 @@ export function addMethod(
   }
 }
 
-/**
- * Replaces default error messages with localized versions.
- * Use this for multi-language support or to customize error messages globally.
- *
- * @param data - Object mapping validator names to localized error messages
- * @example
- * // French localization
- * dv.localize({
- *   required: 'Ce champ est obligatoire.',
- *   email: 'Veuillez entrer une adresse email valide.',
- *   minlength: 'Veuillez entrer au moins {0} caractères.'
- * });
- *
- * @example
- * // Partial localization - only override specific messages
- * dv.localize({
- *   required: 'This field is mandatory',
- *   email: 'Invalid email format'
- * });
- */
-export function localize(data: Record<string, string>) {
-  messages.replace(data);
+export function localize(
+  data: Record<string, string> | Record<string, ValidationMethod>,
+) {
+  const firstValue = Object.values(data)[0];
+
+  if (typeof firstValue === 'string') {
+    messages.replace(data as Record<string, string>);
+  } else {
+    methods.replace(data as Record<string, ValidationMethod>);
+  }
 }
 
 /**
