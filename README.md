@@ -20,6 +20,10 @@ This library is a partial port of the [jQuery Validation Plugin](https://github.
 - **Modern ES6+** - ESM and UMD builds for all environments
 - **Localization support** - Customize error messages/methods for any locale
 
+## Demo
+
+[**Try it on CodePen**](https://codepen.io/cadamsmith/pen/NPrxMgQ) - Interactive side-by-side comparison with jQuery Validation
+
 ## Table of Contents
 
 - [Installation](#installation)
