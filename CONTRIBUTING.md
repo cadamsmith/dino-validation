@@ -17,6 +17,8 @@ Thank you for your interest in contributing to dino-validation! This document pr
 
 By participating in this project, you agree to maintain a respectful and inclusive environment for all contributors.
 
+See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for more details.
+
 ## Getting Started
 
 1. **Fork the repository** on GitHub
