@@ -173,6 +173,21 @@ export function addMethod(
   }
 }
 
+/**
+ * Replaces default error messages or validation methods with localized versions.
+ *
+ * @param data - Object containing either localized error messages (string values) or
+ *               validation methods (function values). If values are strings, replaces
+ *               error messages. If values are functions, replaces validation methods.
+ *
+ * @example
+ * // Localize error messages to French
+ * dv.localize({
+ *   required: 'Ce champ est obligatoire.',
+ *   email: 'Veuillez entrer une adresse email valide.',
+ *   minlength: 'Veuillez entrer au moins {0} caractères.'
+ * });
+ */
 export function localize(
   data: Record<string, string> | Record<string, ValidationMethod>,
 ) {

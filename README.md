@@ -14,11 +14,11 @@ This library is a partial port of the [jQuery Validation Plugin](https://github.
 
 ## Features
 
-- **17 built-in validation methods** - email, URL, number, date, minlength, and more
+- **17 built-in validation methods** - required, email, URL, number, date, minlength, and more
 - **Declarative or programmatic API** - Define rules in HTML attributes or JavaScript
 - **Zero dependencies** - Pure vanilla JavaScript, no jQuery required
 - **Modern ES6+** - ESM and UMD builds for all environments
-- **Localization support** - Customize error messages for any language
+- **Localization support** - Customize error messages/methods for any locale
 
 ## Table of Contents
 
@@ -75,10 +75,10 @@ npm install dino-validation
 
 Choose the right build for your environment:
 
-| Format  | Use Case                                 | Import                                                                                   |
-| ------- | ---------------------------------------- | ---------------------------------------------------------------------------------------- |
-| **ESM** | Modern build tools (Vite, webpack, etc.) | `import dv from 'dino-validation'`                                                       |
-| **UMD** | Browsers, legacy builds, CDN             | `<script src="dist/dv.js"></script>`<br/>OR<br/>`<script src="dist/dv.min.js"></script>` |
+| Format  | Use Case                                 | Import                                                                                        |
+| ------- | ---------------------------------------- | --------------------------------------------------------------------------------------------- |
+| **ESM** | Modern build tools (Vite, webpack, etc.) | <br/>`import dv from 'dino-validation'`                                                       |
+| **UMD** | Browsers, legacy builds, CDN             | `<script src="https://cdn.jsdelivr.net/npm/dino-validation@VERSION/dist/dv.min.js"></script>` |
 
 **ESM Example:**
 
@@ -95,7 +95,7 @@ const validator = dv.validate('#myForm', {
 **UMD Example:**
 
 ```html
-<script src="node_modules/dino-validation/dist/dv.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dino-validation@VERSION/dist/dv.min.js"></script>
 <script>
   dv.validate('#myForm', {
     rules: {
@@ -258,11 +258,6 @@ dv.addMethod(
 );
 ```
 
-**3. Message Placeholder Syntax**
-
-- jQuery Validation uses `{0}` in messages
-- dino-validation also uses `{0}`, `{1}`, etc. (same syntax!)
-
 ### Custom Validator Comparison
 
 Both libraries support custom validators with similar syntax:
@@ -304,27 +299,10 @@ dino-validation is a partial port of jQuery Validation. The following features a
 - `step` - Step increment validation (e.g., multiples of 5)
 - `remote` - Server-side AJAX validation
 
-**Workaround for `remote`:** Use `dv.addMethod()` to create custom async validators:
-
-```javascript
-dv.addMethod(
-  'usernameAvailable',
-  async function ({ blank, value }) {
-    if (blank) return true;
-    const response = await fetch(`/api/check/${value}`);
-    const data = await response.json();
-    return data.available;
-  },
-  'Already taken',
-);
-```
-
 **Missing Options:**
 
 - `normalizer` - Transform field values before validation
 - `groups` - Group multiple fields into a single error message
-
-If you need these features, you'll need to implement custom solutions or use jQuery Validation directly.
 
 ## Core API
 
@@ -514,42 +492,19 @@ dv.validate('#myForm', {
 });
 ```
 
-**Async Validator:**
+### dv.localize(data)
 
-```javascript
-dv.addMethod(
-  'usernameAvailable',
-  async function ({ blank, value }) {
-    if (blank) return true;
-
-    const response = await fetch(`/api/check-username/${value}`);
-    const data = await response.json();
-    return data.available;
-  },
-  'This username is already taken',
-);
-
-dv.validate('#myForm', {
-  rules: {
-    username: {
-      required: true,
-      usernameAvailable: true,
-    },
-  },
-});
-```
-
-### dv.localize(messages)
-
-Replaces all default error messages with localized versions. Use this for multi-language support.
+Replaces default error messages or validation methods with localized versions. Use this for multi-language support.
 
 **Parameters:**
 
-- `messages` (object): Object mapping validator names to localized error messages
+- `data` (object): Object containing either localized error messages (string values) or validation methods (function values)
+  - If values are strings, replaces error messages
+  - If values are functions, replaces validation methods
 
 **Returns:** None
 
-**Example:**
+**Example 1: Localize error messages**
 
 ```javascript
 // French localization
@@ -574,12 +529,10 @@ dv.localize({
 });
 ```
 
-**Partial localization:**
-
-You don't need to provide all messages - only override the ones you need:
+**Example 2: Partial localization**
 
 ```javascript
-// Just change a few messages
+// Only override specific messages
 dv.localize({
   required: 'This field is mandatory',
   email: 'Invalid email format',
