@@ -32,7 +32,7 @@ const EVENT_TARGETS = {
     'button',
     "input[type='button']",
   ],
-  CLICK_TARGETS: ['select', 'option', "[type='radio']", "[type='checkbox']"],
+  CLICK_TARGETS: ['select', "[type='radio']", "[type='checkbox']"],
 } as const;
 
 /**
@@ -173,12 +173,19 @@ export class FormEventManager {
     handler: ValidationEventHandler,
   ): (event: Event) => void {
     return (event: Event) => {
+      let element = event.target as HTMLElement;
+      if (element.tagName === 'OPTION') {
+        element = element.closest('select') as HTMLElement;
+      }
+
       // Skip if handler is disabled (boolean false)
       if (typeof handler === 'boolean') {
         return;
       }
-
-      const element = event.target as HTMLElement;
+      // Skip if element is null
+      if (element === null) {
+        return;
+      }
 
       // Check if element matches any of the target selectors
       if (!element.matches(targets.join(', '))) {
