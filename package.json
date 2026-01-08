@@ -26,6 +26,21 @@
     }
   },
   "license": "MIT",
+  "keywords": [
+    "validation",
+    "form-validation",
+    "validator",
+    "form",
+    "forms",
+    "input-validation",
+    "client-side",
+    "vanilla-js",
+    "zero-dependency",
+    "lightweight",
+    "html-forms",
+    "jquery-validation",
+    "frontend"
+  ],
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "@rollup/plugin-terser": "^0.4.4",
