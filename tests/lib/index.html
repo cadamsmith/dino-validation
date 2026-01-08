@@ -1062,6 +1062,34 @@
         form="testForm30"
         required
       />
+      <form id="testDataErrorPlacement">
+        <input
+          type="text"
+          name="field1"
+          id="dep-field1"
+          data-rule-required="true"
+          data-error-placement="#dep-error1"
+        />
+        <div id="dep-error1"></div>
+
+        <input
+          type="text"
+          name="field2"
+          id="dep-field2"
+          data-rule-required="true"
+          data-error-placement="#nonexistent"
+        />
+
+        <input
+          type="text"
+          name="field3"
+          id="dep-field3"
+          data-rule-required="true"
+          data-error-placement="#dep-error3"
+        />
+        <div id="dep-error3"></div>
+      </form>
+      <div id="dep-label-container"></div>
     </div>
   </body>
 </html>

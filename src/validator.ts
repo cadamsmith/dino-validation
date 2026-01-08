@@ -501,6 +501,16 @@ export class Validator {
 
       if (this.labelContainer) {
         this.labelContainer.appendChild(insert);
+      } else if (element.dataset.errorPlacement) {
+        const target = document.querySelector(element.dataset.errorPlacement);
+        if (target) {
+          target.appendChild(insert);
+        } else {
+          console.warn(
+            `dv: data-error-placement target "${element.dataset.errorPlacement}" not found, using default placement`,
+          );
+          element.after(insert);
+        }
       } else if (this.settings.errorPlacement) {
         this.settings.errorPlacement(insert, element);
       } else {

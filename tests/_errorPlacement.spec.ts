@@ -580,3 +580,156 @@ test('test id/name containing single quotes', async ({ page }) => {
 
   expect(result).toEqual([3, true, true, true]);
 });
+
+test('data-error-placement places error in target', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector(
+      '#testDataErrorPlacement',
+    ) as HTMLFormElement;
+    const field = document.querySelector('#dep-field1') as HTMLInputElement;
+    const container = document.querySelector('#dep-error1') as HTMLElement;
+
+    dv.validate(form)!;
+    dv.valid(field);
+
+    return [
+      container.children.length === 1,
+      container.children[0]?.classList.contains('error'),
+      container.children[0]?.textContent?.includes('required'),
+    ];
+  });
+
+  expect(result).toEqual([true, true, true]);
+});
+
+test('data-error-placement warns when target not found', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const warnings: string[] = [];
+    const originalWarn = console.warn;
+    console.warn = (...args: any[]) => {
+      warnings.push(args.join(' '));
+    };
+
+    const form = document.querySelector(
+      '#testDataErrorPlacement',
+    ) as HTMLFormElement;
+    const field = document.querySelector('#dep-field2') as HTMLInputElement;
+
+    dv.validate(form)!;
+    dv.valid(field);
+
+    const ret = [
+      warnings.length > 0,
+      warnings[0]?.includes('data-error-placement'),
+      warnings[0]?.includes('#nonexistent'),
+      warnings[0]?.includes('not found'),
+      field.nextElementSibling?.classList.contains('error'),
+    ];
+
+    console.warn = originalWarn;
+    return ret;
+  });
+
+  expect(result).toEqual([true, true, true, true, true]);
+});
+
+test('data-error-placement lower priority than errorLabelContainer', async ({
+  page,
+}) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector(
+      '#testDataErrorPlacement',
+    ) as HTMLFormElement;
+    const field = document.querySelector('#dep-field1') as HTMLInputElement;
+    const dataContainer = document.querySelector('#dep-error1') as HTMLElement;
+    const labelContainer = document.querySelector(
+      '#dep-label-container',
+    ) as HTMLElement;
+
+    dv.validate(form, { errorLabelContainer: '#dep-label-container' })!;
+    dv.valid(field);
+
+    return [
+      labelContainer.children.length === 1,
+      dataContainer.children.length === 0,
+      labelContainer.children[0]?.classList.contains('error'),
+    ];
+  });
+
+  expect(result).toEqual([true, true, true]);
+});
+
+test('data-error-placement higher priority than errorPlacement callback', async ({
+  page,
+}) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector(
+      '#testDataErrorPlacement',
+    ) as HTMLFormElement;
+    const field = document.querySelector('#dep-field3') as HTMLInputElement;
+    const dataContainer = document.querySelector('#dep-error3') as HTMLElement;
+
+    let callbackCalled = false;
+    dv.validate(form, {
+      errorPlacement: () => {
+        callbackCalled = true;
+      },
+    })!;
+    dv.valid(field);
+
+    return [
+      dataContainer.children.length === 1,
+      !callbackCalled,
+      dataContainer.children[0]?.classList.contains('error'),
+    ];
+  });
+
+  expect(result).toEqual([true, true, true]);
+});
+
+test('data-error-placement lifecycle', async ({ page }) => {
+  await page.goto('');
+
+  const result = await page.evaluate(() => {
+    const form = document.querySelector(
+      '#testDataErrorPlacement',
+    ) as HTMLFormElement;
+    const field = document.querySelector('#dep-field1') as HTMLInputElement;
+    const container = document.querySelector('#dep-error1') as HTMLElement;
+
+    dv.validate(form)!;
+
+    const ret = [];
+
+    // Initially no error
+    ret.push(container.children.length === 0);
+
+    // Trigger validation - error should appear
+    dv.valid(field);
+    ret.push(
+      container.children.length === 1,
+      dv_testLib.isVisible(container.children[0] as HTMLElement),
+    );
+
+    // Fix the error
+    field.value = 'valid value';
+    dv.valid(field);
+    ret.push(
+      container.children.length === 1,
+      !dv_testLib.isVisible(container.children[0] as HTMLElement),
+      container.children[0]?.textContent === '',
+    );
+
+    return ret;
+  });
+
+  expect(result).toEqual([true, true, true, true, true, true]);
+});
