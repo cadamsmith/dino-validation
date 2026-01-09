@@ -10,7 +10,6 @@ We release patches for security vulnerabilities only in the latest stable versio
 | (all other 1.x.x versions) | :x:                |
 | 0.x.x                      | :x:                |
 
-
 ## Reporting a Vulnerability
 
 We take security vulnerabilities seriously. If you discover a security issue in dino-validation, please report it responsibly.
