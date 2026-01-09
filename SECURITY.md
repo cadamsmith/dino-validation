@@ -27,7 +27,7 @@ Instead, please report security vulnerabilities by:
    - Provide details about the vulnerability
 
 2. **Email** (Alternative)
-   - Send an email to the repository owner through GitHub
+   - Send an email to: cadamsmith.dev@gmail.com
    - Include "SECURITY" in the subject line
    - Provide a detailed description of the vulnerability
 
