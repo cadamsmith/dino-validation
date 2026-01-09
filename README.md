@@ -29,11 +29,11 @@ This library is a partial port of the [jQuery Validation Plugin](https://github.
 
 Explore interactive examples to see dino-validation in action:
 
-### 📝 [Quick Start](https://codepen.io/cadamsmith/pen/LEZZegj)
+### 📝 [quick start](https://codepen.io/cadamsmith/pen/LEZZegj)
 
 Simple contact form showing the minimal setup needed to get started. Includes required fields, email validation, and custom error messages.
 
-### 🔄 [jQuery Validation vs dino-validation](https://codepen.io/cadamsmith/pen/NPrxMgQ)
+### 🔄 [jquery-validation vs dino-validation](https://codepen.io/cadamsmith/pen/NPrxMgQ)
 
 Side-by-side comparison demonstrating feature parity between jquery-validation and dino-validation. See how the same form behaves identically with both libraries.
 
