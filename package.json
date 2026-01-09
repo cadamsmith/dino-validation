@@ -39,7 +39,8 @@
     "lightweight",
     "html-forms",
     "jquery-validation",
-    "frontend"
+    "frontend",
+    "jquery-alternative"
   ],
   "devDependencies": {
     "@playwright/test": "^1.57.0",
