@@ -71,6 +71,7 @@
     "type-check": "tsc --noEmit",
     "type-check-tests": "tsc --noEmit -p tests/tsconfig.json",
     "size": "npm pack --dry-run && echo '' && echo 'Individual file sizes (gzipped):' && for file in dist/dv.js dist/dv.min.js dist/dv.esm.js; do gzip -c $file | wc -c | awk -v name=$(basename $file) '{printf \"  %-15s %6.1f KB\\n\", name, $1/1024}'; done",
+    "examples": "http-server . -p 8080 -o /examples",
     "prepare": "husky"
   }
 }

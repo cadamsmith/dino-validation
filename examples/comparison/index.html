@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>dino-validation 1.0.0: comparison</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="comparison-container">
+      <!-- jQuery Validation Form -->
+      <div class="form-column">
+        <h2>
+          <a
+            href="https://www.npmjs.com/package/jquery-validation/v/1.21.0"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="View on npm"
+            >jquery-validation@1.21.0</a
+          >
+        </h2>
+        <form id="jqForm" class="demo-form">
+          <h3>Required Method</h3>
+          <div class="form-group">
+            <label for="jq-name">Name (required)</label>
+            <input
+              type="text"
+              id="jq-name"
+              name="name"
+              placeholder="John Doe"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="jq-country">Country (required)</label>
+            <select id="jq-country" name="country">
+              <option value="">Select a country</option>
+              <option value="us">United States</option>
+              <option value="ca">Canada</option>
+              <option value="uk">United Kingdom</option>
+              <option value="au">Australia</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="jq-comments">Comments (required)</label>
+            <textarea
+              id="jq-comments"
+              name="comments"
+              rows="3"
+              placeholder="Enter your comments..."
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Preferred Contact Method (required)</label>
+            <div>
+              <label>
+                <input
+                  type="radio"
+                  name="contactMethod"
+                  value="email"
+                  id="jq-contactMethod-email"
+                  data-error-placement="#jq-contactMethod-feedback"
+                />
+                Email
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="contactMethod"
+                  id="jq-contactMethod-phone"
+                  value="phone"
+                />
+                Phone
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="contactMethod"
+                  id="jq-contactMethod-mail"
+                  value="mail"
+                />
+                Mail
+              </label>
+            </div>
+            <div id="jq-contactMethod-feedback"></div>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input
+                type="checkbox"
+                name="terms"
+                id="jq-terms"
+                data-error-placement="#jq-terms-feedback"
+              />
+              I agree to terms (required)
+            </label>
+            <div id="jq-terms-feedback"></div>
+          </div>
+
+          <h3>String Format Methods</h3>
+          <div class="form-group">
+            <label for="jq-email">Email (required, email)</label>
+            <input
+              type="text"
+              id="jq-email"
+              name="email"
+              placeholder="user@example.com"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="jq-website">Website (required, url)</label>
+            <input
+              type="text"
+              id="jq-website"
+              name="website"
+              placeholder="https://example.com"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="jq-birthdate">Birth Date (required, date)</label>
+            <input
+              type="text"
+              id="jq-birthdate"
+              name="birthdate"
+              placeholder="12/31/1990"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="jq-startDate">Start Date (required, dateISO)</label>
+            <input
+              type="text"
+              id="jq-startDate"
+              name="startDate"
+              placeholder="1990-12-31"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="jq-zipcode">ZIP Code (required, digits)</label>
+            <input
+              type="text"
+              id="jq-zipcode"
+              name="zipcode"
+              placeholder="12345"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="jq-price">Price (required, number)</label>
+            <input type="text" id="jq-price" name="price" placeholder="99.99" />
+          </div>
+
+          <h3>Length Methods</h3>
+          <div class="form-group">
+            <label for="jq-username"
+              >Username (required, minlength: 3, maxlength: 15)</label
+            >
+            <input
+              type="text"
+              id="jq-username"
+              name="username"
+              placeholder="johndoe"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="jq-bio">Bio (required, rangelength: 10-200)</label>
+            <textarea
+              id="jq-bio"
+              name="bio"
+              rows="3"
+              placeholder="Tell us about yourself..."
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Interests (required, minlength: 2)</label>
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  name="interests"
+                  value="sports"
+                  id="jq-interests-sports"
+                  data-error-placement="#jq-interests-feedback"
+                />
+                Sports
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="interests"
+                  value="music"
+                  id="jq-interests-music"
+                />
+                Music
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="interests"
+                  value="reading"
+                  id="jq-interests-reading"
+                />
+                Reading
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="interests"
+                  value="gaming"
+                  id="jq-interests-gaming"
+                />
+                Gaming
+              </label>
+            </div>
+            <div id="jq-interests-feedback"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Skills (required, maxlength: 3)</label>
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  name="skills"
+                  value="javascript"
+                  id="jq-skills-javascript"
+                  data-error-placement="#jq-skills-feedback"
+                />
+                JavaScript
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="skills"
+                  value="python"
+                  id="jq-skills-python"
+                />
+                Python
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="skills"
+                  value="java"
+                  id="jq-skills-java"
+                />
+                Java
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="skills"
+                  value="csharp"
+                  id="jq-skills-csharp"
+                />
+                C#
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="skills"
+                  value="go"
+                  id="jq-skills-go"
+                />
+                Go
+              </label>
+            </div>
+            <div id="jq-skills-feedback"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Hobbies (required, rangelength: 2-4)</label>
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  name="hobbies"
+                  value="cooking"
+                  id="jq-hobbies-cooking"
+                  data-error-placement="#jq-hobbies-feedback"
+                />
+                Cooking
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="hobbies"
+                  value="travel"
+                  id="jq-hobbies-travel"
+                />
+                Travel
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="hobbies"
+                  value="photography"
+                  id="jq-hobbies-photography"
+                />
+                Photography
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="hobbies"
+                  value="art"
+                  id="jq-hobbies-art"
+                />
+                Art
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="hobbies"
+                  value="gardening"
+                  id="jq-hobbies-gardening"
+                />
+                Gardening
+              </label>
+            </div>
+            <div id="jq-hobbies-feedback"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="jq-languages">Languages (required, minlength: 2)</label>
+            <select id="jq-languages" name="languages" multiple size="5">
+              <option value="english">English</option>
+              <option value="spanish">Spanish</option>
+              <option value="french">French</option>
+              <option value="german">German</option>
+              <option value="chinese">Chinese</option>
+              <option value="japanese">Japanese</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="jq-frameworks"
+              >Frameworks (required, maxlength: 3)</label
+            >
+            <select id="jq-frameworks" name="frameworks" multiple size="5">
+              <option value="react">React</option>
+              <option value="vue">Vue</option>
+              <option value="angular">Angular</option>
+              <option value="svelte">Svelte</option>
+              <option value="nextjs">Next.js</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="jq-topics">Topics (required, rangelength: 2-4)</label>
+            <select id="jq-topics" name="topics" multiple size="6">
+              <option value="ai">Artificial Intelligence</option>
+              <option value="blockchain">Blockchain</option>
+              <option value="cloud">Cloud Computing</option>
+              <option value="security">Cybersecurity</option>
+              <option value="iot">IoT</option>
+              <option value="mobile">Mobile Development</option>
+            </select>
+          </div>
+
+          <h3>Numeric Methods</h3>
+          <div class="form-group">
+            <label for="jq-age">Age (required, min: 18)</label>
+            <input type="number" id="jq-age" name="age" placeholder="25" />
+          </div>
+
+          <div class="form-group">
+            <label for="jq-discount">Discount % (required, max: 100)</label>
+            <input
+              type="number"
+              id="jq-discount"
+              name="discount"
+              placeholder="15"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="jq-rating">Rating (required, range: 1-5)</label>
+            <input type="number" id="jq-rating" name="rating" placeholder="4" />
+          </div>
+
+          <h3>Equal To Method</h3>
+          <div class="form-group">
+            <label for="jq-password">Password (required)</label>
+            <input
+              type="password"
+              id="jq-password"
+              name="password"
+              placeholder="Enter password"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="jq-confirmPassword"
+              >Confirm Password (required, equalTo)</label
+            >
+            <input
+              type="password"
+              id="jq-confirmPassword"
+              name="confirmPassword"
+              placeholder="Re-enter password"
+            />
+          </div>
+        </form>
+      </div>
+
+      <!-- dino-validation Form -->
+      <div class="form-column">
+        <h2>
+          <a
+            href="https://www.npmjs.com/package/dino-validation/v/1.0.0"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="View on npm"
+            >dino-validation@1.0.0</a
+          >
+        </h2>
+        <form id="dvForm" class="demo-form">
+          <h3>Required Method</h3>
+          <div class="form-group">
+            <label for="dv-name">Name (required)</label>
+            <input
+              type="text"
+              id="dv-name"
+              name="name"
+              placeholder="John Doe"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="dv-country">Country (required)</label>
+            <select id="dv-country" name="country">
+              <option value="">Select a country</option>
+              <option value="us">United States</option>
+              <option value="ca">Canada</option>
+              <option value="uk">United Kingdom</option>
+              <option value="au">Australia</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="dv-comments">Comments (required)</label>
+            <textarea
+              id="dv-comments"
+              name="comments"
+              rows="3"
+              placeholder="Enter your comments..."
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Preferred Contact Method (required)</label>
+            <div>
+              <label>
+                <input
+                  type="radio"
+                  name="contactMethod"
+                  value="email"
+                  id="dv-contactMethod-email"
+                  data-error-placement="#dv-contactMethod-feedback"
+                />
+                Email
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="contactMethod"
+                  value="phone"
+                  id="dv-contactMethod-phone"
+                />
+                Phone
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="contactMethod"
+                  value="mail"
+                  id="dv-contactMethod-mail"
+                />
+                Mail
+              </label>
+            </div>
+            <div id="dv-contactMethod-feedback"></div>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input
+                type="checkbox"
+                name="terms"
+                id="dv-terms"
+                data-error-placement="#dv-terms-feedback"
+              />
+              I agree to terms (required)
+            </label>
+            <div id="dv-terms-feedback"></div>
+          </div>
+
+          <h3>String Format Methods</h3>
+          <div class="form-group">
+            <label for="dv-email">Email (required, email)</label>
+            <input
+              type="text"
+              id="dv-email"
+              name="email"
+              placeholder="user@example.com"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="dv-website">Website (required, url)</label>
+            <input
+              type="text"
+              id="dv-website"
+              name="website"
+              placeholder="https://example.com"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="dv-birthdate">Birth Date (required, date)</label>
+            <input
+              type="text"
+              id="dv-birthdate"
+              name="birthdate"
+              placeholder="12/31/1990"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="dv-startDate">Start Date (required, dateISO)</label>
+            <input
+              type="text"
+              id="dv-startDate"
+              name="startDate"
+              placeholder="1990-12-31"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="dv-zipcode">ZIP Code (required, digits)</label>
+            <input
+              type="text"
+              id="dv-zipcode"
+              name="zipcode"
+              placeholder="12345"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="dv-price">Price (required, number)</label>
+            <input type="text" id="dv-price" name="price" placeholder="99.99" />
+          </div>
+
+          <h3>Length Methods</h3>
+          <div class="form-group">
+            <label for="dv-username"
+              >Username (required, minlength: 3, maxlength: 15)</label
+            >
+            <input
+              type="text"
+              id="dv-username"
+              name="username"
+              placeholder="johndoe"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="dv-bio">Bio (required, rangelength: 10-200)</label>
+            <textarea
+              id="dv-bio"
+              name="bio"
+              rows="3"
+              placeholder="Tell us about yourself..."
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Interests (required, minlength: 2)</label>
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  name="interests"
+                  value="sports"
+                  id="dv-interests-sports"
+                  data-error-placement="#dv-interests-feedback"
+                />
+                Sports
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="interests"
+                  value="music"
+                  id="dv-interests-music"
+                />
+                Music
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="interests"
+                  value="reading"
+                  id="dv-interests-reading"
+                />
+                Reading
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="interests"
+                  value="gaming"
+                  id="dv-interests-gaming"
+                />
+                Gaming
+              </label>
+            </div>
+            <div id="dv-interests-feedback"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Skills (required, maxlength: 3)</label>
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  name="skills"
+                  value="javascript"
+                  id="dv-skills-javascript"
+                  data-error-placement="#dv-skills-feedback"
+                />
+                JavaScript
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="skills"
+                  value="python"
+                  id="dv-skills-python"
+                />
+                Python
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="skills"
+                  value="java"
+                  id="dv-skills-java"
+                />
+                Java
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="skills"
+                  value="csharp"
+                  id="dv-skills-csharp"
+                />
+                C#
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="skills"
+                  value="go"
+                  id="dv-skills-go"
+                />
+                Go
+              </label>
+            </div>
+            <div id="dv-skills-feedback"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Hobbies (required, rangelength: 2-4)</label>
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  name="hobbies"
+                  value="cooking"
+                  id="dv-hobbies-cooking"
+                  data-error-placement="#dv-hobbies-feedback"
+                />
+                Cooking
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="hobbies"
+                  value="travel"
+                  id="dv-hobbies-travel"
+                />
+                Travel
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="hobbies"
+                  value="photography"
+                  id="dv-hobbies-photography"
+                />
+                Photography
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="hobbies"
+                  value="art"
+                  id="dv-hobbies-art"
+                />
+                Art
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="hobbies"
+                  value="gardening"
+                  id="dv-hobbies-gardening"
+                />
+                Gardening
+              </label>
+            </div>
+            <div id="dv-hobbies-feedback"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="dv-languages">Languages (required, minlength: 2)</label>
+            <select id="dv-languages" name="languages" multiple size="5">
+              <option value="english">English</option>
+              <option value="spanish">Spanish</option>
+              <option value="french">French</option>
+              <option value="german">German</option>
+              <option value="chinese">Chinese</option>
+              <option value="japanese">Japanese</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="dv-frameworks"
+              >Frameworks (required, maxlength: 3)</label
+            >
+            <select id="dv-frameworks" name="frameworks" multiple size="5">
+              <option value="react">React</option>
+              <option value="vue">Vue</option>
+              <option value="angular">Angular</option>
+              <option value="svelte">Svelte</option>
+              <option value="nextjs">Next.js</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="dv-topics">Topics (required, rangelength: 2-4)</label>
+            <select id="dv-topics" name="topics" multiple size="6">
+              <option value="ai">Artificial Intelligence</option>
+              <option value="blockchain">Blockchain</option>
+              <option value="cloud">Cloud Computing</option>
+              <option value="security">Cybersecurity</option>
+              <option value="iot">IoT</option>
+              <option value="mobile">Mobile Development</option>
+            </select>
+          </div>
+
+          <h3>Numeric Methods</h3>
+          <div class="form-group">
+            <label for="dv-age">Age (required, min: 18)</label>
+            <input type="number" id="dv-age" name="age" placeholder="25" />
+          </div>
+
+          <div class="form-group">
+            <label for="dv-discount">Discount % (required, max: 100)</label>
+            <input
+              type="number"
+              id="dv-discount"
+              name="discount"
+              placeholder="15"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="dv-rating">Rating (required, range: 1-5)</label>
+            <input type="number" id="dv-rating" name="rating" placeholder="4" />
+          </div>
+
+          <h3>Equal To Method</h3>
+          <div class="form-group">
+            <label for="dv-password">Password (required)</label>
+            <input
+              type="password"
+              id="dv-password"
+              name="password"
+              placeholder="Enter password"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="dv-confirmPassword"
+              >Confirm Password (required, equalTo)</label
+            >
+            <input
+              type="password"
+              id="dv-confirmPassword"
+              name="confirmPassword"
+              placeholder="Re-enter password"
+            />
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js"></script>
+    <script src="../../dist/dv.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
