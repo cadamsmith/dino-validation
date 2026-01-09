@@ -1,0 +1,44 @@
+# Security Policy
+
+## Supported Versions
+
+We release patches for security vulnerabilities only in the latest stable version:
+
+| Version        | Supported          |
+| -------------- | ------------------ |
+| 1.x.x (latest) | :white_check_mark: |
+| 0.x.x          | :x:                |
+
+**Please upgrade to version 1.0.0 or later to receive security updates. Pre-1.0 versions are not supported.**
+
+## Reporting a Vulnerability
+
+We take security vulnerabilities seriously. If you discover a security issue in dino-validation, please report it responsibly.
+
+### How to Report
+
+**Please do NOT report security vulnerabilities through public GitHub issues.**
+
+Instead, please report security vulnerabilities by:
+
+1. **GitHub Security Advisories** (Preferred)
+   - Go to the [Security tab](https://github.com/cadamsmith/dino-validation/security/advisories)
+   - Click "Report a vulnerability"
+   - Provide details about the vulnerability
+
+2. **Email** (Alternative)
+   - Send an email to the repository owner through GitHub
+   - Include "SECURITY" in the subject line
+   - Provide a detailed description of the vulnerability
+
+## Additional Security Measures
+
+This project uses:
+
+- **CodeQL Analysis:** Automated security scanning on every push
+- **Dependabot:** Automated dependency updates
+- **Dependency Review:** Blocks PRs with vulnerable dependencies
+- **npm Audit:** Runs in CI to catch vulnerabilities
+- **npm Provenance:** Build attestations for published packages
+
+Thank you for helping keep dino-validation and its users safe!
