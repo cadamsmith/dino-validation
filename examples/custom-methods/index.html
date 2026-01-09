@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dino-validation 1.0.0: custom methods</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Custom Methods</h1>
+      <p class="subtitle">
+        Extend dino-validation with custom validation methods for specific
+        business requirements
+      </p>
+
+      <form id="signupForm">
+        <div class="form-group">
+          <label for="username">Username *</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            data-rule-required="true"
+            data-rule-minlength="3"
+            placeholder="johndoe"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            data-rule-required="true"
+            data-rule-email="true"
+            placeholder="john@example.com"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="birthdate">Date of Birth *</label>
+          <input
+            type="date"
+            id="birthdate"
+            name="birthdate"
+            placeholder="YYYY-MM-DD"
+          />
+        </div>
+
+        <button type="submit">Sign Up</button>
+      </form>
+
+      <div id="success-message" style="display: none">
+        <p>✓ Account created successfully!</p>
+      </div>
+
+      <div class="info-box">
+        <h3>Custom Method: Age Verification</h3>
+        <p>
+          This example demonstrates a custom <code>ageVerification</code>
+          method that:
+        </p>
+        <ul>
+          <li>Validates the date of birth is a valid date</li>
+          <li>Ensures the date is not in the future</li>
+          <li>Calculates age from the birth date</li>
+          <li>Verifies the user is at least 18 years old</li>
+          <li>Ensures the age is within a reasonable range (max 120 years)</li>
+        </ul>
+        <p>
+          This type of complex validation logic is perfect for custom methods.
+        </p>
+      </div>
+    </div>
+
+    <script src="../../dist/dv.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

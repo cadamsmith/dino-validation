@@ -38,6 +38,9 @@ Explore interactive examples to see dino-validation in action:
 - 📋 **[[declarative config]](https://codepen.io/cadamsmith/pen/EayyoMZ)**
   Define all validation rules using HTML data attributes - no JavaScript configuration needed. Perfect for simple forms.
 
+- 🔧 **[[custom methods]](https://codepen.io/cadamsmith/pen/wBWWywb)**
+  Extend the library's capabilities by creating custom validation methods for specific business requirements. Demonstrates an age verification method with complex date validation logic.
+
 ## Table of Contents
 
 - [Installation](#installation)
