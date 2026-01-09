@@ -4,12 +4,12 @@
 
 We release patches for security vulnerabilities only in the latest stable version:
 
-| Version        | Supported          |
-| -------------- | ------------------ |
-| 1.x.x (latest) | :white_check_mark: |
-| 0.x.x          | :x:                |
+| Version                    | Supported          |
+| -------------------------- | ------------------ |
+| ^1.0.0 (latest 1.x.x)      | :white_check_mark: |
+| (all other 1.x.x versions) | :x:                |
+| 0.x.x                      | :x:                |
 
-**Please upgrade to version 1.0.0 or later to receive security updates. Pre-1.0 versions are not supported.**
 
 ## Reporting a Vulnerability
 
