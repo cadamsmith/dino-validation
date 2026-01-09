@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dino-validation 1.0.0: declarative config</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Declarative Config</h1>
+      <p class="subtitle">
+        Define validation rules using HTML data attributes - no JavaScript
+        configuration needed!
+      </p>
+
+      <form id="registrationForm">
+        <div class="form-group">
+          <label for="username">Username *</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            data-rule-required="true"
+            data-rule-minlength="3"
+            data-rule-maxlength="20"
+            data-msg-required="Please enter a username"
+            data-msg-minlength="Username must be at least 3 characters"
+            data-msg-maxlength="Username cannot exceed 20 characters"
+            placeholder="johndoe"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            data-rule-required="true"
+            data-rule-email="true"
+            data-msg-required="Please enter your email"
+            data-msg-email="Please enter a valid email address"
+            placeholder="john@example.com"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="website">Website</label>
+          <input
+            type="text"
+            id="website"
+            name="website"
+            data-rule-url="true"
+            data-msg-url="Please enter a valid URL"
+            placeholder="https://example.com"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="age">Age *</label>
+          <input
+            type="number"
+            id="age"
+            name="age"
+            data-rule-required="true"
+            data-rule-number="true"
+            data-rule-min="18"
+            data-rule-max="120"
+            data-msg-required="Please enter your age"
+            data-msg-min="You must be at least 18 years old"
+            data-msg-max="Please enter a valid age"
+            placeholder="25"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password *</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            data-rule-required="true"
+            data-rule-minlength="8"
+            data-msg-required="Please enter a password"
+            data-msg-minlength="Password must be at least 8 characters"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password *</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            data-rule-required="true"
+            data-rule-equalto="#password"
+            data-msg-required="Please confirm your password"
+            data-msg-equalto="Passwords do not match"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="bio">Bio (10-200 characters) *</label>
+          <textarea
+            id="bio"
+            name="bio"
+            rows="4"
+            data-rule-required="true"
+            data-rule-rangelength="[10, 200]"
+            data-msg-required="Please tell us about yourself"
+            data-msg-rangelength="Bio must be between 10 and 200 characters"
+            placeholder="Tell us about yourself..."
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input
+              type="checkbox"
+              name="terms"
+              id="terms"
+              data-rule-required="true"
+              data-msg-required="You must accept the terms"
+            />
+            I agree to the terms and conditions *
+          </label>
+        </div>
+
+        <button type="submit">Register</button>
+      </form>
+
+      <div class="info-box">
+        <h3>How It Works</h3>
+        <p>
+          All validation rules are defined using <code>data-rule-*</code>
+          attributes in the HTML. Custom error messages use
+          <code>data-msg-*</code> attributes.
+        </p>
+        <p>
+          The only JavaScript needed is a single line:
+          <code>dv.validate('#registrationForm');</code>
+        </p>
+      </div>
+    </div>
+
+    <script src="../../dist/dv.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
