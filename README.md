@@ -20,6 +20,7 @@ This library is a partial port of the [jQuery Validation Plugin](https://github.
 ## Features
 
 - **17 built-in validation methods** - required, email, URL, number, date, minlength, and more
+- **82% smaller than jQuery Validation** - Only 6.7 KB gzipped vs 37.5 KB for jQuery + jQuery Validation
 - **Declarative or programmatic API** - Define rules in HTML attributes or JavaScript
 - **Zero dependencies** - Pure vanilla JavaScript, no jQuery required
 - **Modern ES6+** - ESM and UMD builds for all environments
@@ -44,6 +45,7 @@ Explore interactive examples to see dino-validation in action:
 ## Table of Contents
 
 - [Installation](#installation)
+- [Size Comparison](#size-comparison)
 - [Browser Support](#browser-support)
 - [Quick Start](#quick-start)
   - [Declarative Validation (HTML Attributes)](#declarative-validation-html-attributes)
@@ -125,6 +127,21 @@ const validator = dv.validate('#myForm', {
   });
 </script>
 ```
+
+## Size Comparison
+
+dino-validation is significantly smaller than the jQuery-based alternative:
+
+| Library                 | Minified | Gzipped     | Dependencies    |
+| ----------------------- | -------- | ----------- | --------------- |
+| **dino-validation**     | 21.2 KB  | **6.7 KB**  | None ✓          |
+| jquery-validation       | 24.6 KB  | 7.7 KB      | Requires jQuery |
+| + jQuery 3.7.1          | 85.1 KB  | 29.7 KB     | -               |
+| **Total (jQuery path)** | 109.7 KB | **37.5 KB** | -               |
+
+**Result: dino-validation is 82% smaller** 🦖
+
+_Bundle sizes from [Bundlephobia](https://bundlephobia.com/)_
 
 ## Browser Support
 
