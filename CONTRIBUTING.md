@@ -184,23 +184,20 @@ dino-validation/
 │   ├── defaults.ts           # Default validator configuration
 │   ├── objectStore.ts        # Internal data storage type
 │   └── localization/         # Localizations for messages/methods
-├── examples/                # Example usage (run with `npm run examples`)
-│   ├── index.html          # Examples index page
-│   ├── quick-start/        # Quick start example
-│   └── comparison/         # jQuery Validation vs dino-validation
+├── examples/                 # Source code for CodePen examples
 ├── tests/
-│   ├── *.spec.ts            # Test files
-│   └── lib/                 # Test utilities
-├── dist/                    # Built files (generated)
-│   ├── dv.js               # UMD build
-│   ├── dv.min.js           # UMD minified
-│   ├── dv.esm.js           # ESM build
-│   ├── types/              # TypeScript type definitions
-│   └── localization/       # Localization builds
+│   ├── *.spec.ts             # Test files
+│   └── lib/                  # Test utilities
+├── dist/                     # Built files (generated)
+│   ├── dv.js                 # UMD build
+│   ├── dv.min.js             # UMD minified
+│   ├── dv.esm.js             # ESM build
+│   ├── types/                # TypeScript type definitions
+│   └── localization/         # Localization builds
 ├── .github/
-│   └── workflows/          # GitHub Actions
-├── playwright.config.ts    # Playwright test configuration
-└── rollup.config.ts        # Build configuration
+│   └── workflows/            # GitHub Actions
+├── playwright.config.ts      # Playwright test configuration
+└── rollup.config.ts          # Build configuration
 ```
 
 ## License
