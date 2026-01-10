@@ -9,7 +9,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/cadamsmith/dino-validation)](https://github.com/cadamsmith/dino-validation/issues)
 
 > [!NOTE]
-> Version 1.0.0 will be released soon. (when I get a chance this weekend)
+> Version 1.0.0 will be released soon. (target date: 01/11/26)
 >
 > Until then, 0.X.0 versions will be pushed while I do some final tests and updates to documentation.
 

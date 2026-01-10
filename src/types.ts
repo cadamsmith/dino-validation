@@ -8,9 +8,9 @@ export interface ValidatorSettings {
   wrapper: string | null;
   errorLabelContainer: string | null;
   errorContainer: string | null;
-  onfocusin: boolean | ((element: FormControlElement, event: Event) => void);
-  onfocusout: boolean | ((element: FormControlElement, event: Event) => void);
-  onkeyup: boolean | ((element: FormControlElement, event: Event) => void);
+  onfocusin: false | ((element: FormControlElement, event: Event) => void);
+  onfocusout: false | ((element: FormControlElement, event: Event) => void);
+  onkeyup: false | ((element: FormControlElement, event: Event) => void);
   highlight:
     | false
     | ((
@@ -25,7 +25,7 @@ export interface ValidatorSettings {
         errorClasses: string[],
         validClasses: string[],
       ) => void);
-  onclick: boolean | ((element: FormControlElement, event: Event) => void);
+  onclick: false | ((element: FormControlElement, event: Event) => void);
   errorPlacement:
     | ((error: HTMLElement, element: FormControlElement) => void)
     | null;
@@ -48,6 +48,9 @@ export interface ValidatorSettings {
   onsubmit: boolean;
   debug: boolean;
   invalidHandler: null | ((event: CustomEvent<ValidationError[]>) => void);
+  submitHandler:
+    | null
+    | ((form: HTMLFormElement, event: SubmitEvent) => boolean | undefined);
 }
 
 export type ValidationMessage =

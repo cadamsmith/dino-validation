@@ -32,13 +32,14 @@ export const ValidatorDefaults: ValidatorSettings = {
   onsubmit: true,
   debug: false,
   invalidHandler: null,
+  submitHandler: null,
 };
 
 function onFocusIn(this: Validator, element: FormControlElement): void {
   this.lastActive = element;
 
   if (this.settings.focusCleanup) {
-    if (typeof this.settings.unhighlight !== 'boolean') {
+    if (this.settings.unhighlight) {
       this.settings.unhighlight(element, this.errorClasses, this.validClasses);
     }
     this.hideErrors(element);
