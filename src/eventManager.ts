@@ -52,11 +52,15 @@ export class FormEventManager {
     onFocusOut: ((e: Event) => void) | null;
     onKeyUp: ((e: Event) => void) | null;
     onClick: ((e: Event) => void) | null;
+    onClickSubmit: ((e: Event) => void) | null;
+    onSubmit: ((e: Event) => void) | null;
   } = {
     onFocusIn: null,
     onFocusOut: null,
     onKeyUp: null,
     onClick: null,
+    onClickSubmit: null,
+    onSubmit: null,
   };
 
   private submitButton: HTMLInputElement | HTMLButtonElement | null = null;
@@ -96,19 +100,12 @@ export class FormEventManager {
     this.form.addEventListener('click', this.boundEventHandlers.onClick);
 
     if (this.settings.onsubmit) {
-      this.form.addEventListener('click', (e: PointerEvent) => {
-        const target = e.target as HTMLElement;
+      this.boundEventHandlers.onClickSubmit = this.handleSubmitClick;
+      this.boundEventHandlers.onSubmit = (e) =>
+        this.handleSubmitForm(e as SubmitEvent);
 
-        // Track the used submit button to properly handle scripted
-        // submits later.
-        if (target.matches('button[type="submit"], input[type="submit"]')) {
-          this.submitButton = e.target as HTMLInputElement | HTMLButtonElement;
-        }
-      });
-
-      this.form.addEventListener('submit', (e: SubmitEvent) =>
-        this.handleSubmitForm(e),
-      );
+      this.form.addEventListener('click', this.boundEventHandlers.onClick);
+      this.form.addEventListener('submit', this.boundEventHandlers.onSubmit);
     }
 
     const invalidHandler = this.settings.invalidHandler;
@@ -132,6 +129,16 @@ export class FormEventManager {
 
   private isCustomEvent(event: Event): event is CustomEvent {
     return 'detail' in event;
+  }
+
+  private handleSubmitClick(e: Event) {
+    const target = e.target as HTMLElement;
+
+    // Track the used submit button to properly handle scripted
+    // submits later.
+    if (target.matches('button[type="submit"], input[type="submit"]')) {
+      this.submitButton = e.target as HTMLInputElement | HTMLButtonElement;
+    }
   }
 
   private handleSubmitForm(e: SubmitEvent) {
@@ -195,12 +202,23 @@ export class FormEventManager {
     if (this.boundEventHandlers.onClick) {
       this.form.removeEventListener('click', this.boundEventHandlers.onClick);
     }
+    if (this.boundEventHandlers.onClickSubmit) {
+      this.form.removeEventListener(
+        'click',
+        this.boundEventHandlers.onClickSubmit,
+      );
+    }
+    if (this.boundEventHandlers.onSubmit) {
+      this.form.removeEventListener('submit', this.boundEventHandlers.onSubmit);
+    }
 
     // Clear references
     this.boundEventHandlers.onFocusIn = null;
     this.boundEventHandlers.onFocusOut = null;
     this.boundEventHandlers.onKeyUp = null;
     this.boundEventHandlers.onClick = null;
+    this.boundEventHandlers.onClickSubmit = null;
+    this.boundEventHandlers.onSubmit = null;
   }
 
   /**
