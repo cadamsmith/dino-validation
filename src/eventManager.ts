@@ -59,6 +59,8 @@ export class FormEventManager {
     onClick: null,
   };
 
+  private submitButton: HTMLInputElement | HTMLButtonElement | null = null;
+
   constructor(
     private form: HTMLFormElement,
     private settings: ValidatorSettings,
@@ -94,6 +96,16 @@ export class FormEventManager {
     this.form.addEventListener('click', this.boundEventHandlers.onClick);
 
     if (this.settings.onsubmit) {
+      this.form.addEventListener('click', (e: PointerEvent) => {
+        const target = e.target as HTMLElement;
+
+        // Track the used submit button to properly handle scripted
+        // submits later.
+        if (target.matches('button[type="submit"], input[type="submit"]')) {
+          this.submitButton = e.target as HTMLInputElement | HTMLButtonElement;
+        }
+      });
+
       this.form.addEventListener('submit', (e: SubmitEvent) =>
         this.handleSubmitForm(e),
       );
@@ -132,6 +144,32 @@ export class FormEventManager {
       this.focusInvalidCallback();
       e.preventDefault();
       e.stopPropagation();
+      return;
+    }
+
+    let hidden: HTMLInputElement | null = null;
+
+    // Insert a hidden input as a replacement for the missing submit button
+    // if a submitHandler is passed as option
+    if (this.submitButton && this.settings.submitHandler) {
+      hidden = document.createElement('input');
+      hidden.setAttribute('type', 'hidden');
+      hidden.setAttribute('name', this.submitButton.name);
+      hidden.setAttribute('value', this.submitButton.value);
+      this.form.appendChild(hidden);
+    }
+
+    if (this.settings.submitHandler && !this.settings.debug) {
+      const result = this.settings.submitHandler(this.form, e);
+      if (hidden) {
+        // And clean up afterwards
+        hidden.remove();
+      }
+
+      if (!result) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
     }
   }
 

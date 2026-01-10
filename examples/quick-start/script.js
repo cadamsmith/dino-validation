@@ -28,7 +28,7 @@ dv.validate('#contactForm', {
       minlength: 'Message must be at least 10 characters',
     },
   },
-  submitHandler: function (form) {
+  submitHandler: function (form, event) {
     // Prevent actual submission for demo
     event.preventDefault();
 

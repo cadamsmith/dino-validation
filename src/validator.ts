@@ -75,6 +75,7 @@ export class Validator {
       'unhighlight',
       'errorPlacement',
       'invalidHandler',
+      'submitHandler',
     ].forEach((key) => {
       const setting = this.settings[key as keyof ValidatorSettings];
       if (setting && typeof setting === 'function') {

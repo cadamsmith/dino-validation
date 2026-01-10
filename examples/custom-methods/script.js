@@ -37,11 +37,7 @@ dv.addMethod(
     }
 
     // Check maximum reasonable age (120 years)
-    if (age > 120) {
-      return false;
-    }
-
-    return true;
+    return age <= 120;
   },
   'You must be at least {0} years old',
 );
@@ -60,7 +56,7 @@ dv.validate('#signupForm', {
       ageVerification: 'You must be at least 18 years old to sign up',
     },
   },
-  submitHandler: function (form) {
+  submitHandler: function (form, event) {
     // Prevent actual submission for demo
     event.preventDefault();
 
