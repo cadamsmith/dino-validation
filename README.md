@@ -42,65 +42,18 @@ Explore interactive examples to see dino-validation in action:
 - 🔧 **[[custom methods]](https://codepen.io/cadamsmith/pen/wBWWywb)**
   Extend the library's capabilities by creating custom validation methods for specific business requirements. Demonstrates an age verification method with complex date validation logic.
 
-## Table of Contents
-
-- [Installation](#installation)
-- [Size Comparison](#size-comparison)
-- [Browser Support](#browser-support)
-- [Quick Start](#quick-start)
-  - [Declarative Validation (HTML Attributes)](#declarative-validation-html-attributes)
-  - [Programmatic Validation (JavaScript)](#programmatic-validation-javascript)
-  - [Checking Validation Status](#checking-validation-status)
-- [Migrating from jQuery Validation](#migrating-from-jquery-validation)
-  - [API Method Mapping](#api-method-mapping)
-  - [Key Differences](#key-differences)
-  - [Custom Validator Comparison](#custom-validator-comparison)
-  - [Features Not Included](#features-not-included)
-- [Core API](#core-api)
-  - [dv.validate()](#dvvalidateselector-options)
-  - [dv.valid()](#dvvalidselector)
-  - [dv.rules()](#dvrulesselector)
-  - [dv.addMethod()](#dvaddmethodname-method-message)
-  - [dv.localize()](#dvlocalizemessages)
-- [Built-in Validators](#built-in-validators)
-  - [Required Field Validators](#required-field-validators)
-  - [String Format Validators](#string-format-validators)
-  - [Length Validators](#length-validators)
-  - [Numeric Validators](#numeric-validators)
-  - [Comparison Validators](#comparison-validators)
-  - [Real-world Validator Combinations](#real-world-validator-combinations)
-- [Configuration & Customization](#configuration--customization)
-  - [Error Display Configuration](#error-display-configuration)
-  - [Event Handling](#event-handling)
-  - [Validation Behavior](#validation-behavior)
-  - [Success & Error Callbacks](#success--error-callbacks)
-  - [Custom Error Messages](#custom-error-messages)
-  - [Real-world Configuration Examples](#real-world-configuration-examples)
-- [Custom Validators](#custom-validators)
-  - [Custom Validator Basics](#custom-validator-basics)
-  - [Pattern Matching Examples](#pattern-matching-examples)
-  - [Conditional/Cross-field Validators](#conditionalcross-field-validators)
-  - [File Upload Validators](#file-upload-validators)
-- [Localization](#localization)
-  - [Using Localization Builds](#using-localization-builds)
-  - [Custom Localization](#custom-localization)
-- [Coming Soon](#coming-soon)
-- [Contributing](#contributing)
-- [License](#license)
+- 📍 **[[error placement]](https://codepen.io/cadamsmith/pen/QwEKGrj)**
+  Customize where and how validation errors are displayed. Showcases six different error placement strategies: default placement, designated containers, tooltips, grid layouts, error summaries, and inline errors.
 
 ## Installation
 
-```bash
-npm install dino-validation
-```
+Choose the right build for your environment:
 
 ### ESM vs UMD
 
-Choose the right build for your environment:
-
 | Format  | Use Case                                 | Import                                                                                        |
 | ------- | ---------------------------------------- | --------------------------------------------------------------------------------------------- |
-| **ESM** | Modern build tools (Vite, webpack, etc.) | <br/>`import dv from 'dino-validation'`                                                       |
+| **ESM** | Modern build tools (Vite, webpack, etc.) | `import dv from 'dino-validation'`                                                            |
 | **UMD** | Browsers, legacy builds, CDN             | `<script src="https://cdn.jsdelivr.net/npm/dino-validation@VERSION/dist/dv.min.js"></script>` |
 
 **ESM Example:**
