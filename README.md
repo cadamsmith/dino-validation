@@ -20,9 +20,9 @@ This library is a partial port of the [jQuery Validation Plugin](https://github.
 ## Features
 
 - **17 built-in validation methods** - required, email, URL, number, date, minlength, and more
-- **82% smaller than jQuery Validation** - Only 6.7 KB gzipped vs 37.5 KB for jQuery + jQuery Validation
+- **Significantly smaller than jQuery Validation** - Pure vanilla JavaScript with zero dependencies
 - **Declarative or programmatic API** - Define rules in HTML attributes or JavaScript
-- **Zero dependencies** - Pure vanilla JavaScript, no jQuery required
+- **Zero dependencies** - No jQuery required, works everywhere
 - **Modern ES6+** - ESM and UMD builds for all environments
 - **Localization support** - Customize error messages/methods for any locale
 
@@ -47,28 +47,9 @@ Explore interactive examples to see dino-validation in action:
 
 ## Installation
 
-Choose the right build for your environment:
+### UMD (CDN)
 
-### ESM vs UMD
-
-| Format  | Use Case                                 | Import                                                                                        |
-| ------- | ---------------------------------------- | --------------------------------------------------------------------------------------------- |
-| **ESM** | Modern build tools (Vite, webpack, etc.) | `import dv from 'dino-validation'`                                                            |
-| **UMD** | Browsers, legacy builds, CDN             | `<script src="https://cdn.jsdelivr.net/npm/dino-validation@VERSION/dist/dv.min.js"></script>` |
-
-**ESM Example:**
-
-```javascript
-import dv from 'dino-validation';
-
-const validator = dv.validate('#myForm', {
-  rules: {
-    email: { required: true, email: true },
-  },
-});
-```
-
-**UMD Example:**
+For direct browser usage via CDN - no build tools required:
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/dino-validation@VERSION/dist/dv.min.js"></script>
@@ -81,20 +62,36 @@ const validator = dv.validate('#myForm', {
 </script>
 ```
 
+### ESM (NPM)
+
+For modern build tools (Vite, webpack, Rollup, etc.):
+
+```bash
+npm install dino-validation
+```
+
+```javascript
+import dv from 'dino-validation';
+
+const validator = dv.validate('#myForm', {
+  rules: {
+    email: { required: true, email: true },
+  },
+});
+```
+
 ## Size Comparison
 
-dino-validation is significantly smaller than the jQuery-based alternative:
+dino-validation is **significantly smaller** than the jQuery-based alternative:
 
-| Library                 | Minified | Gzipped     | Dependencies    |
-| ----------------------- | -------- | ----------- | --------------- |
-| **dino-validation**     | 21.2 KB  | **6.7 KB**  | None ✓          |
-| jquery-validation       | 24.6 KB  | 7.7 KB      | Requires jQuery |
-| + jQuery 3.7.1          | 85.1 KB  | 29.7 KB     | -               |
-| **Total (jQuery path)** | 109.7 KB | **37.5 KB** | -               |
+| Library                              | Bundle Size (minified + gzipped)                                                                                            | Dependencies    |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| **dino-validation**                  | ![](https://img.shields.io/bundlephobia/minzip/dino-validation)                                                             | None ✓          |
+| **jquery-validation**<br/>(+ jquery) | ![](https://img.shields.io/bundlephobia/minzip/jquery-validation)<br>![](https://img.shields.io/bundlephobia/minzip/jquery) | Requires jQuery |
 
-**Result: dino-validation is 82% smaller** 🦖
+🦖 **Zero dependencies, modern vanilla JavaScript**
 
-_Bundle sizes from [Bundlephobia](https://bundlephobia.com/)_
+_Bundle sizes from [Bundlephobia](https://bundlephobia.com/) (latest published versions)_
 
 ## Browser Support
 
@@ -196,7 +193,7 @@ if (dv.valid('#email')) {
 }
 
 // Check multiple fields
-if (dv.valid(['#email', '#message'])) {
+if (dv.valid('#email, #message')) {
   console.log('Both fields are valid');
 }
 
@@ -209,7 +206,9 @@ if (dv.valid(emailInput)) {
 
 ## Migrating from jQuery Validation
 
-If you're familiar with the jQuery Validation Plugin, transitioning to dino-validation is straightforward. The API is intentionally similar to minimize the learning curve.
+If you're familiar with the jQuery Validation Plugin, transitioning to dino-validation is straightforward.
+
+The API is intentionally similar to minimize the learning curve.
 
 ### API Method Mapping
 
@@ -249,7 +248,7 @@ dv.addMethod(
 );
 ```
 
-### Custom Validator Comparison
+### Custom Method Comparison
 
 Both libraries support custom validators with similar syntax:
 
@@ -285,7 +284,7 @@ dv.addMethod(
 
 dino-validation is a partial port of jQuery Validation. The following features are **not implemented**:
 
-**Missing Validators:**
+**Missing Validation Methods:**
 
 - `step` - Step increment validation (e.g., multiples of 5)
 - `remote` - Server-side AJAX validation
@@ -294,6 +293,7 @@ dino-validation is a partial port of jQuery Validation. The following features a
 
 - `normalizer` - Transform field values before validation
 - `groups` - Group multiple fields into a single error message
+- `focusInvalid` - enable/disable focusing of invalid elements on form submission
 
 ## Core API
 
@@ -355,7 +355,7 @@ Validates form or form elements and returns whether they are valid. Triggers val
 
 - `selector` (string | HTMLElement | HTMLElement[]): Element(s) to validate
 
-**Returns:** `true` if all elements are valid, `false` otherwise
+**Returns:** `true` if all element(s) are valid, `false` otherwise
 
 **Examples:**
 
@@ -373,7 +373,7 @@ if (dv.valid('#email')) {
 }
 
 // Validate multiple fields
-if (dv.valid(['#email', '#password'])) {
+if (dv.valid('#email', #password')) {
   console.log('Both email and password are valid');
 }
 
@@ -428,60 +428,7 @@ Adds a custom validation method that can be used in validation rules.
 - `method` (function): Validation function that returns `true` if valid
 - `message` (string, optional): Default error message
 
-**Validation Function Signature:**
-
-```typescript
-function({ blank, value, values, length, element, param }): boolean
-```
-
-**Input Parameters:**
-
-- `blank` (boolean): `true` if field is empty
-- `value` (string): Field's value
-- `values` (string[]): For radio/checkbox groups, array of selected values
-- `length` (number): Character count of value
-- `element` (FormControlElement): The input element
-- `param` (any): Parameter passed in rule definition
-
-**Examples:**
-
-**Simple Pattern Matching:**
-
-```javascript
-dv.addMethod(
-  'phone',
-  function ({ blank, value }) {
-    return blank || /^\d{3}-\d{3}-\d{4}$/.test(value);
-  },
-  'Please enter a valid phone number (xxx-xxx-xxxx)',
-);
-
-// Use in validation rules
-dv.validate('#myForm', {
-  rules: {
-    phoneNumber: { phone: true },
-  },
-});
-```
-
-**Parameterized Validator:**
-
-```javascript
-dv.addMethod(
-  'notContains',
-  function ({ blank, value, param }) {
-    return blank || !value.includes(param);
-  },
-  'This field cannot contain "{0}"',
-);
-
-// Use with parameter
-dv.validate('#myForm', {
-  rules: {
-    bio: { notContains: 'spam' },
-  },
-});
-```
+See [Custom Validation Methods](#custom-validation-methods) for detailed function signature, parameters, and examples.
 
 ### dv.localize(data)
 
@@ -495,65 +442,19 @@ Replaces default error messages or validation methods with localized versions. U
 
 **Returns:** None
 
-**Example 1: Localize error messages**
+See [Localization](#localization) for more information.
 
-```javascript
-// French localization
-dv.localize({
-  required: 'Ce champ est obligatoire.',
-  email: 'Veuillez entrer une adresse email valide.',
-  url: 'Veuillez entrer une URL valide.',
-  date: 'Veuillez entrer une date valide.',
-  dateISO: 'Veuillez entrer une date valide (ISO).',
-  number: 'Veuillez entrer un nombre valide.',
-  digits: 'Veuillez entrer uniquement des chiffres.',
-  equalTo: 'Veuillez entrer la même valeur à nouveau.',
-  maxlength: 'Veuillez entrer au maximum {0} caractères.',
-  minlength: 'Veuillez entrer au moins {0} caractères.',
-  rangelength: 'Veuillez entrer une valeur entre {0} et {1} caractères.',
-  range: 'Veuillez entrer une valeur entre {0} et {1}.',
-  max: 'Veuillez entrer une valeur inférieure ou égale à {0}.',
-  min: 'Veuillez entrer une valeur supérieure ou égale à {0}.',
-  creditcard: 'Veuillez entrer un numéro de carte de crédit valide.',
-  regex: 'Veuillez entrer une valeur qui correspond au modèle {0}.',
-  nonalphamin: 'Veuillez entrer au moins {0} caractères non-alphabétiques.',
-});
-```
+## Built-in Validation Methods
 
-**Example 2: Partial localization**
+dino-validation includes 17 built-in validation methods covering common validation scenarios.
 
-```javascript
-// Only override specific messages
-dv.localize({
-  required: 'This field is mandatory',
-  email: 'Invalid email format',
-});
-```
-
-## Built-in Validators
-
-dino-validation includes 17 built-in validators covering common validation scenarios.
-
-### Required Field Validators
-
-#### `required`
+### `required`
 
 Validates that the field has a value (is not empty).
 
 **Parameters:** None
 
 **Examples:**
-
-```html
-<!-- HTML attribute -->
-<input type="text" name="username" required />
-
-<!-- Data attribute -->
-<input type="text" name="username" data-rule-required="true" />
-
-<!-- CSS class -->
-<input type="text" name="username" class="required" />
-```
 
 ```javascript
 // JavaScript
@@ -564,21 +465,13 @@ dv.validate('#myForm', {
 });
 ```
 
-**Default message:** "This field is required."
-
-### String Format Validators
-
-#### `email`
+### `email`
 
 Validates email address format using RFC-compliant regex.
 
 **Parameters:** None
 
 **Examples:**
-
-```html
-<input type="email" name="email" data-rule-email="true" />
-```
 
 ```javascript
 dv.validate('#myForm', {
@@ -590,13 +483,9 @@ dv.validate('#myForm', {
 
 **Accepts:** `user@example.com`, `first.last@domain.co.uk`, `user+tag@example.com`
 
-**Important:** Accepts empty values. Combine with `required` for mandatory email fields.
-
-**Default message:** "Please enter a valid email address."
-
 ---
 
-#### `url`
+### `url`
 
 Validates URL format (HTTP/HTTPS/FTP).
 
@@ -614,11 +503,9 @@ dv.validate('#myForm', {
 
 **Accepts:** `http://example.com`, `https://example.com/path?query=value`, `ftp://files.example.com`
 
-**Default message:** "Please enter a valid URL."
-
 ---
 
-#### `date`
+### `date`
 
 Validates that the field contains a parseable date string.
 
@@ -636,22 +523,17 @@ dv.validate('#myForm', {
 
 **Accepts:** `12/31/2024`, `2024-12-31`, `December 31, 2024`, any format parseable by `new Date()`
 
-**Default message:** "Please enter a valid date."
+**Recommendation:** For more reliable date validation across different browsers and locales, use `dateISO` instead, which enforces the ISO 8601 format (YYYY-MM-DD).
 
 ---
 
-#### `dateISO`
+### `dateISO`
 
 Validates ISO 8601 date format (YYYY-MM-DD or YYYY/MM/DD).
 
 **Parameters:** None
 
 **Example:**
-
-```html
-<input type="date" name="startDate" />
-<!-- dateISO automatically applied to type="date" inputs -->
-```
 
 ```javascript
 dv.validate('#myForm', {
@@ -662,13 +544,11 @@ dv.validate('#myForm', {
 ```
 
 **Accepts:** `2024-12-31`, `2024/12/31`
-**Rejects:** `12/31/2024` (use `date` instead)
-
-**Default message:** "Please enter a valid date (ISO)."
+**Rejects:** `12/31/2024`
 
 ---
 
-#### `creditcard`
+### `creditcard`
 
 Validates credit card number using the Luhn algorithm.
 
@@ -686,11 +566,9 @@ dv.validate('#myForm', {
 
 **Accepts:** 13-19 digit numbers, spaces and dashes are stripped automatically
 
-**Default message:** "Please enter a valid credit card number."
-
 ---
 
-#### `digits`
+### `digits`
 
 Validates that the field contains only numeric digits (0-9).
 
@@ -709,11 +587,9 @@ dv.validate('#myForm', {
 **Accepts:** `12345`, `000`, `99999`
 **Rejects:** Decimals, negative numbers, letters (use `number` for decimals)
 
-**Default message:** "Please enter only digits."
-
 ---
 
-#### `number`
+### `number`
 
 Validates numeric values including decimals and comma-separated thousands.
 
@@ -731,23 +607,13 @@ dv.validate('#myForm', {
 
 **Accepts:** `100`, `100.50`, `1,000.00`, `-50.5`
 
-**Default message:** "Please enter a valid number."
+### `minlength`
 
-### Length Validators
+Validates minimum length.
 
-#### `minlength`
-
-Validates minimum string length.
-
-**Parameters:** `integer` - minimum character count
+**Parameters:** `integer` - minimum length
 
 **Examples:**
-
-```html
-<input type="text" name="username" minlength="3" />
-<!-- or -->
-<input type="text" name="username" data-rule-minlength="3" />
-```
 
 ```javascript
 dv.validate('#myForm', {
@@ -757,40 +623,41 @@ dv.validate('#myForm', {
 });
 ```
 
-**Works with:** Character count (not bytes), applies to text inputs and textareas
+**Works with:**
 
-**Default message:** "Please enter at least {0} characters."
+- Text inputs/textareas: Character count
+- Checkboxes/radios/selects: Number of selected items
 
 ---
 
-#### `maxlength`
+### `maxlength`
 
-Validates maximum string length.
+Validates maximum length.
 
-**Parameters:** `integer` - maximum character count
+**Parameters:** `integer` - maximum length
 
 **Example:**
 
 ```javascript
 dv.validate('#myForm', {
   rules: {
-    username: {
-      minlength: 3,
-      maxlength: 20,
-    },
+    username: { maxlength: 20 },
   },
 });
 ```
 
-**Default message:** "Please enter no more than {0} characters."
+**Works with:**
+
+- Text inputs/textareas: Character count
+- Checkboxes/radios/selects: Number of selected items
 
 ---
 
-#### `rangelength`
+### `rangelength`
 
-Validates string length is within a range.
+Validates length is within a range.
 
-**Parameters:** `[min, max]` - array with minimum and maximum character counts
+**Parameters:** `[min, max]` - array with minimum and maximum lengths
 
 **Example:**
 
@@ -799,27 +666,21 @@ dv.validate('#myForm', {
   rules: {
     bio: { rangelength: [10, 500] },
   },
-  messages: {
-    bio: 'Your bio must be between 10 and 500 characters',
-  },
 });
 ```
 
-**Default message:** "Please enter a value between {0} and {1} characters long."
+**Works with:**
 
-### Numeric Validators
+- Text inputs/textareas: Character count
+- Checkboxes/radios/selects: Number of selected items
 
-#### `min`
+### `min`
 
 Validates that numeric value is greater than or equal to minimum.
 
 **Parameters:** `number` - minimum value
 
 **Examples:**
-
-```html
-<input type="number" name="age" min="18" />
-```
 
 ```javascript
 dv.validate('#myForm', {
@@ -829,11 +690,9 @@ dv.validate('#myForm', {
 });
 ```
 
-**Default message:** "Please enter a value greater than or equal to {0}."
-
 ---
 
-#### `max`
+### `max`
 
 Validates that numeric value is less than or equal to maximum.
 
@@ -849,11 +708,9 @@ dv.validate('#myForm', {
 });
 ```
 
-**Default message:** "Please enter a value less than or equal to {0}."
-
 ---
 
-#### `range`
+### `range`
 
 Validates that numeric value is within a range.
 
@@ -869,11 +726,7 @@ dv.validate('#myForm', {
 });
 ```
 
-**Default message:** "Please enter a value between {0} and {1}."
-
-### Comparison Validators
-
-#### `equalTo`
+### `equalTo`
 
 Validates that field value matches another field's value (e.g., password confirmation).
 
@@ -881,33 +734,17 @@ Validates that field value matches another field's value (e.g., password confirm
 
 **Examples:**
 
-```html
-<input type="password" name="password" id="password" />
-<input type="password" name="confirmPassword" data-rule-equalto="#password" />
-```
-
 ```javascript
 dv.validate('#myForm', {
   rules: {
-    password: { required: true, minlength: 8 },
-    confirmPassword: {
-      required: true,
-      equalTo: '#password',
-    },
-  },
-  messages: {
-    confirmPassword: {
-      equalTo: 'Passwords do not match',
-    },
+    confirmPassword: { equalTo: '#password' },
   },
 });
 ```
 
-**Default message:** "Please enter the same value again."
-
 ---
 
-#### `regex`
+### `regex`
 
 Validates that value matches a regular expression pattern.
 
@@ -916,16 +753,6 @@ Validates that value matches a regular expression pattern.
 **Example:**
 
 ```javascript
-dv.addMethod(
-  'regex',
-  function ({ blank, value, param }) {
-    if (blank) return true;
-    const match = new RegExp(param).exec(value);
-    return !!match && match.index === 0 && match[0].length === value.length;
-  },
-  'Please enter a value matching the pattern {0}.',
-);
-
 dv.validate('#myForm', {
   rules: {
     username: { regex: '^[a-zA-Z0-9_-]+$' },
@@ -935,13 +762,11 @@ dv.validate('#myForm', {
 
 **Note:** Pattern must match from start to end of string.
 
-**Default message:** "Please enter a value that matches the pattern {0}."
-
 ---
 
-#### `nonalphamin`
+### `nonalphamin`
 
-Validates minimum count of non-alphanumeric characters (for password strength).
+Validates minimum count of non-alphanumeric characters (example: password strength).
 
 **Parameters:** `integer` - minimum number of special characters required
 
@@ -950,434 +775,22 @@ Validates minimum count of non-alphanumeric characters (for password strength).
 ```javascript
 dv.validate('#myForm', {
   rules: {
-    password: {
-      required: true,
-      minlength: 8,
-      nonalphamin: 1, // At least 1 special character
-    },
+    password: { nonalphamin: 1 },
   },
 });
 ```
 
-**Common special characters:** `!@#$%^&*()_+-=[]{}|;:,.<>?`
+## Configuration
 
-**Default message:** "Please enter at least {0} non-alphabetic characters."
+TODO: fill this in
 
-### Real-world Validator Combinations
+## Error Messages
 
-**Username Validation:**
+By default, the library will display the default error messages for validation methods.
 
-```javascript
-username: {
-  required: true,
-  minlength: 3,
-  maxlength: 20,
-  regex: '^[a-zA-Z0-9_-]+$'
-}
-```
+You can configure these error messages to be exactly what you want.
 
-**Strong Password Validation:**
-
-```javascript
-password: {
-  required: true,
-  minlength: 12,
-  nonalphamin: 2  // At least 2 special characters
-}
-```
-
-**Age Validation:**
-
-```javascript
-age: {
-  required: true,
-  number: true,
-  min: 18,
-  max: 120
-}
-```
-
-**Discount Code Validation:**
-
-```javascript
-discountCode: {
-  minlength: 5,
-  maxlength: 10,
-  regex: '^[A-Z0-9]+$'  // Uppercase letters and numbers only
-}
-```
-
-**Email with Confirmation:**
-
-```javascript
-rules: {
-  email: {
-    required: true,
-    email: true
-  },
-  emailConfirm: {
-    required: true,
-    equalTo: '#email'
-  }
-}
-```
-
-## Configuration & Customization
-
-dino-validation is highly customizable. Control how errors are displayed, when validation occurs, and how fields are styled.
-
-### Error Display Configuration
-
-#### `errorClass` and `validClass`
-
-CSS classes applied to invalid/valid fields.
-
-**Defaults:** `errorClass: 'error'`, `validClass: 'valid'`
-
-**Example:**
-
-```javascript
-dv.validate('#myForm', {
-  errorClass: 'is-invalid',
-  validClass: 'is-valid',
-});
-```
-
-**CSS:**
-
-```css
-.is-invalid {
-  border-color: #dc3545;
-  background-color: #fff5f5;
-}
-
-.is-valid {
-  border-color: #28a745;
-}
-```
-
----
-
-#### `errorElement` and `wrapper`
-
-Control the HTML structure of error messages.
-
-**Defaults:** `errorElement: 'label'`, `wrapper: null`
-
-**Example:**
-
-```javascript
-dv.validate('#myForm', {
-  errorElement: 'span',
-  wrapper: 'div',
-});
-```
-
-**Renders as:**
-
-```html
-<div><span class="error">Error message here</span></div>
-```
-
----
-
-#### `errorPlacement`
-
-Custom function to position error messages.
-
-**Signature:** `(error: HTMLElement, element: FormControlElement) => void`
-
-**Default behavior:** Appends error after the field
-
-**Example 1: Place in specific container**
-
-```javascript
-dv.validate('#myForm', {
-  errorPlacement: (error, element) => {
-    const fieldName = element.name;
-    const errorContainer = document.getElementById(`error-${fieldName}`);
-    errorContainer.appendChild(error);
-  },
-});
-```
-
-**Example 2: Place in form row**
-
-```javascript
-dv.validate('#myForm', {
-  errorPlacement: (error, element) => {
-    const row = element.closest('.form-row');
-    row.querySelector('.error-target').appendChild(error);
-  },
-});
-```
-
-**Example 3: Tooltip-style errors**
-
-```javascript
-dv.validate('#myForm', {
-  errorPlacement: (error, element) => {
-    error.classList.add('tooltip');
-    element.parentElement.appendChild(error);
-  },
-});
-```
-
----
-
-#### `highlight` and `unhighlight`
-
-Custom functions to add/remove error styling.
-
-**Signature:** `(element: FormControlElement, errorClasses: string[], validClasses: string[]) => void`
-
-**Default behavior:** Adds/removes `errorClass` and `validClass`
-
-**Example 1: Bootstrap styling**
-
-```javascript
-dv.validate('#myForm', {
-  highlight: (element) => {
-    element.classList.add('is-invalid');
-    element.closest('.form-group')?.classList.add('has-error');
-  },
-  unhighlight: (element) => {
-    element.classList.remove('is-invalid');
-    element.closest('.form-group')?.classList.remove('has-error');
-  },
-});
-```
-
-**Example 2: Custom validation states**
-
-```javascript
-dv.validate('#myForm', {
-  highlight: (element, errorClasses) => {
-    element.classList.add(...errorClasses);
-    element.setAttribute('aria-invalid', 'true');
-  },
-  unhighlight: (element, errorClasses) => {
-    element.classList.remove(...errorClasses);
-    element.setAttribute('aria-invalid', 'false');
-  },
-});
-```
-
----
-
-#### `errorLabelContainer` and `errorContainer`
-
-Group error messages in a single location.
-
-**Example: Error summary at top of form**
-
-```html
-<div id="errorSummary" style="display: none;">
-  <h3>Please fix the following errors:</h3>
-  <ul id="errorList"></ul>
-</div>
-
-<form id="myForm">
-  <!-- form fields -->
-</form>
-```
-
-```javascript
-dv.validate('#myForm', {
-  errorContainer: '#errorSummary',
-  errorLabelContainer: '#errorList ul',
-});
-```
-
-### Event Handling
-
-Control when validation occurs.
-
-#### `onfocusout`, `onkeyup`, `onclick`, `onfocusin`
-
-Can be boolean (enable/disable) or custom function.
-
-**Defaults:** `onfocusout: true`, others: `false`
-
-**Example 1: Validate on blur (recommended for UX)**
-
-```javascript
-dv.validate('#myForm', {
-  onfocusout: (element) => {
-    // Validate when user leaves field
-    dv.valid(element);
-  },
-});
-```
-
-**Example 2: Real-time validation with debounce**
-
-```javascript
-let timeoutId;
-dv.validate('#myForm', {
-  onkeyup: (element) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      dv.valid(element);
-    }, 300); // Wait 300ms after last keystroke
-  },
-});
-```
-
-**Example 3: Disable all event validation**
-
-```javascript
-dv.validate('#myForm', {
-  onfocusout: false,
-  onkeyup: false,
-  onclick: false,
-});
-```
-
----
-
-#### `onsubmit`
-
-Controls whether form validates on submit.
-
-**Default:** `true`
-
-**Example: Manual validation control**
-
-```javascript
-const validator = dv.validate('#myForm', { onsubmit: false });
-
-document.getElementById('submitBtn').addEventListener('click', () => {
-  if (validator.form()) {
-    // Validation passed, submit form
-    document.getElementById('myForm').submit();
-  }
-});
-```
-
-### Validation Behavior
-
-#### `ignore`
-
-CSS selector for elements to ignore during validation.
-
-**Default:** `':hidden'` (skip hidden fields)
-
-**Example: Also ignore disabled fields**
-
-```javascript
-dv.validate('#myForm', {
-  ignore: ':hidden, :disabled',
-});
-```
-
----
-
-#### `focusCleanup`
-
-Remove error class when field gets focus.
-
-**Default:** `false`
-
-**Example:**
-
-```javascript
-dv.validate('#myForm', {
-  focusCleanup: true,
-});
-```
-
----
-
-#### `escapeHtml`
-
-Escape HTML in error messages to prevent XSS attacks.
-
-**Default:** `false`
-
-**Important:** Enable if error messages come from user input.
-
-**Example:**
-
-```javascript
-dv.validate('#myForm', {
-  escapeHtml: true, // Prevents <script> tags in custom messages
-});
-```
-
----
-
-#### `debug`
-
-Enable debug mode (prevents form submission, useful during development).
-
-**Default:** `false`
-
-**Example:**
-
-```javascript
-dv.validate('#myForm', {
-  debug: true, // Form won't submit, check console for validation info
-});
-```
-
-### Success & Error Callbacks
-
-#### `success`
-
-Callback when field passes validation. Can be a CSS class or function.
-
-**Example 1: Add success class**
-
-```javascript
-dv.validate('#myForm', {
-  success: 'valid-field',
-});
-```
-
-**Example 2: Custom success handler**
-
-```javascript
-dv.validate('#myForm', {
-  success: (labels, element) => {
-    labels.forEach((label) => {
-      label.classList.add('success-msg');
-      label.textContent = '✓ Looks good!';
-    });
-  },
-});
-```
-
----
-
-#### `invalidHandler`
-
-Callback when form submission fails validation.
-
-**Signature:** `(event: CustomEvent<ValidationError[]>) => void`
-
-**Example: Display error summary**
-
-```javascript
-dv.validate('#myForm', {
-  invalidHandler: (event) => {
-    const errors = event.detail;
-    console.log(`Form has ${errors.length} error(s)`);
-
-    // Display error summary
-    const errorList = document.getElementById('errorSummary');
-    errorList.innerHTML =
-      '<h4>Please fix the following:</h4>' +
-      errors
-        .map((err) => `<li>${err.element.name}: ${err.message}</li>`)
-        .join('');
-  },
-});
-```
-
-### Custom Error Messages
-
-Three ways to specify custom error messages:
+Two ways to specify custom error messages:
 
 **1. Per-field in config object**
 
@@ -1390,6 +803,21 @@ dv.validate('#myForm', {
     email: {
       required: 'Please enter your email address',
       email: 'Invalid email format',
+    },
+  },
+});
+```
+
+```javascript
+dv.validate('#myForm', {
+  rules: {
+    username: { minlength: 5, maxlength: 20 },
+  },
+  messages: {
+    username: {
+      // parameterized messages (will insert 5 and 20 for the placeholders)
+      minlength: 'Username must be at least {0} characters',
+      maxlength: 'Username cannot exceed {0} characters',
     },
   },
 });
@@ -1408,92 +836,9 @@ dv.validate('#myForm', {
 />
 ```
 
-**3. Parameterized messages**
-
-```javascript
-dv.validate('#myForm', {
-  rules: {
-    username: { minlength: 5, maxlength: 20 },
-  },
-  messages: {
-    username: {
-      minlength: 'Username must be at least {0} characters',
-      maxlength: 'Username cannot exceed {0} characters',
-    },
-  },
-});
-```
-
-### Real-world Configuration Examples
-
-**Bootstrap Form Styling:**
-
-```javascript
-dv.validate('#myForm', {
-  errorClass: 'is-invalid',
-  validClass: 'is-valid',
-  errorElement: 'div',
-  errorPlacement: (error, element) => {
-    error.classList.add('invalid-feedback', 'd-block');
-    element.parentElement.appendChild(error);
-  },
-  highlight: (element) => {
-    element.classList.add('is-invalid');
-  },
-  unhighlight: (element) => {
-    element.classList.remove('is-invalid');
-  },
-});
-```
-
-**Inline Validation with Real-time Feedback:**
-
-```javascript
-dv.validate('#myForm', {
-  onfocusout: (element) => dv.valid(element),
-  onkeyup: (element) => dv.valid(element),
-  errorElement: 'span',
-  errorPlacement: (error, element) => {
-    error.classList.add('help-text');
-    element.parentElement.appendChild(error);
-  },
-  highlight: (element) => {
-    element.classList.add('error');
-  },
-  unhighlight: (element) => {
-    element.classList.remove('error');
-  },
-});
-```
-
-**Form Submission with Loading Spinner:**
-
-```javascript
-dv.validate('#myForm', {
-  invalidHandler: (event) => {
-    // Stop spinner if validation fails
-    document.querySelector('[type="submit"]').disabled = false;
-    document.querySelector('.spinner').style.display = 'none';
-  },
-});
-
-document.getElementById('myForm').addEventListener('submit', (e) => {
-  if (!dv.valid('#myForm')) {
-    e.preventDefault();
-    return;
-  }
-
-  // Show spinner while submitting
-  document.querySelector('[type="submit"]').disabled = true;
-  document.querySelector('.spinner').style.display = 'inline-block';
-});
-```
-
-## Custom Validators
+## Custom Validation Methods
 
 Extend dino-validation with custom validation rules for your specific needs.
-
-### Custom Validator Basics
 
 **Validator Function Signature:**
 
@@ -1506,13 +851,13 @@ function({ blank, value, values, length, element, param }): boolean
 - `blank` (boolean): `true` if field is empty
 - `value` (string): Field's value
 - `values` (string[]): For radio/checkbox groups, array of selected values
-- `length` (number): Character count of value
+- `length` (number): For text inputs, character count; for select/checkboxes/radios, number of selected/checked items
 - `element` (FormControlElement): The input element
 - `param` (any): Parameter passed in rule definition
 
 **Return Value:** `true` if valid, `false` if invalid
 
-### Pattern Matching Examples
+### Examples
 
 **URL Slug Validator:**
 
@@ -1588,8 +933,6 @@ dv.validate('#myForm', {
   },
 });
 ```
-
-### Conditional/Cross-field Validators
 
 **Greater Than Validator:**
 
@@ -1676,67 +1019,6 @@ dv.validate('#myForm', {
         selector: '#category',
         value: 'other',
       },
-    },
-  },
-});
-```
-
-### File Upload Validators
-
-**File Type Validator:**
-
-```javascript
-dv.addMethod(
-  'fileType',
-  function ({ blank, element, param }) {
-    if (blank || !element.files?.length) return true;
-
-    const file = element.files[0];
-    const allowedTypes = param.split(',').map((t) => t.trim());
-
-    return allowedTypes.some((type) => file.type.startsWith(type));
-  },
-  'Please upload a file of type: {0}',
-);
-
-// Usage
-dv.validate('#myForm', {
-  rules: {
-    profileImage: {
-      required: true,
-      fileType: 'image/jpeg,image/png,image/webp',
-    },
-  },
-  messages: {
-    profileImage: {
-      fileType: 'Please upload a JPEG, PNG, or WebP image',
-    },
-  },
-});
-```
-
-**File Size Validator:**
-
-```javascript
-dv.addMethod(
-  'fileSize',
-  function ({ blank, element, param }) {
-    if (blank || !element.files?.length) return true;
-
-    const file = element.files[0];
-    const maxSizeInBytes = param * 1024 * 1024; // Convert MB to bytes
-
-    return file.size <= maxSizeInBytes;
-  },
-  'File must be smaller than {0}MB',
-);
-
-// Usage: Max 10MB
-dv.validate('#myForm', {
-  rules: {
-    document: {
-      required: true,
-      fileSize: 10,
     },
   },
 });
