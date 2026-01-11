@@ -42,7 +42,7 @@ Explore interactive examples to see dino-validation in action:
 - 🔧 **[[custom methods]](https://codepen.io/cadamsmith/pen/wBWWywb)**
   Extend the library's capabilities by creating custom validation methods for specific business requirements. Demonstrates an age verification method with complex date validation logic.
 
-- 📍 **[[error placement]](https://codepen.io/cadamsmith/pen/PLACEHOLDER)**
+- 📍 **[[error placement]](https://codepen.io/cadamsmith/pen/QwEKGrj)**
   Customize where and how validation errors are displayed. Showcases six different error placement strategies: default placement, designated containers, tooltips, grid layouts, error summaries, and inline errors.
 
 ## Installation
