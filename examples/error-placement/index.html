@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dino-validation 1.0.0: error placement</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Error Placement Strategies</h1>
+      <p class="subtitle">
+        Customize where and how validation errors are displayed
+      </p>
+
+      <div class="examples-grid">
+        <!-- Example 1: Default Placement -->
+        <div class="example-card">
+          <h2>Default Placement</h2>
+          <p class="description">
+            Errors appear immediately after the invalid field
+          </p>
+
+          <form id="defaultForm">
+            <div class="form-group">
+              <label for="email1">Email</label>
+              <input
+                type="email"
+                id="email1"
+                name="email"
+                placeholder="your@email.com"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="password1">Password</label>
+              <input
+                type="password"
+                id="password1"
+                name="password"
+                placeholder="Minimum 8 characters"
+              />
+            </div>
+
+            <button type="submit">Submit</button>
+          </form>
+        </div>
+
+        <!-- Example 2: Specific Container -->
+        <div class="example-card">
+          <h2>Error Container</h2>
+          <p class="description">
+            Using data-error-placement to target specific containers
+          </p>
+
+          <form id="containerForm">
+            <div class="form-group">
+              <label for="username2">Username</label>
+              <input
+                type="text"
+                id="username2"
+                name="username"
+                placeholder="johndoe"
+                data-error-placement="#error-username"
+              />
+              <div class="error-container" id="error-username"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="email2">Email</label>
+              <input
+                type="email"
+                id="email2"
+                name="email"
+                placeholder="your@email.com"
+                data-error-placement="#error-email"
+              />
+              <div class="error-container" id="error-email"></div>
+            </div>
+
+            <button type="submit">Submit</button>
+          </form>
+        </div>
+
+        <!-- Example 3: Grid Layout with Icons -->
+        <div class="example-card">
+          <h2>Grid with Icons</h2>
+          <p class="description">
+            Errors appear below fields in a grid layout with icons
+          </p>
+
+          <form id="gridForm">
+            <div class="form-row">
+              <label for="firstName">First Name</label>
+              <div class="input-wrapper">
+                <input
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  placeholder="John"
+                />
+                <span class="icon-status"></span>
+              </div>
+              <div class="error-target"></div>
+            </div>
+
+            <div class="form-row">
+              <label for="lastName">Last Name</label>
+              <div class="input-wrapper">
+                <input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  placeholder="Doe"
+                />
+                <span class="icon-status"></span>
+              </div>
+              <div class="error-target"></div>
+            </div>
+
+            <div class="form-row">
+              <label for="phone">Phone</label>
+              <div class="input-wrapper">
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  placeholder="(555) 123-4567"
+                />
+                <span class="icon-status"></span>
+              </div>
+              <div class="error-target"></div>
+            </div>
+
+            <button type="submit">Submit</button>
+          </form>
+        </div>
+
+        <!-- Example 4: Error Summary -->
+        <div class="example-card">
+          <h2>Error Summary</h2>
+          <p class="description">
+            All errors are listed at the top of the form
+          </p>
+
+          <form id="summaryForm">
+            <div id="errorSummary" class="error-summary" style="display: none">
+              <h3>Please fix the following errors:</h3>
+              <ul id="errorList"></ul>
+            </div>
+
+            <div class="form-group">
+              <label for="name">Full Name</label>
+              <input type="text" id="name" name="name" placeholder="John Doe" />
+            </div>
+
+            <div class="form-group">
+              <label for="email5">Email</label>
+              <input
+                type="email"
+                id="email5"
+                name="email"
+                placeholder="your@email.com"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea
+                id="message"
+                name="message"
+                rows="3"
+                placeholder="Your message here..."
+              ></textarea>
+            </div>
+
+            <button type="submit">Submit</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <h3>Error Placement Options</h3>
+        <p>
+          dino-validation offers multiple ways to control where error messages
+          appear:
+        </p>
+        <ul>
+          <li>
+            <strong>Default:</strong> Errors automatically insert after the
+            field
+          </li>
+          <li>
+            <strong>data-error-placement:</strong> Use HTML attributes to
+            specify target containers declaratively
+          </li>
+          <li>
+            <strong>errorPlacement callback:</strong> Custom JavaScript function
+            for dynamic placement logic
+          </li>
+          <li>
+            <strong>errorContainer/errorLabelContainer:</strong> Collect all
+            errors in a summary container at the top of forms
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <script src="../../dist/dv.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

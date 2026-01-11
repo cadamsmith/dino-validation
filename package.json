@@ -19,9 +19,9 @@
   "types": "dist/types/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/types/index.d.ts",
       "import": "./dist/dv.esm.js",
       "require": "./dist/dv.js",
-      "types": "./dist/types/index.d.ts",
       "default": "./dist/dv.esm.js"
     }
   },
