@@ -362,6 +362,7 @@ test('option: subformRequired', async ({ page }) => {
         return !blank;
       },
       '',
+      true,
     );
 
     const v = dv.validate('#subformRequired')!;
