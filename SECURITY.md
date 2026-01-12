@@ -1,6 +1,6 @@
-# Security Policy
+# 🦖 dino-validation: security policy
 
-## Supported Versions
+## supported versions
 
 We release patches for security vulnerabilities only in the latest stable version:
 
@@ -10,11 +10,11 @@ We release patches for security vulnerabilities only in the latest stable versio
 | (all other 1.x.x versions) | :x:                |
 | 0.x.x                      | :x:                |
 
-## Reporting a Vulnerability
+## reporting a vulnerability
 
 We take security vulnerabilities seriously. If you discover a security issue in dino-validation, please report it responsibly.
 
-### How to Report
+### how to report
 
 **Please do NOT report security vulnerabilities through public GitHub issues.**
 
@@ -30,7 +30,7 @@ Instead, please report security vulnerabilities by:
    - Include "SECURITY" in the subject line
    - Provide a detailed description of the vulnerability
 
-## Additional Security Measures
+## additional security measures
 
 This project uses:
 

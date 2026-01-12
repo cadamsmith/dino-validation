@@ -1,25 +1,14 @@
-# Contributing to dino-validation
+# 🦖 dino-validation: contributing
 
 Thank you for your interest in contributing to dino-validation! This document provides guidelines and instructions for contributing to the project.
 
-## Table of Contents
-
-- [Code of Conduct](#code-of-conduct)
-- [Getting Started](#getting-started)
-- [Development Setup](#development-setup)
-- [Making Changes](#making-changes)
-- [Code Style](#code-style)
-- [Testing](#testing)
-- [Pull Request Process](#pull-request-process)
-- [Project Structure](#project-structure)
-
-## Code of Conduct
+## code of conduct
 
 By participating in this project, you agree to maintain a respectful and inclusive environment for all contributors.
 
 See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for more details.
 
-## Getting Started
+## getting started
 
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
@@ -32,14 +21,14 @@ See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for more details.
    git remote add upstream https://github.com/cadamsmith/dino-validation.git
    ```
 
-## Development Setup
+## development setup
 
-### Prerequisites
+### prerequisites
 
 - Node.js (version 18 or higher recommended)
 - npm (comes with Node.js)
 
-### Installation
+### installation
 
 Install dependencies:
 
@@ -47,7 +36,7 @@ Install dependencies:
 npm install
 ```
 
-### Available Scripts
+### available scripts
 
 - `npm run build` - Full build with type checking
 - `npm run build:ci` - CI build (core + French localization + test lib)
@@ -59,9 +48,9 @@ npm install
 - `npm run ci` - Full CI check (build + format + tests)
 - `npm run examples` - Start local server and open examples in browser
 
-## Making Changes
+## making changes
 
-### Before You Start
+### before you start
 
 1. **Check existing issues** - See if your bug/feature is already reported
 2. **Open an issue** - For significant changes, discuss first in an issue
@@ -72,7 +61,7 @@ npm install
    git checkout -b docs/update-readme
    ```
 
-### Development Workflow
+### development workflow
 
 1. **Make your changes** in the `src/` directory
 2. **Test your changes**:
@@ -96,27 +85,27 @@ npm install
    npm run build:ci
    ```
 
-## Code Style
+## code style
 
 - **TypeScript** - All source code is written in TypeScript
 - **Prettier** - Code formatting is enforced via Prettier
 - **No console.log** - Remove debug statements before committing
 
-### Formatting
+### formatting
 
 Code is automatically formatted with Prettier. Run `npm run format` before committing, or configure your editor to format on save.
 
-## Testing
+## testing
 
 All changes must include appropriate tests.
 
-### Writing Tests
+### writing tests
 
 - Tests are located in the `tests/` directory
 - Tests use Playwright for browser-based validation testing
 - Test files use the pattern `*.spec.ts`
 
-### Running Tests
+### running tests
 
 **Important**: Tests run against the built files in `dist/`, so you must build before testing:
 
@@ -139,13 +128,13 @@ npm run test:firefox
 npm run test:webkit
 ```
 
-### Test Coverage
+### test coverage
 
 - Add tests for new features
 - Add regression tests for bug fixes
 - Update existing tests if behavior changes
 
-## Pull Request Process
+## pull request process
 
 1. Fork the repo
 
@@ -167,7 +156,7 @@ npm run test:webkit
 - [ ] Documentation is updated (if needed)
 - [ ] PR description clearly describes the changes
 
-## Project Structure
+## project structure
 
 ```
 dino-validation/
@@ -200,7 +189,7 @@ dino-validation/
 └── rollup.config.ts          # Build configuration
 ```
 
-## License
+## license
 
 By contributing to dino-validation, you agree that your contributions will be licensed under the MIT License.
 
