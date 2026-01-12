@@ -79,10 +79,15 @@ test('rules() - external - complete form', async ({ page }) => {
 
   const result = await page.evaluate(() => {
     let executed = false;
-    dv.addMethod('verifytest', function () {
-      executed = true;
-      return true;
-    });
+    dv.addMethod(
+      'verifytest',
+      function () {
+        executed = true;
+        return true;
+      },
+      '',
+      false,
+    );
 
     const v = dv.validate('#form', {
       rules: {
