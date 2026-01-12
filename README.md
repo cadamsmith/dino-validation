@@ -210,7 +210,7 @@ if (dv.valid(emailInput)) {
   Configuration options
 
 - 🌍 **[[localization]](docs/localization.md)**
-  Multi-language support
+  Support for other locales across the world.
 
 - 🔄 **[[migrating from jquery-validation]](docs/jqv-migration.md)**
   Differences from **jquery-validation** api
