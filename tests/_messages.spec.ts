@@ -1,22 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { FormControlElement } from '../src/types';
 
-test('predefined message not overwritten by addMethod(a, b, undefined)', async ({
-  page,
-}) => {
-  await page.goto('');
-
-  const result = await page.evaluate(() => {
-    const message = 'my custom message';
-    dv.messages.set('custom', message);
-    dv.addMethod('custom', () => true);
-
-    return dv.messages.get('custom');
-  });
-
-  expect(result).toBe('my custom message');
-});
-
 test('read messages from metadata', async ({ page }) => {
   await page.goto('');
 

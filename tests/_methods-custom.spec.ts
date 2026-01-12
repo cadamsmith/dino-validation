@@ -43,7 +43,7 @@ test('addMethod2', async ({ page }) => {
     const ret = [];
 
     dv.addMethod(
-      'complicatedPassword',
+      'complicatedpassword',
       function ({ blank, value }) {
         return (
           blank || (value !== null && /\D/.test(value) && /\d/.test(value))
@@ -54,7 +54,7 @@ test('addMethod2', async ({ page }) => {
 
     const v = dv.validate('#form', {
       rules: {
-        action: { complicatedPassword: true },
+        action: { complicatedpassword: true },
       },
     })!;
 

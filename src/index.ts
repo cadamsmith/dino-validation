@@ -146,6 +146,7 @@ export function rules(selector: string | HTMLElement): ValidationRuleset {
  * @param name - Name of the validation method
  * @param method - Validation function that returns true if valid
  * @param message - Default error message for this validation method
+ * @param addAsClassRule - Whether to allow using this method as a CSS class (default: true). Set to false for methods that require a param.
  * @example
  * // Add a custom phone validation method
  * dv.addMethod('phone', function(blank, value, element) {
@@ -162,13 +163,24 @@ export function rules(selector: string | HTMLElement): ValidationRuleset {
 export function addMethod(
   name: string,
   method: ValidationMethod,
-  message?: any,
+  message: string,
+  addAsClassRule: boolean = false,
 ) {
-  methods.set(name, method);
-  if (message) {
-    messages.set(name, message);
+  name = name.trim().toLowerCase();
+  if (name === '' || !/^[a-zA-Z0-9]+$/.test(name)) {
+    console.warn(
+      'Invalid method name: must be non-empty and only alphanumeric characters.',
+    );
+    return;
   }
-  if (method.length < 3) {
+  if (methods.get(name)) {
+    console.warn(`Invalid method name: ${name} already exists.`);
+    return;
+  }
+
+  methods.set(name, method);
+  messages.set(name, message);
+  if (addAsClassRule) {
     addClassRule(name);
   }
 }

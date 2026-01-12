@@ -354,7 +354,7 @@ test('option: subformRequired', async ({ page }) => {
     const billToCo = document.querySelector('#bill_to_co') as HTMLInputElement;
 
     dv.addMethod(
-      'billingRequired',
+      'billingrequired',
       function ({ blank, element }) {
         if (billToCo && billToCo.checked) {
           return !!element.closest('#subform');
