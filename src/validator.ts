@@ -82,6 +82,25 @@ export class Validator {
         (this.settings as any)[key] = setting.bind(this);
       }
     });
+
+    // transform method names to lowercase in messages
+    if (this.settings.messages) {
+      Object.keys(this.settings.messages).forEach((elementName) => {
+        const messages = this.settings.messages[elementName];
+
+        // Only transform if it's an object (not a string)
+        if (typeof messages === 'object' && messages !== null) {
+          const normalizedMessages: Record<string, string> = {};
+
+          Object.keys(messages).forEach((methodName) => {
+            normalizedMessages[methodName.toLowerCase()] =
+              messages[methodName]!;
+          });
+
+          this.settings.messages[elementName] = normalizedMessages;
+        }
+      });
+    }
   }
 
   /**

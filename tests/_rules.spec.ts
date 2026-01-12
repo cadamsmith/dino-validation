@@ -79,14 +79,19 @@ test('rules() - external - complete form', async ({ page }) => {
 
   const result = await page.evaluate(() => {
     let executed = false;
-    dv.addMethod('verifyTest', function () {
-      executed = true;
-      return true;
-    });
+    dv.addMethod(
+      'verifytest',
+      function () {
+        executed = true;
+        return true;
+      },
+      '',
+      false,
+    );
 
     const v = dv.validate('#form', {
       rules: {
-        action: { verifyTest: true },
+        action: { verifytest: true },
       },
     })!;
     v.form();
@@ -115,14 +120,14 @@ test('rules(), class and attribute combinations', async ({ page }) => {
 
   const result = await page.evaluate(() => {
     dv.addMethod(
-      'customMethod1',
+      'custommethod1',
       function () {
         return false;
       },
       '',
     );
     dv.addMethod(
-      'customMethod2',
+      'custommethod2',
       function () {
         return false;
       },
@@ -134,7 +139,7 @@ test('rules(), class and attribute combinations', async ({ page }) => {
         'v2-i9': {
           required: true,
           minlength: 2,
-          customMethod: true,
+          custommethod: true,
         },
       },
     });
@@ -154,8 +159,8 @@ test('rules(), class and attribute combinations', async ({ page }) => {
     { required: true, email: true },
     { url: true },
     { required: true, minlength: 2 },
-    { required: true, minlength: 2, maxlength: 5, customMethod1: '123' },
-    { required: true, minlength: 2, customMethod: true },
+    { required: true, minlength: 2, maxlength: 5, custommethod1: '123' },
+    { required: true, minlength: 2, custommethod: true },
   ]);
 });
 
@@ -170,7 +175,7 @@ test('rules(), rangelength attribute as array', async ({ page }) => {
   expect(result).toEqual({ required: true, rangelength: [2, 3] });
 });
 
-test('rules() - returns dateISO for input type=date', async ({ page }) => {
+test('rules() - returns date for input type=date', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
@@ -178,7 +183,7 @@ test('rules() - returns dateISO for input type=date', async ({ page }) => {
     return dv.rules('#minDateInvalid');
   });
 
-  expect(result).toEqual({ dateISO: true, min: '2012-12-21' });
+  expect(result).toEqual({ date: true, min: '2012-12-21' });
 });
 
 test('all rules are evaluated', async ({ page }) => {

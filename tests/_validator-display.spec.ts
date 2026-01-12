@@ -227,12 +227,22 @@ test('showErrors() - external messages', async ({ page }) => {
   await page.goto('');
 
   const result = await page.evaluate(() => {
-    dv.addMethod('foo', function () {
-      return false;
-    });
-    dv.addMethod('bar', function () {
-      return false;
-    });
+    dv.addMethod(
+      'foo',
+      function () {
+        return false;
+      },
+      '',
+      false,
+    );
+    dv.addMethod(
+      'bar',
+      function () {
+        return false;
+      },
+      '',
+      false,
+    );
 
     let f1Next = document.querySelector('#testForm4 #f1')!
       .nextElementSibling as HTMLElement;

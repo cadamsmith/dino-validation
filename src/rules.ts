@@ -43,7 +43,6 @@ const classRuleSettings: Record<string, ValidationRuleset> = {
   email: { email: true },
   url: { url: true },
   date: { date: true },
-  dateISO: { dateISO: true },
   number: { number: true },
   digits: { digits: true },
   creditcard: { creditcard: true },
@@ -112,11 +111,15 @@ function classRules(element: FormControlElement): ValidationRuleset {
   const classes = element.getAttribute('class');
 
   if (classes) {
-    classes.split(' ').forEach((className: string) => {
-      if (className in classRuleSettings) {
-        rules = { ...rules, ...classRuleSettings[className] };
-      }
-    });
+    classes
+      .trim()
+      .split(/\s/)
+      .map((className) => className.toLowerCase())
+      .forEach((className: string) => {
+        if (className in classRuleSettings) {
+          rules = { ...rules, ...classRuleSettings[className] };
+        }
+      });
   }
 
   return rules;
@@ -235,7 +238,7 @@ function normalizeAttributeRule(
   } else if (type === method && type !== 'range') {
     // Exception: the jquery validate 'range' method
     // does not test for the html5 'range' type
-    rules[type === 'date' ? 'dateISO' : method] = true;
+    rules[method] = true;
   }
 }
 
@@ -249,13 +252,19 @@ export function normalizeRule(
   data: ValidationRuleset | string,
 ): ValidationRuleset {
   if (typeof data !== 'string') {
-    return data;
+    return Object.fromEntries(
+      Object.entries(data).map(([key, value]) => [key.toLowerCase(), value]),
+    );
   }
 
   const transformed: ValidationRuleset = {};
-  data.split(/\s/).forEach((token) => {
-    transformed[token] = true;
-  });
+  data
+    .trim()
+    .split(/\s/)
+    .map((token) => token.toLowerCase())
+    .forEach((token) => {
+      transformed[token] = true;
+    });
 
   return transformed;
 }

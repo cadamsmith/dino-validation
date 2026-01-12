@@ -218,21 +218,6 @@ test('date', async ({ page }) => {
   await page.goto('');
 
   const results = await runMethodTests(page, 'date', '#form', [
-    { blank: false, value: '06/06/1990', expected: true },
-    { blank: false, value: '6/6/06', expected: true },
-
-    { blank: false, value: '1990x-06-06', expected: false },
-  ]);
-
-  for (let i = 0; i < results.length; i++) {
-    expect(results[i]).toBe(true);
-  }
-});
-
-test('dateISO', async ({ page }) => {
-  await page.goto('');
-
-  const results = await runMethodTests(page, 'dateISO', '#form', [
     { blank: false, value: '1990-06-06', expected: true },
     { blank: false, value: '1990-01-01', expected: true },
     { blank: false, value: '1990-01-31', expected: true },
@@ -376,10 +361,10 @@ test('range', async ({ page }) => {
   results.forEach((r) => expect(r).toBe(true));
 });
 
-test('equalTo', async ({ page }) => {
+test('equalto', async ({ page }) => {
   await page.goto('');
 
-  const results = await runMethodTests(page, 'equalTo', '#form', [
+  const results = await runMethodTests(page, 'equalto', '#form', [
     { blank: false, value: 'Test', param: '#text1', expected: true },
     { blank: false, value: 'T', param: '#text2', expected: true },
   ]);

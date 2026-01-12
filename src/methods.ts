@@ -15,10 +15,9 @@ export const store = new ObjectStore<ValidationMethod>({
   email,
   url,
   date,
-  dateISO,
   number,
   digits,
-  equalTo,
+  equalto: equalTo,
   regex,
   nonalphamin: nonAlphaMin,
   creditcard: creditCard,
@@ -119,26 +118,12 @@ function url({ blank, value }: ValidationMethodInput): boolean {
 }
 
 /**
- * Validates that the field value is a valid date string
- * @param blank - whether the field is blank
- * @param value - field value
- * @return true if blank or valid date string
- */
-function date({ blank, value }: ValidationMethodInput): boolean {
-  if (blank) {
-    return true;
-  }
-
-  return !/Invalid|NaN/.test(new Date(value).toString());
-}
-
-/**
  * Validates that the field value is a valid ISO date format (YYYY-MM-DD or YYYY/MM/DD).
  * @param blank - whether the field is blank
  * @param value - field value
  * @return true if blank or valid ISO date format
  */
-function dateISO({ blank, value }: ValidationMethodInput): boolean {
+function date({ blank, value }: ValidationMethodInput): boolean {
   if (blank) {
     return true;
   }
