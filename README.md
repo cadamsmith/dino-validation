@@ -34,7 +34,7 @@ Explore interactive examples to see dino-validation in action:
 - 📋 **[[declarative config]](https://codepen.io/cadamsmith/pen/EayyoMZ)**
   Define all validation rules using HTML data attributes - no JavaScript configuration needed. Perfect for simple forms.
 
-- 🔧 **[[custom methods]](https://codepen.io/cadamsmith/pen/wBWWywb)**
+- ⭐ **[[custom methods]](https://codepen.io/cadamsmith/pen/wBWWywb)**
   Extend the library's capabilities by creating custom validation methods for specific business requirements. Demonstrates an age verification method with complex date validation logic.
 
 - 📍 **[[error placement]](https://codepen.io/cadamsmith/pen/QwEKGrj)**
@@ -192,7 +192,7 @@ if (dv.valid(emailInput)) {
 
 </details>
 
-## other documentation
+## documentation
 
 - 📚 **[[api reference]](docs/api-reference.md)**
   Core API methods (`dv.validate`, `dv.valid`, `dv.rules`, etc.)
@@ -200,14 +200,14 @@ if (dv.valid(emailInput)) {
 - ✅ **[[built-in validation methods]](docs/methods.md)**
   Complete list of all 16 validation methods
 
-- 🔧 **[[custom validation methods]](docs/custom-methods.md)**
-  Creating custom validation methods
+- ⚙️ **[[configuration]](docs/configuration.md)**
+  Configuration options
 
 - 💬 **[[error messages]](docs/error-messages.md)**
   Customizing validation error messages
 
-- ⚙️ **[[configuration]](docs/configuration.md)**
-  Configuration options
+- ⭐ **[[custom validation methods]](docs/custom-methods.md)**
+  Creating custom validation methods
 
 - 🌍 **[[localization]](docs/localization.md)**
   Support for other locales across the world.
