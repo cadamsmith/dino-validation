@@ -3,7 +3,7 @@
     "target": "ES2015",
     "module": "ESNext",
     "lib": ["ES2015", "DOM"],
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowJs": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
