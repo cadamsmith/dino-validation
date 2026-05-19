@@ -2,8 +2,9 @@
   "compilerOptions": {
     "target": "ES2015",
     "module": "ESNext",
-    "lib": ["ES2015", "DOM"],
-    "moduleResolution": "node",
+    "lib": ["ES2020", "DOM"],
+    "moduleResolution": "bundler",
+    "types": ["node"],
     "allowJs": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
