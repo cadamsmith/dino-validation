@@ -13,6 +13,8 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests',
+  fullyParallel: true,
+  workers: process.env.CI ? 4 : undefined,
   webServer: {
     command: 'npx http-server -c-1 -p 8080 . > /dev/null 2>&1',
     port: 8080,
