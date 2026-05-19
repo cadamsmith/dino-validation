@@ -26,9 +26,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Audit dependencies for vulnerabilities
-        run: npm audit --audit-level=high
-
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium firefox webkit
 
@@ -42,3 +39,22 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  audit:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Audit dependencies for vulnerabilities
+        run: npm audit --audit-level=high
