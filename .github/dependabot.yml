@@ -5,7 +5,7 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
-      day: 'monday'
+      day: 'saturday'
       time: '06:00'
       timezone: 'America/New_York'
     # Bundle all non-major updates into one PR; majors get individual PRs
